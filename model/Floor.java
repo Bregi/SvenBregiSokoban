@@ -1,4 +1,4 @@
-package src.Controller;
+package model;
 
 public class Floor {
 

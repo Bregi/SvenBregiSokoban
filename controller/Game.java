@@ -1,4 +1,4 @@
-package src.Controller;
+package controller;
 
 public class Game {
 

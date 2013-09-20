@@ -1,4 +1,4 @@
-package src.Model;
+package controller;
 
 public class Diamant {
 

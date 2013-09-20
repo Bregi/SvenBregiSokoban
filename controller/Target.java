@@ -1,4 +1,4 @@
-package src.View;
+package controller;
 
 public class Target {
 

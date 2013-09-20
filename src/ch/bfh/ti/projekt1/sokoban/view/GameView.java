@@ -14,6 +14,11 @@ public class GameView extends JFrame {
 	GameView(Game game) {
 		JLabel jlbSokoban = new JLabel("Sokobaaaaaaaaan");
 		add(jlbSokoban);
+
+        SokoComponent sokoComponent = new SokoComponent();
+        sokoComponent.setBounds(100,100,100,100);
+
+        add(sokoComponent);
 		this.setSize(game.getSizeX(), game.getSizeY());
 		setVisible(true);
 	}

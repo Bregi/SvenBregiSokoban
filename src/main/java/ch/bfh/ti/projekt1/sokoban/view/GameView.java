@@ -1,4 +1,4 @@
-package view;
+package ch.bfh.ti.projekt1.sokoban.view;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JLabel;

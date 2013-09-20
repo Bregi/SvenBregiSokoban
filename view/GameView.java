@@ -3,6 +3,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JLabel;
 import model.*;
+import controller.*;
 
 public class GameView extends JFrame {
 
@@ -11,8 +12,8 @@ public class GameView extends JFrame {
 		new GameView(game);
 	}
 	GameView(Game game) {
-		JLabel jlbHelloWorld = new JLabel("Sokobaaaaaaaaan");
-		add(jlbHelloWorld);
+		JLabel jlbSokoban = new JLabel("Sokobaaaaaaaaan");
+		add(jlbSokoban);
 		this.setSize(game.getSizeX(), game.getSizeY());
 		setVisible(true);
 	}

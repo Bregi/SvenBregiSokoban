@@ -2,8 +2,8 @@ package ch.bfh.ti.projekt1.sokoban.view;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JLabel;
-import model.*;
-import controller.*;
+import ch.bfh.ti.projekt1.sokoban.model.*;
+import ch.bfh.ti.projekt1.sokoban.controller.*;
 
 public class GameView extends JFrame {
 

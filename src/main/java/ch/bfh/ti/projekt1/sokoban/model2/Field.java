@@ -5,6 +5,18 @@ public class Field extends AbstractModel {
 
 	private Field upper, lower, left, right;
 
+	public Field(FieldState fieldState) {
+		this(fieldState, null, null, null, null);
+	}
+	
+	public Field(FieldState fieldState, Field upper, Field lower, Field left, Field right) {
+		this.state = fieldState;
+		this.upper = upper;
+		this.lower = lower;
+		this.left = left;
+		this.right = right;
+	}
+	
 	public FieldState getState() {
 		return state;
 	}

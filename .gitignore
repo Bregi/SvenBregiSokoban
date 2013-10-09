@@ -9,9 +9,11 @@
 
 .settings/org.eclipse.core.resources.prefs
 /target
-
+/bin
+/.idea
+/.settings
 .settings/org.eclipse.jdt.core.prefs
 
 .settings/org.eclipse.m2e.core.prefs
 
-src/.DS_Store
+.DS_Store

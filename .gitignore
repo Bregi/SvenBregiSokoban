@@ -6,3 +6,14 @@
 *.jar
 *.war
 *.ear
+
+.settings/org.eclipse.core.resources.prefs
+/target
+/bin
+/.idea
+/.settings
+.settings/org.eclipse.jdt.core.prefs
+
+.settings/org.eclipse.m2e.core.prefs
+
+.DS_Store

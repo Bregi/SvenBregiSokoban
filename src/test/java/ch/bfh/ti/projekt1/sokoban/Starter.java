@@ -2,12 +2,13 @@ package ch.bfh.ti.projekt1.sokoban;
 
 import javax.swing.JFrame;
 
-
 import ch.bfh.ti.projekt1.sokoban.controller2.BoardController;
 import ch.bfh.ti.projekt1.sokoban.model2.Board;
+import ch.bfh.ti.projekt1.sokoban.model2.Diamond;
 import ch.bfh.ti.projekt1.sokoban.model2.Field;
-import ch.bfh.ti.projekt1.sokoban.view2.BoardView;
 import ch.bfh.ti.projekt1.sokoban.model2.FieldState;
+import ch.bfh.ti.projekt1.sokoban.model2.Wall;
+import ch.bfh.ti.projekt1.sokoban.view2.BoardView;
 
 /**
  * This class is only for testing purposes
@@ -21,7 +22,7 @@ public class Starter {
 		System.out.println("Starting Demo");
 		
 		JFrame frame = new JFrame();
-		frame.setBounds(0, 0, 800, 800);
+		frame.setBounds(0, 0, 300, 300);
 
 		BoardController boardController = new BoardController();
 		BoardView boardView = new BoardView(boardController);
@@ -95,13 +96,18 @@ public class Starter {
 
 		boardController.addModel(board);
 		boardController.addView(boardView);
-
-		frame.add(boardView);
-
+		Diamond diamant = new Diamond();
+		Wall wall = new Wall();
+		diamant.setLocation(0,0);
+		wall.setLocation(40,40);
+		wall.initialize();
+		diamant.initialize();
+		frame.add(wall);
+		boardView.add(diamant);
+		//frame.add(boardView);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		boardView.requestFocusInWindow();
-		frame.pack();
 		frame.setVisible(true);
 
 	}

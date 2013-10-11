@@ -18,8 +18,8 @@ public class BoardView extends JPanel implements KeyListener, AbstractView{
 	public BoardView(BoardController controller) {
 		this.controller = controller;
 		
-		setBackground(Color.BLUE);
-		setBounds(0, 0, 800, 800);
+		//setBackground(Color.BLUE);
+		setBounds(0, 0, 300, 300);
 		addKeyListener(this);
 		setFocusable(true);
 	}

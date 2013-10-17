@@ -5,46 +5,65 @@ import ch.bfh.ti.projekt1.sokoban.controller2.AbstractController;
 
 public class Board extends AbstractModel {
 
-	private Field position;
+    private Position position;
+    private Field[][] grid;
 
-	public Field getPosition() {
-		return position;
-	}
+    public Board(int width, int height, Position startPosition) {
+        this.position = startPosition;
+        grid = new Field[width][height];
+    }
 
-	public void setPosition(Field position) {
-		Field oldPosition = this.position;
-		this.position = position;
-		firePropertyChange(AbstractController.PROPERTY_POSITION, oldPosition,
-				this.position);
-	}
+    public void setField(int xPos, int yPos, Field field) throws IllegalArgumentException {
+        if (xPos < 0 || yPos < 0) {
+            throw new IllegalArgumentException("Parameters given are invalid!");
+        }
 
-	public void setNextField(Direction direction) {
-		System.out.println("Try goto:" + direction.name());
+        if (xPos >= grid.length || yPos >= grid[0].length) {
+            throw new IllegalArgumentException("Position out of bounds!");
+        }
 
-		switch (direction) {
-		case DOWN:
-			if (position.getLower() != null) {
-				setPosition(position.getLower());
-				break;
-			}
-		case UP:
-			if (position.getUpper() != null) {
-				setPosition(position.getUpper());
-				break;
-			}
-		case LEFT:
-			if (position.getLeft() != null) {
-				setPosition(position.getLeft());
-				break;
-			}
-		case RIGHT:
-			if (position.getRight() != null) {
-				setPosition(position.getRight());
-				break;
-			}
-		default:
-			System.out.println("Not possible to go there!");
-			break;
-		}
-	}
+        grid[xPos][yPos] = field;
+
+    }
+
+    private void setPosition(int x, int y) {
+
+        firePropertyChange(AbstractController.PROPERTY_POSITION, null, this);
+    }
+
+    public Position getPosition() {
+        return position;
+    }
+
+    public void setNextField(Direction direction) {
+        System.out.println("Try goto:" + direction.name());
+        Position oldPosition = position;
+
+        switch (direction) {
+            case DOWN:
+                if (grid[position.getX()].length > position.getY() + 1 && grid[position.getX()][position.getY() + 1] != null) {
+                    this.position = new Position(position.getX(), position.getY() + 1);
+                }
+                break;
+            case UP:
+                if (0 < position.getY() && grid[position.getX()][position.getY() - 1] != null) {
+                    this.position = new Position(position.getX(), position.getY() - 1);
+                }
+                break;
+            case LEFT:
+                if (0 < position.getX() && grid[position.getX() - 1][position.getY()] != null) {
+                    this.position = new Position(position.getX() - 1, position.getY());
+                }
+                break;
+            case RIGHT:
+                if (grid.length > position.getX() + 1 && grid[position.getX() + 1][position.getY()] != null) {
+                    this.position = new Position(position.getX() + 1, position.getY());
+                }
+                break;
+        }
+
+        if (oldPosition != position) {
+            firePropertyChange(AbstractController.PROPERTY_POSITION, oldPosition, position);
+        }
+    }
 }

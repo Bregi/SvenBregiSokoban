@@ -1,43 +1,69 @@
 package ch.bfh.ti.projekt1.sokoban.view2;
 
-import java.awt.Color;
+import ch.bfh.ti.projekt1.sokoban.controller2.BoardController;
+import ch.bfh.ti.projekt1.sokoban.controller2.BoardDimension;
+import ch.bfh.ti.projekt1.sokoban.controller2.BoardService;
+import ch.bfh.ti.projekt1.sokoban.controller2.BoardServiceImpl;
+import ch.bfh.ti.projekt1.sokoban.model2.Field;
+import ch.bfh.ti.projekt1.sokoban.model2.Position;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
 
-import javax.swing.JPanel;
+public class BoardView extends JPanel implements KeyListener, AbstractView {
 
-import ch.bfh.ti.projekt1.sokoban.controller2.BoardController;
+    private BoardController controller;
+    private BoardService boardService = new BoardServiceImpl();
+    private BoardDimension dimension;
+    private Position playerPosition;
 
-public class BoardView extends JPanel implements KeyListener, AbstractView{
+    public BoardView(BoardController controller, Position playerPosition) {
+        this.controller = controller;
+        this.playerPosition = playerPosition;
+        setBackground(Color.BLACK);
+        addKeyListener(this);
+        setFocusable(true);
+    }
 
-	private BoardController controller;
-		
-	public BoardView(BoardController controller) {
-		this.controller = controller;
-		
-		setBackground(Color.BLUE);
-		setBounds(0, 0, 800, 800);
-		addKeyListener(this);
-		setFocusable(true);
-	}
-	
-	public void modelPropertyChange(PropertyChangeEvent evt) {
-		//Model zum board hat geändert, jetzt muss etwas am GUI geändert werden
-		System.out.println("modelChanged!");
-	}
+    public void modelPropertyChange(PropertyChangeEvent evt) {
+        if (evt.getNewValue() instanceof Field) {
+            Field field = (Field) evt.getNewValue();
+            if (dimension == null) {
+                dimension = boardService.getBoardDimension(field);
+            }
+        }
 
-	public void keyTyped(KeyEvent e) {
-		controller.keyTyped(e);
-	}
+        if (evt.getNewValue() instanceof Position) {
+            playerPosition = (Position) evt.getNewValue();
+        }
 
-	public void keyPressed(KeyEvent e) {
-		controller.keyTyped(e);
-	}
+        repaint();
+        getParent().repaint();
+        //Model zum board hat geändert, jetzt muss etwas am GUI geändert werden
+        System.out.println("modelChanged!");
+    }
 
-	public void keyReleased(KeyEvent e) {
-		
-	}
+    public void keyTyped(KeyEvent e) {
+        controller.keyTyped(e);
+    }
+
+    public void keyPressed(KeyEvent e) {
+        controller.keyTyped(e);
+    }
+
+    public void keyReleased(KeyEvent e) {
+
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        //setSize(dimension.getWidth(), dimension.getHeight());
+        if (playerPosition != null) {
+            g.drawString(playerPosition.toString(), 10, 10);
+
+        }
+    }
 }

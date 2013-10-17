@@ -8,7 +8,6 @@ import ch.bfh.ti.projekt1.sokoban.model2.Position;
 import ch.bfh.ti.projekt1.sokoban.view2.BoardView;
 
 import javax.swing.*;
-import java.io.File;
 
 /**
  * This class is only for testing purposes
@@ -20,10 +19,8 @@ public class Starter {
     public static void main(String[] args) {
         System.out.println("Starting Demo");
 
-        File f = new File("ch/bfh/ti/projekt1/sokoban/test.xml");
-        System.out.print(f.exists());
         JFrame frame = new JFrame();
-        frame.setBounds(0, 0, 1000, 1000);
+        frame.setBounds(0, 0, 400, 400);
         Board board = new Board(4, 5, new Position(2, 2));
 
         BoardController boardController = new BoardController();

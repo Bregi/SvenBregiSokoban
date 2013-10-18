@@ -1,11 +1,11 @@
-package ch.bfh.ti.projekt1.sokoban.view2;
+package ch.bfh.ti.projekt1.sokoban.view;
 
-import ch.bfh.ti.projekt1.sokoban.controller2.BoardController;
-import ch.bfh.ti.projekt1.sokoban.controller2.BoardDimension;
-import ch.bfh.ti.projekt1.sokoban.controller2.BoardService;
-import ch.bfh.ti.projekt1.sokoban.controller2.BoardServiceImpl;
-import ch.bfh.ti.projekt1.sokoban.model2.Field;
-import ch.bfh.ti.projekt1.sokoban.model2.Position;
+import ch.bfh.ti.projekt1.sokoban.controller.BoardController;
+import ch.bfh.ti.projekt1.sokoban.controller.BoardDimension;
+import ch.bfh.ti.projekt1.sokoban.controller.BoardService;
+import ch.bfh.ti.projekt1.sokoban.controller.BoardServiceImpl;
+import ch.bfh.ti.projekt1.sokoban.model.Field;
+import ch.bfh.ti.projekt1.sokoban.model.Position;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,6 +13,12 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.beans.PropertyChangeEvent;
 
+/**
+ * @author svennyffenegger
+ * @since 11.10.13 16:12
+ *        <p/>
+ *        Implementation of the board view
+ */
 public class BoardView extends JPanel implements KeyListener, AbstractView {
 
     private BoardController controller;

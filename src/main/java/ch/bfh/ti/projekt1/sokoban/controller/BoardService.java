@@ -1,6 +1,6 @@
-package ch.bfh.ti.projekt1.sokoban.controller2;
+package ch.bfh.ti.projekt1.sokoban.controller;
 
-import ch.bfh.ti.projekt1.sokoban.model2.Field;
+import ch.bfh.ti.projekt1.sokoban.model.Field;
 
 /**
  * @author svennyffenegger

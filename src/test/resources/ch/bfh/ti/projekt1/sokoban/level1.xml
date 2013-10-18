@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<level xmlns="http://bfh.ch"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://bfh.ch level.xsd">
+    <row id="0">
+        <column id="0"/>
+    </row>
+    <name>crazy level 9999</name>
+    <startPosition row="0" column="0"/>
+</level>

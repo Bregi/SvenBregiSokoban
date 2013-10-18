@@ -11,9 +11,14 @@ import java.util.ArrayList;
 /**
  * @author svennyffenegger
  * @since 11.10.13 13:32
+ *        <p/>
+ *        Abstract class for controller
  */
 public abstract class AbstractController implements PropertyChangeListener {
 
+    /**
+     * The properties that can change
+     */
     public static final String PROPERTY_POSITION = "position";
     public static final String PROPERTY_NEXT_FIELD = "NextField";
     public static final String PROPERTY_FIELD = "field";

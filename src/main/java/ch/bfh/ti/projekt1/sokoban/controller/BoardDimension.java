@@ -1,4 +1,4 @@
-package ch.bfh.ti.projekt1.sokoban.controller2;
+package ch.bfh.ti.projekt1.sokoban.controller;
 
 /**
  * @author svennyffenegger

@@ -1,11 +1,7 @@
-package ch.bfh.ti.projekt1.sokoban.view2;
+package ch.bfh.ti.projekt1.sokoban.view;
 
-import ch.bfh.ti.projekt1.sokoban.controller2.BoardController;
-import ch.bfh.ti.projekt1.sokoban.controller2.BoardDimension;
-import ch.bfh.ti.projekt1.sokoban.controller2.BoardService;
-import ch.bfh.ti.projekt1.sokoban.controller2.BoardServiceImpl;
-import ch.bfh.ti.projekt1.sokoban.model2.Field;
-import ch.bfh.ti.projekt1.sokoban.model2.Position;
+import ch.bfh.ti.projekt1.sokoban.controller.BoardController;
+import ch.bfh.ti.projekt1.sokoban.model.Position;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,11 +9,15 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.beans.PropertyChangeEvent;
 
+/**
+ * @author svennyffenegger
+ * @since 11.10.13 16:12
+ *        <p/>
+ *        Implementation of the board view
+ */
 public class BoardView extends JPanel implements KeyListener, AbstractView {
 
     private BoardController controller;
-    private BoardService boardService = new BoardServiceImpl();
-    private BoardDimension dimension;
     private Position playerPosition;
 
     public BoardView(BoardController controller, Position playerPosition) {
@@ -28,22 +28,20 @@ public class BoardView extends JPanel implements KeyListener, AbstractView {
         setFocusable(true);
     }
 
+    /**
+     * Gets called when the model has changed
+     *
+     * @param evt
+     */
     public void modelPropertyChange(PropertyChangeEvent evt) {
-        if (evt.getNewValue() instanceof Field) {
-            Field field = (Field) evt.getNewValue();
-            if (dimension == null) {
-                dimension = boardService.getBoardDimension(field);
-            }
-        }
-
+        // we have a new position, the player was moved
         if (evt.getNewValue() instanceof Position) {
             playerPosition = (Position) evt.getNewValue();
-        }
 
-        repaint();
-        getParent().repaint();
-        //Model zum board hat geändert, jetzt muss etwas am GUI geändert werden
-        System.out.println("modelChanged!");
+            //repaint the board and the parent
+            repaint();
+            getParent().repaint();
+        }
     }
 
     public void keyTyped(KeyEvent e) {
@@ -58,6 +56,11 @@ public class BoardView extends JPanel implements KeyListener, AbstractView {
 
     }
 
+    /**
+     * Repaints the board
+     *
+     * @param g
+     */
     @Override
     protected void paintComponent(Graphics g) {
         //setSize(dimension.getWidth(), dimension.getHeight());

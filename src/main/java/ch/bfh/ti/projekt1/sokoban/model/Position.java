@@ -1,8 +1,10 @@
-package ch.bfh.ti.projekt1.sokoban.model2;
+package ch.bfh.ti.projekt1.sokoban.model;
 
 /**
  * @author svennyffenegger
  * @since 11.10.13 16:12
+ *        <p/>
+ *        represents the position
  */
 public class Position {
     int y, x;

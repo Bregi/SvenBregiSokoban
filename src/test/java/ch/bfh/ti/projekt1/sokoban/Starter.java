@@ -1,11 +1,11 @@
 package ch.bfh.ti.projekt1.sokoban;
 
-import ch.bfh.ti.projekt1.sokoban.controller2.BoardController;
-import ch.bfh.ti.projekt1.sokoban.model2.Board;
-import ch.bfh.ti.projekt1.sokoban.model2.Field;
-import ch.bfh.ti.projekt1.sokoban.model2.FieldState;
-import ch.bfh.ti.projekt1.sokoban.model2.Position;
-import ch.bfh.ti.projekt1.sokoban.view2.BoardView;
+import ch.bfh.ti.projekt1.sokoban.controller.BoardController;
+import ch.bfh.ti.projekt1.sokoban.model.Board;
+import ch.bfh.ti.projekt1.sokoban.model.Field;
+import ch.bfh.ti.projekt1.sokoban.model.FieldState;
+import ch.bfh.ti.projekt1.sokoban.model.Position;
+import ch.bfh.ti.projekt1.sokoban.view.BoardView;
 
 import javax.swing.*;
 

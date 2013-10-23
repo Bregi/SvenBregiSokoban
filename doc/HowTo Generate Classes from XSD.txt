@@ -1,0 +1,5 @@
+Schema generieren
+
+Konsole, ins Projektverzeichnis (SvenBregiSokoban) wechseln, dann Befehl:
+
+xjc -p ch.bfh.ti.projekt1.sokoban.xml -d src/main/java/ src/test/resources/ch/bfh/ti/projekt1/sokoban/level1.xsd

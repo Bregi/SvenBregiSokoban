@@ -5,9 +5,9 @@ import ch.bfh.ti.projekt1.sokoban.model.Field;
 import ch.bfh.ti.projekt1.sokoban.model.FieldState;
 import ch.bfh.ti.projekt1.sokoban.model.Position;
 import ch.bfh.ti.projekt1.sokoban.view.BoardView;
-import ch.bfh.ti.projekt1.sokoban.xml.ColumnType;
-import ch.bfh.ti.projekt1.sokoban.xml.LevelType;
-import ch.bfh.ti.projekt1.sokoban.xml.RowType;
+import ch.bfh.ti.projekt1.sokoban.xml.Column;
+import ch.bfh.ti.projekt1.sokoban.xml.Level;
+import ch.bfh.ti.projekt1.sokoban.xml.Row;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -24,23 +24,22 @@ public class GameController {
         File file = new File(path);
         JAXBContext jaxbContext = null;
         try {
-            jaxbContext = JAXBContext.newInstance(LevelType.class);
+            jaxbContext = JAXBContext.newInstance(Level.class);
             Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-            LevelType level = (LevelType) jaxbUnmarshaller.unmarshal(file);
+            Level level = (Level) jaxbUnmarshaller.unmarshal(file);
 
-            Position startPos = new Position(new Integer(level.getStartPosition().getColumn()), new Integer(level.getStartPosition().getRow()));
+            Position startPos = new Position(level.getStartPosition().getColumn(), level.getStartPosition().getRow());
 
             Board board = new Board(getMaxColumnCount(level.getRow()), level.getRow().size(), startPos);
 
             BoardController boardController = new BoardController();
             BoardView boardView = new BoardView(boardController, board.getPosition(), level.getName());
 
-            for (RowType rowType : level.getRow()) {
-                for (ColumnType columnType : rowType.getColumn()) {
+            for (Row rowType : level.getRow()) {
+                for (Column columnType : rowType.getColumn()) {
 
-                    // TODO: beim schema integer definieren, nicht string
-                    Field field = new Field(parseFieldState(columnType.getType()));
-                    board.setField(new Integer(columnType.getId()), new Integer(rowType.getId()), field);
+                    Field field = new Field(FieldState.parseXmlFieldType(columnType.getType()));
+                    board.setField(columnType.getId(), rowType.getId(), field);
                 }
             }
             board.setLevelName(level.getName());
@@ -51,37 +50,19 @@ public class GameController {
 
             return boardView;
         } catch (JAXBException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         }
 
         return null;
     }
 
-    private int getMaxColumnCount(List<RowType> list) {
+    private int getMaxColumnCount(List<Row> list) {
         int count = 0;
-        for (RowType rowType : list) {
+        for (Row rowType : list) {
             if (rowType.getColumn().size() > count) {
                 count = rowType.getColumn().size();
             }
         }
         return count;
-    }
-
-    private FieldState parseFieldState(String fieldState) {
-        // TODO: beim laden des xml soll direkt enums erzeugt werden
-        if (fieldState.equalsIgnoreCase(FieldState.DIAMOND.name())) {
-            return FieldState.DIAMOND;
-        } else if (fieldState.equalsIgnoreCase(FieldState.EMPTY.name())) {
-            return FieldState.EMPTY;
-        } else if (fieldState.equalsIgnoreCase(FieldState.COMPLETED.name())) {
-            return FieldState.COMPLETED;
-        } else if (fieldState.equalsIgnoreCase(FieldState.GOAL.name())) {
-            return FieldState.GOAL;
-        } else if (fieldState.equalsIgnoreCase(FieldState.PLAYER.name())) {
-            return FieldState.PLAYER;
-        } else if (fieldState.equalsIgnoreCase(FieldState.WALL.name())) {
-            return FieldState.WALL;
-        }
-        return null;
     }
 }

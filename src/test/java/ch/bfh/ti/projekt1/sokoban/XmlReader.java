@@ -1,6 +1,6 @@
 package ch.bfh.ti.projekt1.sokoban;
 
-import ch.bfh.ti.projekt1.sokoban.xml.LevelType;
+import ch.bfh.ti.projekt1.sokoban.xml.Level;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -21,10 +21,10 @@ public class XmlReader {
         try {
 
             File file = new File("src/test/resources/ch/bfh/ti/projekt1/sokoban/level1.xml");
-            JAXBContext jaxbContext = JAXBContext.newInstance(LevelType.class);
+            JAXBContext jaxbContext = JAXBContext.newInstance(Level.class);
 
             Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-            LevelType level = (LevelType) jaxbUnmarshaller.unmarshal(file);
+            Level level = (Level) jaxbUnmarshaller.unmarshal(file);
             System.out.println(level);
 
         } catch (JAXBException e) {

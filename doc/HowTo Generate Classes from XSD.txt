@@ -3,3 +3,5 @@ Schema generieren
 Konsole, ins Projektverzeichnis (SvenBregiSokoban) wechseln, dann Befehl:
 
 xjc -p ch.bfh.ti.projekt1.sokoban.xml -d src/main/java/ src/test/resources/ch/bfh/ti/projekt1/sokoban/level1.xsd
+
+Dann bei der Root Klasse (Level) noch @XmlRootElement(name = "level") annotieren.

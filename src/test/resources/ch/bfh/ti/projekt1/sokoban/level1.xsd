@@ -1,35 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://bfh.ch"
            xmlns:xs="http://www.w3.org/2001/XMLSchema">
-    <xs:element name="level" type="bfh:levelType" xmlns:bfh="http://bfh.ch"/>
-    <xs:complexType name="startPositionType">
+    <xs:element name="level" type="bfh:level" xmlns:bfh="http://bfh.ch"/>
+    <xs:complexType name="startPosition">
         <xs:simpleContent>
             <xs:extension base="xs:string">
-                <xs:attribute type="xs:string" name="row"/>
-                <xs:attribute type="xs:string" name="column"/>
+                <xs:attribute type="xs:int" name="row"/>
+                <xs:attribute type="xs:int" name="column"/>
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>
-    <xs:complexType name="columnType">
+    <xs:complexType name="column">
         <xs:simpleContent>
             <xs:extension base="xs:string">
-                <xs:attribute type="xs:string" name="id" use="optional"/>
-                <xs:attribute type="xs:string" name="type" use="optional"/>
+                <xs:attribute type="xs:int" name="id" use="optional"/>
+                <xs:attribute type="bfh:fieldType" xmlns:bfh="http://bfh.ch" name="type" use="required"/>
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>
-    <xs:complexType name="rowType">
+    <xs:complexType name="row">
         <xs:sequence>
-            <xs:element type="bfh:columnType" name="column" maxOccurs="unbounded" minOccurs="0"
+            <xs:element type="bfh:column" name="column" maxOccurs="unbounded" minOccurs="0"
                         xmlns:bfh="http://bfh.ch"/>
         </xs:sequence>
-        <xs:attribute type="xs:string" name="id" use="optional"/>
+        <xs:attribute type="xs:int" name="id" use="optional"/>
     </xs:complexType>
-    <xs:complexType name="levelType">
+    <xs:complexType name="level">
         <xs:sequence>
-            <xs:element type="bfh:rowType" name="row" maxOccurs="unbounded" minOccurs="0" xmlns:bfh="http://bfh.ch"/>
+            <xs:element type="bfh:row" name="row" maxOccurs="unbounded" minOccurs="0" xmlns:bfh="http://bfh.ch"/>
             <xs:element type="xs:string" name="name"/>
-            <xs:element type="bfh:startPositionType" name="startPosition" xmlns:bfh="http://bfh.ch"/>
+            <xs:element type="bfh:startPosition" name="startPosition" xmlns:bfh="http://bfh.ch"/>
         </xs:sequence>
     </xs:complexType>
+    <xs:simpleType name="fieldType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="EMPTY"/>
+            <xs:enumeration value="PLAYER"/>
+            <xs:enumeration value="DIAMOND"/>
+            <xs:enumeration value="GOAL"/>
+            <xs:enumeration value="COMPLETED"/>
+            <xs:enumeration value="WALL"/>
+        </xs:restriction>
+    </xs:simpleType>
+
 </xs:schema>

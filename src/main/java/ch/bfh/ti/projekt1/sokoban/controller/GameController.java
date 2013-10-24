@@ -27,7 +27,7 @@ public class GameController {
             jaxbContext = JAXBContext.newInstance(Level.class);
             Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
             Level level = (Level) jaxbUnmarshaller.unmarshal(file);
-
+System.out.println(level.getStartPosition());
             Position startPos = new Position(level.getStartPosition().getColumn(), level.getStartPosition().getRow());
 
             Board board = new Board(getMaxColumnCount(level.getRow()), level.getRow().size(), startPos);

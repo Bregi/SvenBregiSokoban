@@ -19,9 +19,11 @@ public class BoardView extends JPanel implements KeyListener, AbstractView {
 
     private BoardController controller;
     private Position playerPosition;
+    private String levelName;
 
-    public BoardView(BoardController controller, Position playerPosition) {
+    public BoardView(BoardController controller, Position playerPosition, String levelName) {
         this.controller = controller;
+        this.levelName = levelName;
         this.playerPosition = playerPosition;
         setBackground(Color.BLACK);
         addKeyListener(this);
@@ -65,8 +67,12 @@ public class BoardView extends JPanel implements KeyListener, AbstractView {
     protected void paintComponent(Graphics g) {
         //setSize(dimension.getWidth(), dimension.getHeight());
         if (playerPosition != null) {
+            g.setColor(Color.DARK_GRAY);
             g.drawString(playerPosition.toString(), 10, 10);
-
+        }
+        if (levelName != null) {
+            g.setColor(Color.CYAN);
+            g.drawString(levelName, 10, 20);
         }
     }
 }

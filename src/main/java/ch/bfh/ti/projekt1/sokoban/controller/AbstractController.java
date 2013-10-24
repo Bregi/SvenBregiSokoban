@@ -23,6 +23,7 @@ public abstract class AbstractController implements PropertyChangeListener {
     public static final String PROPERTY_NEXT_FIELD = "NextField";
     public static final String PROPERTY_FIELD = "field";
     public static final String PROPERTY_FIELD_STATE = "state";
+    public static final String PROPERTY_LEVEL_NAME = "LevelName";
 
 
     private ArrayList<AbstractView> registeredViews;

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://bfh.ch"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="level" type="bfh:levelType" xmlns:bfh="http://bfh.ch"/>
+    <xs:complexType name="startPositionType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute type="xs:string" name="row"/>
+                <xs:attribute type="xs:string" name="column"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="columnType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute type="xs:string" name="id" use="optional"/>
+                <xs:attribute type="xs:string" name="type" use="optional"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="rowType">
+        <xs:sequence>
+            <xs:element type="bfh:columnType" name="column" maxOccurs="unbounded" minOccurs="0"
+                        xmlns:bfh="http://bfh.ch"/>
+        </xs:sequence>
+        <xs:attribute type="xs:string" name="id" use="optional"/>
+    </xs:complexType>
+    <xs:complexType name="levelType">
+        <xs:sequence>
+            <xs:element type="bfh:rowType" name="row" maxOccurs="unbounded" minOccurs="0" xmlns:bfh="http://bfh.ch"/>
+            <xs:element type="xs:string" name="name"/>
+            <xs:element type="bfh:startPositionType" name="startPosition" xmlns:bfh="http://bfh.ch"/>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

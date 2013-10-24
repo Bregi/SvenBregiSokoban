@@ -15,10 +15,20 @@ public class Board extends AbstractModel {
     private Position position;
     // grid of the fields
     private Field[][] grid;
+    private String levelName;
 
     public Board(int width, int height, Position startPosition) {
         this.position = startPosition;
         grid = new Field[width][height];
+    }
+
+    public String getLevelName() {
+        return levelName;
+    }
+
+    public void setLevelName(String levelName) {
+        this.levelName = levelName;
+        firePropertyChange(AbstractController.PROPERTY_LEVEL_NAME, this.levelName, this.levelName);
     }
 
     /**
@@ -62,22 +72,22 @@ public class Board extends AbstractModel {
 
         switch (direction) {
             case DOWN:
-                if (grid[position.getX()].length > position.getY() + 1 && grid[position.getX()][position.getY() + 1] != null) {
+                if (grid[position.getX()].length > position.getY() + 1 && grid[position.getX()][position.getY() + 1].getState() == FieldState.EMPTY) {
                     this.position = new Position(position.getX(), position.getY() + 1);
                 }
                 break;
             case UP:
-                if (0 < position.getY() && grid[position.getX()][position.getY() - 1] != null) {
+                if (0 < position.getY() && grid[position.getX()][position.getY() - 1].getState() == FieldState.EMPTY) {
                     this.position = new Position(position.getX(), position.getY() - 1);
                 }
                 break;
             case LEFT:
-                if (0 < position.getX() && grid[position.getX() - 1][position.getY()] != null) {
+                if (0 < position.getX() && grid[position.getX() - 1][position.getY()].getState() == FieldState.EMPTY) {
                     this.position = new Position(position.getX() - 1, position.getY());
                 }
                 break;
             case RIGHT:
-                if (grid.length > position.getX() + 1 && grid[position.getX() + 1][position.getY()] != null) {
+                if (grid.length > position.getX() + 1 && grid[position.getX() + 1][position.getY()].getState() == FieldState.EMPTY) {
                     this.position = new Position(position.getX() + 1, position.getY());
                 }
                 break;

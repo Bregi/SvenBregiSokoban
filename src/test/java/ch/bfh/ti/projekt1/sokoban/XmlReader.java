@@ -24,8 +24,8 @@ public class XmlReader {
             JAXBContext jaxbContext = JAXBContext.newInstance(LevelType.class);
 
             Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-            LevelType customer = (LevelType) jaxbUnmarshaller.unmarshal(file);
-            System.out.println(customer);
+            LevelType level = (LevelType) jaxbUnmarshaller.unmarshal(file);
+            System.out.println(level);
 
         } catch (JAXBException e) {
             e.printStackTrace();

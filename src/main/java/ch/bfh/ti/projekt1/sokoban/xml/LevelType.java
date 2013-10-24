@@ -8,19 +8,16 @@
 
 package ch.bfh.ti.projekt1.sokoban.xml;
 
+import javax.xml.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
 
 
 /**
  * <p>Java class for levelType complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="levelType">
  *   &lt;complexContent>
@@ -34,14 +31,13 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
+@XmlRootElement(name = "level")
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "levelType", namespace = "http://bfh.ch", propOrder = {
-    "row",
-    "name",
-    "startPosition"
+@XmlType(name = "level", namespace = "http://bfh.ch", propOrder = {
+        "row",
+        "name",
+        "startPosition"
 })
 public class LevelType {
 
@@ -53,25 +49,23 @@ public class LevelType {
 
     /**
      * Gets the value of the row property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the row property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getRow().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link RowType }
-     * 
-     * 
      */
     public List<RowType> getRow() {
         if (row == null) {
@@ -82,11 +76,9 @@ public class LevelType {
 
     /**
      * Gets the value of the name property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     *         {@link String }
      */
     public String getName() {
         return name;
@@ -94,11 +86,9 @@ public class LevelType {
 
     /**
      * Sets the value of the name property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setName(String value) {
         this.name = value;
@@ -106,11 +96,9 @@ public class LevelType {
 
     /**
      * Gets the value of the startPosition property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link StartPositionType }
-     *     
+     *
+     * @return possible object is
+     *         {@link StartPositionType }
      */
     public StartPositionType getStartPosition() {
         return startPosition;
@@ -118,11 +106,9 @@ public class LevelType {
 
     /**
      * Sets the value of the startPosition property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link StartPositionType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link StartPositionType }
      */
     public void setStartPosition(StartPositionType value) {
         this.startPosition = value;

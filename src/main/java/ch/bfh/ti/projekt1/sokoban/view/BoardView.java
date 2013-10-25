@@ -26,6 +26,8 @@ public class BoardView extends JPanel implements KeyListener, AbstractView {
 	private BoardController controller;
 	private Position playerPosition;
 	private String levelName;
+	private Player p;
+	private Floor f;
 	private boolean levelLoaded;
 
 	public BoardView(BoardController controller, Position playerPosition,
@@ -49,10 +51,11 @@ public class BoardView extends JPanel implements KeyListener, AbstractView {
 		if (levelLoaded == false) {
 			this.drawLevel();
 		}
+		Position oldPlayerPosition = playerPosition;
 		// we have a new position, the player was moved
 		if (evt.getNewValue() instanceof Position) {
 			playerPosition = (Position) evt.getNewValue();
-
+			movePlayer(p, f, playerPosition.getX(), playerPosition.getY(),oldPlayerPosition.getX(), oldPlayerPosition.getY());
 			// repaint the board and the parent
 			repaint();
 			getParent().repaint();
@@ -71,11 +74,21 @@ public class BoardView extends JPanel implements KeyListener, AbstractView {
 
 	}
 
+	public void movePlayer(Player p,Floor f, int newX, int newY, int oldX, int oldY){
+		addComponentToBoard(this.f, oldX, oldY);
+		addComponentToBoard(this.p, newX, newY);
+		
+		repaint();
+	}
+	
 	public void drawLevel() {
-
-		Player p = new Player();
-		p.initialize();
-		addComponentToBoard(p, playerPosition.getX(), playerPosition.getY());
+		this.f = new Floor();
+		this.f.initialize();
+		addComponentToBoard(this.f, playerPosition.getX(), playerPosition.getY());
+		
+		this.p = new Player();
+		this.p.initialize();
+		addComponentToBoard(this.p , playerPosition.getX(), playerPosition.getY());
 	}
 
 	/*

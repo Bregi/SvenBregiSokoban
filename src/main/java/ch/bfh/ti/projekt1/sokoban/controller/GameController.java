@@ -33,7 +33,6 @@ System.out.println(level.getStartPosition());
             Board board = new Board(getMaxColumnCount(level.getRow()), level.getRow().size(), startPos);
 
             BoardController boardController = new BoardController();
-            BoardView boardView = new BoardView(boardController, board.getPosition(), level.getName());
 
             for (Row rowType : level.getRow()) {
                 for (Column columnType : rowType.getColumn()) {
@@ -43,6 +42,7 @@ System.out.println(level.getStartPosition());
                 }
             }
             board.setLevelName(level.getName());
+            BoardView boardView = new BoardView(board, boardController, board.getPosition(), level.getName());
 
             boardController.addModel(board);
             boardController.addView(boardView);

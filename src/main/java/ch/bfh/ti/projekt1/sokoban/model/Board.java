@@ -26,6 +26,10 @@ public class Board extends AbstractModel {
         return levelName;
     }
 
+    public Field[][] getGrid() {
+        return grid;
+    }
+    
     public void setLevelName(String levelName) {
         this.levelName = levelName;
         firePropertyChange(AbstractController.PROPERTY_LEVEL_NAME, this.levelName, this.levelName);

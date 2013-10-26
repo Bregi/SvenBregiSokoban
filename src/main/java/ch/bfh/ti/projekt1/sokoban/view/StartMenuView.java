@@ -1,10 +1,9 @@
 package ch.bfh.ti.projekt1.sokoban.view;
 
-import java.awt.MenuBar;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JFrame;
+import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -12,7 +11,7 @@ import javax.swing.JOptionPane;
 
 public class StartMenuView extends JMenuBar implements ActionListener {
 
-	//spiel
+	// spiel
 	JMenu menuFile = new JMenu("Spiel");
 	JMenuItem itmNew = new JMenuItem("Neues Spiel starten");
 	JMenuItem itmReload = new JMenuItem("Level neu starten");
@@ -20,18 +19,18 @@ public class StartMenuView extends JMenuBar implements ActionListener {
 	JMenuItem itmLoad = new JMenuItem("Spiel laden");
 	JMenuItem itmClose = new JMenuItem("Spiel beenden");
 
-	//optionen
+	// optionen
 	JMenu menuEdit = new JMenu("Optionen");
 	JMenuItem itmStatistics = new JMenuItem("Levelstatistik anzeigen");
 	JMenuItem itmBest = new JMenuItem("Bestergebnisse anzeigen");
-	
-	//Leveleditor
+
+	// Leveleditor
 	JMenu menuLevelEditor = new JMenu("Level Editor");
 	JMenuItem itmLevelEditorStart = new JMenuItem("Level Editor Starten");
 
 	public StartMenuView() {
 
-		//Spiel
+		// Spiel
 		menuFile.add(itmNew);
 		menuFile.addSeparator();
 
@@ -43,22 +42,22 @@ public class StartMenuView extends JMenuBar implements ActionListener {
 
 		menuFile.add(itmLoad);
 		menuFile.addSeparator();
-		
+
 		menuFile.add(itmClose);
-		
-		//optionen
+
+		// optionen
 		menuEdit.add(itmStatistics);
 		menuEdit.addSeparator();
 		menuEdit.add(itmBest);
 
-		//leveleditor
+		// leveleditor
 		menuLevelEditor.add(itmLevelEditorStart);
 
 		add(menuFile);
 		add(menuEdit);
 		add(menuLevelEditor);
 
-		//spiel
+		// spiel
 		itmNew.setActionCommand("new");
 		itmNew.addActionListener(this);
 		itmReload.setActionCommand("reload");
@@ -69,31 +68,51 @@ public class StartMenuView extends JMenuBar implements ActionListener {
 		itmLoad.addActionListener(this);
 		itmClose.setActionCommand("close");
 		itmClose.addActionListener(this);
-		
-		//optionen
+
+		// optionen
 		itmStatistics.setActionCommand("undo");
 		itmStatistics.addActionListener(this);
 		itmBest.setActionCommand("cut");
 		itmBest.addActionListener(this);
-		
-		//leveleditor
+
+		// leveleditor
 		itmLevelEditorStart.setActionCommand("leveleditorstart");
 		itmLevelEditorStart.addActionListener(this);
 	}
 
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("new")) {
-			JOptionPane.showMessageDialog(null,"Neues Spiel");
+			Object[] options = { "Ja", "Nein" };
+			JOptionPane.showOptionDialog(
+							this,
+							"Bist du sicher, dass du ein neues Spiel starten willst? Ungespeicherter Fortschritt geht dabei verloren. ",
+							"Level neu starten", JOptionPane.YES_NO_OPTION,
+							JOptionPane.QUESTION_MESSAGE, null, options,
+							options[1]);
+			
 		} else if (e.getActionCommand().equals("close")) {
-			JOptionPane.showMessageDialog(null,"beenden");
+			Object[] options = { "Ja", "Nein" };
+			JOptionPane
+					.showOptionDialog(
+							this,
+							"Bist du sicher, dass du das Spiel beenden willst? Ungespeicherter Fortschritt geht dabei verloren. ",
+							"Spiel beenden", JOptionPane.YES_NO_OPTION,
+							JOptionPane.QUESTION_MESSAGE, null, options,
+							options[1]);
 		} else if (e.getActionCommand().equals("reload")) {
-			JOptionPane.showMessageDialog(null,"relo..");
-		} else if (e.getActionCommand().equals("load")) {	
-			JOptionPane.showMessageDialog(null,"load");
-		}else if (e.getActionCommand().equals("save")) {	
-			JOptionPane.showMessageDialog(null,"save");
-		}else if (e.getActionCommand().equals("leveleditorstart")) {	
-			JOptionPane.showMessageDialog(null,"starte editor..");
+			Object[] options = { "Ja", "Nein" };
+			JOptionPane
+					.showOptionDialog(
+							this,
+							"Bist du sicher, dass du das Level neu laden willst? Ungespeicherter Fortschritt geht dabei verloren. ",
+							"Level neu laden", JOptionPane.YES_NO_OPTION,
+							JOptionPane.QUESTION_MESSAGE, null, options,
+							options[1]);
+		} else if (e.getActionCommand().equals("load")) {
+			JOptionPane.showMessageDialog(null, "load");
+		} else if (e.getActionCommand().equals("save")) {
+		} else if (e.getActionCommand().equals("leveleditorstart")) {
+			JOptionPane.showMessageDialog(null, "starte editor..");
 		}
 	}
 }

@@ -1,9 +1,10 @@
 package ch.bfh.ti.projekt1.sokoban;
 
+import javax.swing.JFrame;
+
 import ch.bfh.ti.projekt1.sokoban.controller.GameController;
 import ch.bfh.ti.projekt1.sokoban.view.BoardView;
-
-import javax.swing.*;
+import ch.bfh.ti.projekt1.sokoban.view.StartMenuView;
 
 /**
  * This class is only for testing purposes
@@ -20,12 +21,13 @@ public class Starter {
 
         GameController controller = new GameController();
         BoardView view = controller.loadLevel("src/test/resources/ch/bfh/ti/projekt1/sokoban/level1.xml");
-
+        
         frame.add(view);
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         view.requestFocusInWindow();
+        frame.setJMenuBar(new StartMenuView());
         frame.setVisible(true);
 
     }

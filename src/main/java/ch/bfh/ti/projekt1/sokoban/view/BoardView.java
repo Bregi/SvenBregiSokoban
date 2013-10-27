@@ -10,9 +10,10 @@ import javax.swing.JPanel;
 
 import ch.bfh.ti.projekt1.sokoban.controller.BoardController;
 import ch.bfh.ti.projekt1.sokoban.model.Board;
+import ch.bfh.ti.projekt1.sokoban.model.Diamond;
 import ch.bfh.ti.projekt1.sokoban.model.Element;
-import ch.bfh.ti.projekt1.sokoban.model.Empty;
 import ch.bfh.ti.projekt1.sokoban.model.Field;
+import ch.bfh.ti.projekt1.sokoban.model.Finish;
 import ch.bfh.ti.projekt1.sokoban.model.Floor;
 import ch.bfh.ti.projekt1.sokoban.model.Player;
 import ch.bfh.ti.projekt1.sokoban.model.Position;
@@ -86,16 +87,42 @@ public class BoardView extends JPanel implements KeyListener, AbstractView {
 
 	public void movePlayer(Player p, Floor f, int newX, int newY, int oldX,
 			int oldY) {
-		this.p.setBounds(newX * 40, newY * 40, 40, 40);
-		this.f.setBounds(oldX * 40, oldY * 40, 40, 40);
-		this.p.revalidate();
-		this.p.repaint();
+		p.setBounds(newX * 40, newY * 40, 40, 40);
+		f.setBounds(oldX * 40, oldY * 40, 40, 40);
+		p.revalidate();
+		p.repaint();
 		revalidate();
 		repaint();
 
 		System.out.println("Player moved to:" + p.getBounds().toString());
 	}
+	
+	/**
+	 * if a diamond is in the way move that one too
+	 * @param p
+	 * @param f
+	 * @param d
+	 * @param newX
+	 * @param newY
+	 * @param oldX
+	 * @param oldY
+	 */
+	public void movePlayerWithDiamond(Player p, Floor f,Diamond d, int newX, int newY, int oldX,
+			int oldY) {
+		p.setBounds(newX * 40, newY * 40, 40, 40);
+		f.setBounds(oldX * 40, oldY * 40, 40, 40);
+		d.setBounds((2*newX-oldX) * 40, (2*newY-oldY) * 40, 40, 40);
+		p.revalidate();
+		p.repaint();
+		revalidate();
+		repaint();
 
+		System.out.println("Player moved to:" + p.getBounds().toString());
+	}
+	
+	/** 
+	 * takes the predefined level file and draws the elements on screen
+	 */
 	public void drawLevel() {
 
 
@@ -116,10 +143,20 @@ public class BoardView extends JPanel implements KeyListener, AbstractView {
 					w.initialize();
 					addComponentToBoard(w, i,n);
 					break;
+				case GOAL:
+					Finish fi = new Finish();
+					fi.initialize();
+					addComponentToBoard(fi, i,n);
+					break;
 				case EMPTY:
 					Floor f = new Floor();
 					f.initialize();
 					addComponentToBoard(f, i,n);
+					break;
+				case DIAMOND:
+					Diamond d = new Diamond();
+					d.initialize();
+					addComponentToBoard(d, i,n);
 					break;
 				default:
 					break;

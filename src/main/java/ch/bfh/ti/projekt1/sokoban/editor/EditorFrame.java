@@ -15,7 +15,7 @@ public class EditorFrame {
 
     private JMenu menuFile;
 
-    private JMenu menuFileNew;
+    private JMenuItem menuFileNew;
 
     public EditorFrame() {
         frame = new JFrame("Editor");
@@ -26,17 +26,20 @@ public class EditorFrame {
         menuFile = new JMenu("File");
         menuBar.add(menuFile);
 
-        menuFileNew = new JMenu("New");
+        menuFileNew = new JMenuItem("New");
         menuFile.add(menuFileNew);
-        menuFile.addActionListener(new ActionListener() {
+        menuFileNew.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(frame, "create new level!");
+                frame.setContentPane(new LevelEditorView(5, 5));
+                frame.getContentPane().revalidate();
             }
         });
 
-        frame.setSize(500, 100);
+        frame.setSize(500, 500);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setVisible(true);
+
+
     }
 }

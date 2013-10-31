@@ -20,14 +20,14 @@ import java.util.List;
  * @since 23.10.13 13:58
  */
 public class GameController {
-    public BoardView loadLevel(String path) {
-        File file = new File(path);
+
+    public BoardView loadLevel(File file) {
         JAXBContext jaxbContext = null;
         try {
             jaxbContext = JAXBContext.newInstance(Level.class);
             Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
             Level level = (Level) jaxbUnmarshaller.unmarshal(file);
-System.out.println(level.getStartPosition());
+            System.out.println(level.getStartPosition());
             Position startPos = new Position(level.getStartPosition().getColumn(), level.getStartPosition().getRow());
 
             Board board = new Board(getMaxColumnCount(level.getRow()), level.getRow().size(), startPos);
@@ -54,6 +54,11 @@ System.out.println(level.getStartPosition());
         }
 
         return null;
+    }
+
+    public BoardView loadLevel(String path) {
+        File file = new File(path);
+        return loadLevel(file);
     }
 
     private int getMaxColumnCount(List<Row> list) {

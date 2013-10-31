@@ -1,6 +1,6 @@
 package ch.bfh.ti.projekt1.sokoban;
 
-import ch.bfh.ti.projekt1.sokoban.editor.EditorFrame;
+import ch.bfh.ti.projekt1.sokoban.editor.SokobanEditor;
 
 /**
  * @author svennyffenegger
@@ -9,7 +9,7 @@ import ch.bfh.ti.projekt1.sokoban.editor.EditorFrame;
 public class EditorTest {
 
     public static void main(String[] args) {
-        new EditorFrame();
+        new SokobanEditor();
 
     }
 }

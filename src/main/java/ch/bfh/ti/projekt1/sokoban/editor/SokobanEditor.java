@@ -1,6 +1,9 @@
 package ch.bfh.ti.projekt1.sokoban.editor;
 
+import ch.bfh.ti.projekt1.sokoban.controller.FieldController;
 import ch.bfh.ti.projekt1.sokoban.model.Board;
+import ch.bfh.ti.projekt1.sokoban.model.Field;
+import ch.bfh.ti.projekt1.sokoban.model.FieldState;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,7 +14,7 @@ import java.awt.event.ActionListener;
  * @author svennyffenegger
  * @since 24/10/13 14:29
  */
-public class EditorFrame {
+public class SokobanEditor {
     private JFrame frame;
 
     private JMenuBar menuBar;
@@ -22,7 +25,11 @@ public class EditorFrame {
 
     private JMenuItem menuFileSave;
 
-    public EditorFrame() {
+    private Board currentLevel;
+
+    private LevelService levelService = new LevelServiceImpl();
+
+    public SokobanEditor() {
         frame = new JFrame("Editor");
 
         menuBar = new JMenuBar();
@@ -41,11 +48,27 @@ public class EditorFrame {
 
                 if (dim != null) {
                     EditorController controller = new EditorController();
-                    Board board = new Board(dim.width, dim.height);
-                    controller.addModel(board);
+                    currentLevel = new Board(dim.width, dim.height);
+
+                    controller.addModel(currentLevel);
 
                     LevelEditorView editorView = new LevelEditorView(controller, dim.width, dim.height);
                     controller.addView(editorView);
+
+                    for (int i = 0; i < dim.width; i++) {
+                        for (int j = 0; j < dim.height; j++) {
+                            Field field = new Field(FieldState.EMPTY);
+                            currentLevel.setField(i, j, field);
+                            FieldController fieldController = new FieldController();
+                            DraggableElementDestination elementDestination = new DraggableElementDestination(fieldController);
+
+                            fieldController.addView(elementDestination);
+                            fieldController.addModel(field);
+
+                            editorView.addElement(elementDestination);
+                        }
+                    }
+
 
                     frame.setContentPane(editorView);
                     frame.getContentPane().revalidate();
@@ -56,10 +79,10 @@ public class EditorFrame {
 
         menuFileSave = new JMenuItem("Save");
         menuFile.add(menuFileSave);
-        menuFileNew.addActionListener(new ActionListener() {
+        menuFileSave.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("Save here!");
+                levelService.saveLevel(currentLevel);
             }
         });
 

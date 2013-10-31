@@ -1,10 +1,12 @@
 package ch.bfh.ti.projekt1.sokoban.view;
 
+import ch.bfh.ti.projekt1.sokoban.controller.FieldController;
 import ch.bfh.ti.projekt1.sokoban.model.FieldState;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.beans.PropertyChangeEvent;
 import java.io.File;
 import java.io.IOException;
 
@@ -12,7 +14,7 @@ import java.io.IOException;
 /**
  * TODO: Element nur mit Konstruktor, der FieldState voraussetzt?
  */
-public abstract class Element extends JComponent {
+public abstract class Element extends JComponent implements AbstractView {
 
     public static final String DIAMOND_PATH = "src/main/resources/ch/bfh/ti/projekt1/sokoban/img/diamond.jpg";
     public static final String EMPTY_PATH = "src/main/resources/ch/bfh/ti/projekt1/sokoban/img/empty.jpg";
@@ -26,6 +28,16 @@ public abstract class Element extends JComponent {
 
     private String imageUrl;
     private int x, y;
+
+    protected FieldController controller;
+
+    public Element(FieldController controller) {
+        this.controller = controller;
+    }
+
+    public Element() {
+        this(null);
+    }
 
     public void addImage(String imageUrl) {
         this.imageUrl = imageUrl;
@@ -54,6 +66,7 @@ public abstract class Element extends JComponent {
             default:
                 System.out.println("check the code: a fieldstate is not implemented!");
         }
+        repaint();
     }
 
     public void setLocation(int x, int y) {
@@ -81,5 +94,12 @@ public abstract class Element extends JComponent {
 
     public String getImageUrl() {
         return imageUrl;
+    }
+
+    @Override
+    public void modelPropertyChange(PropertyChangeEvent evt) {
+        if (evt.getNewValue() instanceof FieldState) {
+            addImage((FieldState) evt.getNewValue());
+        }
     }
 }

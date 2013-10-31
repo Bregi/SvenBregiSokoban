@@ -31,6 +31,9 @@ public class EditorFrame {
         menuFileNew.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                LevelDimensionDialog.showDimensionDialog(frame);
+
+
                 frame.setContentPane(new LevelEditorView(5, 5));
                 frame.getContentPane().revalidate();
             }

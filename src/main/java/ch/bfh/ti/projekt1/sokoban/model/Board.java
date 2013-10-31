@@ -17,6 +17,12 @@ public class Board extends AbstractModel {
     private Field[][] grid;
     private String levelName;
 
+    //used for the editor mainly
+    public Board(int width, int height) {
+        this(width, height, null);
+    }
+
+    //used for the game
     public Board(int width, int height, Position startPosition) {
         this.position = startPosition;
         grid = new Field[width][height];
@@ -29,7 +35,7 @@ public class Board extends AbstractModel {
     public Field[][] getGrid() {
         return grid;
     }
-    
+
     public void setLevelName(String levelName) {
         this.levelName = levelName;
         firePropertyChange(AbstractController.PROPERTY_LEVEL_NAME, this.levelName, this.levelName);

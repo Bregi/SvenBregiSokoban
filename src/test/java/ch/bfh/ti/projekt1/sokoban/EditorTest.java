@@ -1,3 +1,5 @@
+package ch.bfh.ti.projekt1.sokoban;
+
 import ch.bfh.ti.projekt1.sokoban.editor.EditorFrame;
 
 /**

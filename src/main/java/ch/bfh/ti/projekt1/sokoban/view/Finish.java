@@ -1,4 +1,4 @@
-package ch.bfh.ti.projekt1.sokoban.model;
+package ch.bfh.ti.projekt1.sokoban.view;
 
 public class Finish extends Element {
 
@@ -7,6 +7,6 @@ public class Finish extends Element {
     }
 
     public void initialize() {
-        addImage("src/main/resources/ch/bfh/ti/projekt1/sokoban/img/finish.jpg");
+        addImage(FINISH_PATH);
     }
 }

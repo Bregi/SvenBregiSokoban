@@ -1,5 +1,6 @@
 package ch.bfh.ti.projekt1.sokoban.editor;
 
+import ch.bfh.ti.projekt1.sokoban.model.Board;
 import ch.bfh.ti.projekt1.sokoban.xml.Level;
 
 /**
@@ -32,4 +33,5 @@ public interface LevelService {
      */
     Level changeLevelDimension(Level existingLevel, int columns, int rows);
 
+    Level saveLevel(Board board);
 }

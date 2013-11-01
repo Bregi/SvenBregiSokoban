@@ -35,4 +35,29 @@ public enum FieldState {
                 return EMPTY;
         }
     }
+
+    /**
+     * Helper Method for converting Model Objects to XML Objects
+     *
+     * @param state
+     * @return
+     */
+    public static FieldType convertToXMLFieldType(FieldState state) {
+        switch (state) {
+            case EMPTY:
+                return FieldType.EMPTY;
+            case WALL:
+                return FieldType.WALL;
+            case DIAMOND:
+                return FieldType.DIAMOND;
+            case PLAYER:
+                return FieldType.PLAYER;
+            case COMPLETED:
+                return FieldType.COMPLETED;
+            case GOAL:
+                return FieldType.GOAL;
+            default:
+                return FieldType.EMPTY;
+        }
+    }
 }

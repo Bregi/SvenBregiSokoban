@@ -1,4 +1,4 @@
-package ch.bfh.ti.projekt1.sokoban.model;
+package ch.bfh.ti.projekt1.sokoban.view;
 
 public class Diamond extends Element {
 
@@ -7,6 +7,6 @@ public class Diamond extends Element {
     }
 
     public void initialize() {
-        addImage("src/main/resources/ch/bfh/ti/projekt1/sokoban/img/diamond.jpg");
+        addImage(DIAMOND_PATH);
     }
 }

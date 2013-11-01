@@ -1,5 +1,8 @@
 package ch.bfh.ti.projekt1.sokoban.view;
 
+import ch.bfh.ti.projekt1.sokoban.controller.GameController;
+import ch.bfh.ti.projekt1.sokoban.editor.SokobanEditor;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -83,14 +86,26 @@ public class StartMenuView extends JMenuBar implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("new")) {
 			Object[] options = { "Ja", "Nein" };
-			JOptionPane.showOptionDialog(
-							this,
-							"Bist du sicher, dass du ein neues Spiel starten willst? Ungespeicherter Fortschritt geht dabei verloren. ",
-							"Level neu starten", JOptionPane.YES_NO_OPTION,
-							JOptionPane.QUESTION_MESSAGE, null, options,
-							options[1]);
-			
-			
+            int response = JOptionPane.showOptionDialog(
+                    this,
+                    "Bist du sicher, dass du ein neues Spiel starten willst? Ungespeicherter Fortschritt geht dabei verloren. ",
+                    "Level neu starten", JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE, null, options,
+                    options[1]);
+
+            if (response == JOptionPane.YES_OPTION) {
+
+                //TODO unschön
+                GameController controller = new GameController();
+
+                JFileChooser jFileChooser = new JFileChooser("src/test/resources/ch/bfh/ti/projekt1/sokoban/generated");
+
+                jFileChooser.showOpenDialog(null);
+
+
+                BoardView view = controller.loadLevel(jFileChooser.getSelectedFile());
+                getRootPane().setContentPane(view);
+            }
 		} else if (e.getActionCommand().equals("close")) {
 			Object[] options = { "Ja", "Nein" };
 			JOptionPane
@@ -113,7 +128,7 @@ public class StartMenuView extends JMenuBar implements ActionListener {
 			JOptionPane.showMessageDialog(null, "load");
 		} else if (e.getActionCommand().equals("save")) {
 		} else if (e.getActionCommand().equals("leveleditorstart")) {
-			JOptionPane.showMessageDialog(null, "starte editor..");
+            new SokobanEditor();
 		}
 	}
 }

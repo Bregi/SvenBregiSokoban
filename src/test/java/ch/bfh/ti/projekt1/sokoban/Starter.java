@@ -1,10 +1,10 @@
 package ch.bfh.ti.projekt1.sokoban;
 
-import javax.swing.JFrame;
-
 import ch.bfh.ti.projekt1.sokoban.controller.GameController;
 import ch.bfh.ti.projekt1.sokoban.view.BoardView;
 import ch.bfh.ti.projekt1.sokoban.view.StartMenuView;
+
+import javax.swing.*;
 
 /**
  * This class is only for testing purposes
@@ -20,8 +20,14 @@ public class Starter {
         frame.setBounds(0, 0, 400, 400);
 
         GameController controller = new GameController();
-        BoardView view = controller.loadLevel("src/test/resources/ch/bfh/ti/projekt1/sokoban/level1.xml");
-        
+
+        JFileChooser jFileChooser = new JFileChooser("src/test/resources/ch/bfh/ti/projekt1/sokoban/generated");
+
+        jFileChooser.showOpenDialog(null);
+
+
+        BoardView view = controller.loadLevel(jFileChooser.getSelectedFile());
+
         frame.add(view);
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

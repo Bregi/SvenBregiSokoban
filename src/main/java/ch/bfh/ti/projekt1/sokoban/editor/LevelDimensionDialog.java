@@ -11,22 +11,48 @@ import java.awt.event.ActionListener;
  */
 public class LevelDimensionDialog {
 
-    public static Dimension showDimensionDialog(Frame owner) {
-        final JDialog dialog = new JDialog(owner);
+    private JDialog dialog;
+    private Dimension dimension;
+    private JPanel content;
+    private JTextField textWidth;
+    private JTextField textHeight;
 
-        JPanel content = new JPanel(new GridLayout(4, 2));
+    public Dimension showDimensionDialog(Frame owner) {
+        dialog = new JDialog(owner);
+
+        content = new JPanel(new GridLayout(4, 2));
 
         JLabel labelWidth = new JLabel("Breite");
         JLabel labelHeight = new JLabel("Höhe");
 
-        JTextField textWidth = new JTextField();
-        JTextField textHeight = new JTextField();
+        textWidth = new JTextField();
+        textHeight = new JTextField();
 
         JButton buttonConfirm = new JButton("Ok");
         buttonConfirm.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                dialog.setVisible(false);
+                //TODO: richtig validieren
+                try {
+                    int height = Integer.parseInt(textHeight.getText());
+                    int width = Integer.parseInt(textWidth.getText());
+                    dimension = new Dimension(width, height);
+                } catch (NumberFormatException nfe) {
+                    JOptionPane.showMessageDialog(dialog, "Keine gültigen Eingaben");
+                }
+
+                dialog.dispose();
+
+
+            }
+        });
+
+        JButton buttonCancel = new JButton("Abbrechen");
+        buttonCancel.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                dimension = null;
+                dialog.dispose();
             }
         });
 
@@ -37,15 +63,15 @@ public class LevelDimensionDialog {
         content.add(textHeight);
 
         content.add(buttonConfirm);
+        content.add(buttonCancel);
 
         dialog.setContentPane(content);
 
-        System.out.println("Vor");
-
+        dialog.setModal(true);
         dialog.setVisible(true);
-        System.out.println("Nach");
+        dialog.dispose();
 
-        return new Dimension(3, 3);
+        return dimension;
     }
 
 }

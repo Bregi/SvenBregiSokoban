@@ -90,6 +90,7 @@ public class StartMenuView extends JMenuBar implements ActionListener {
 							JOptionPane.QUESTION_MESSAGE, null, options,
 							options[1]);
 			
+			
 		} else if (e.getActionCommand().equals("close")) {
 			Object[] options = { "Ja", "Nein" };
 			JOptionPane

@@ -1,7 +1,7 @@
 package ch.bfh.ti.projekt1.sokoban.editor;
 
 import ch.bfh.ti.projekt1.sokoban.model.FieldState;
-import ch.bfh.ti.projekt1.sokoban.view.Element;
+import ch.bfh.ti.projekt1.sokoban.view.element.Element;
 
 import java.awt.datatransfer.Transferable;
 import java.awt.dnd.*;

@@ -1,7 +1,7 @@
-package ch.bfh.ti.projekt1.sokoban.view;
+package ch.bfh.ti.projekt1.sokoban.view.element;
 
 public class Player extends Element {
-    public void initialize() {
+    public Player() {
         addImage(PLAYER_PATH);
     }
 }

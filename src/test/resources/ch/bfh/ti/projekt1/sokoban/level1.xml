@@ -3,7 +3,7 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://bfh.ch level1.xsd">
     <row id="0">
-        <column id="0" type="EMPTY"/>
+        <column id="0" type="DIAMOND"/>
         <column id="1" type="EMPTY"/>
         <column id="2" type="EMPTY"/>
         <column id="3" type="EMPTY"/>

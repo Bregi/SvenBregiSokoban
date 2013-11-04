@@ -1,7 +1,8 @@
-package ch.bfh.ti.projekt1.sokoban.view;
+package ch.bfh.ti.projekt1.sokoban.view.element;
 
 import ch.bfh.ti.projekt1.sokoban.controller.FieldController;
 import ch.bfh.ti.projekt1.sokoban.model.FieldState;
+import ch.bfh.ti.projekt1.sokoban.view.AbstractView;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -24,12 +25,9 @@ public abstract class Element extends JComponent implements AbstractView {
     public static final String START_PATH = "src/main/resources/ch/bfh/ti/projekt1/sokoban/img/start.jpg";
     public static final String WALL_PATH = "src/main/resources/ch/bfh/ti/projekt1/sokoban/img/wall.jpg";
     public static final String GOAL_PATH = "src/main/resources/ch/bfh/ti/projekt1/sokoban/img/finish.jpg";
-
-
-    private String imageUrl;
-    private int x, y;
-
     protected FieldController controller;
+    private Image backgroundImage;
+    private int x, y;
 
     public Element(FieldController controller) {
         this.controller = controller;
@@ -40,7 +38,13 @@ public abstract class Element extends JComponent implements AbstractView {
     }
 
     public void addImage(String imageUrl) {
-        this.imageUrl = imageUrl;
+        try {
+            this.backgroundImage = ImageIO.read(new File(imageUrl));
+        } catch (IOException ex) {
+            System.out.println(ex.toString());
+            System.out.println("Image file was not found " + backgroundImage);
+            this.backgroundImage = null;
+        }
     }
 
     public void addImage(FieldState state) {
@@ -82,18 +86,11 @@ public abstract class Element extends JComponent implements AbstractView {
 
     public void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
-        String backgroundImage = imageUrl;
-        try {
-            Image img = ImageIO.read(new File(backgroundImage));
-            g2.drawImage(img, x, y, null);
-        } catch (IOException ex) {
-            System.out.println(ex.toString());
-            System.out.println("Image file was not found " + backgroundImage);
-        }
-    }
 
-    public String getImageUrl() {
-        return imageUrl;
+        if (backgroundImage != null) {
+            g2.drawImage(backgroundImage, x, y, null);
+        }
+
     }
 
     @Override

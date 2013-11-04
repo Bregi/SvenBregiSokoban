@@ -1,8 +1,5 @@
 package ch.bfh.ti.projekt1.sokoban.view;
 
-import ch.bfh.ti.projekt1.sokoban.controller.GameController;
-import ch.bfh.ti.projekt1.sokoban.editor.SokobanEditor;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -11,6 +8,9 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+
+import ch.bfh.ti.projekt1.sokoban.controller.GameController;
+import ch.bfh.ti.projekt1.sokoban.editor.SokobanEditor;
 
 public class StartMenuView extends JMenuBar implements ActionListener {
 

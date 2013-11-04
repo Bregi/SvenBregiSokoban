@@ -21,12 +21,15 @@ import java.util.List;
  */
 public class GameController {
 
+	private String currentLevel;
+	
     public BoardView loadLevel(File file) {
         JAXBContext jaxbContext = null;
         try {
             jaxbContext = JAXBContext.newInstance(Level.class);
             Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
             Level level = (Level) jaxbUnmarshaller.unmarshal(file);
+            currentLevel = level.getName();
             System.out.println(level.getStartPosition());
             Position startPos = new Position(level.getStartPosition().getColumn(), level.getStartPosition().getRow());
 
@@ -59,6 +62,14 @@ public class GameController {
     public BoardView loadLevel(String path) {
         File file = new File(path);
         return loadLevel(file);
+    }
+    
+    /**
+     * saves the current progress
+     */
+    public void saveLevelProgress(){
+    	//TODO
+    	System.out.println(currentLevel);
     }
 
     private int getMaxColumnCount(List<Row> list) {

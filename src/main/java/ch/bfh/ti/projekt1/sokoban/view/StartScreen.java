@@ -19,7 +19,11 @@ import ch.bfh.ti.projekt1.sokoban.controller.GameController;
  * @since 24/10/13 14:29
  */
 public class StartScreen {
+
+	private String levelName;
 	private JFrame frame;
+
+	public GameController gameController;
 
 	private JMenuBar menuBar;
 	private JMenuBar aaaBar;
@@ -50,6 +54,7 @@ public class StartScreen {
 				// LevelDimensionDialog.showDimensionDialog(frame);
 
 				GameController controller = new GameController();
+				gameController = controller;
 				BoardView view = controller
 						.loadLevel("src/test/resources/ch/bfh/ti/projekt1/sokoban/level1.xml");
 
@@ -83,10 +88,10 @@ public class StartScreen {
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					File file = fc.getSelectedFile();
 					System.out.println(file.toString());
+					levelName = file.toString();
 					// TODO: (also validate)
 					GameController controller = new GameController();
-					BoardView view = controller
-							.loadLevel(file.toString());
+					BoardView view = controller.loadLevel(file.toString());
 					frame.setJMenuBar(new StartMenuView());
 					frame.setContentPane(view);
 
@@ -101,13 +106,41 @@ public class StartScreen {
 				frame.getContentPane().revalidate();
 			}
 		});
+
 		frame.setSize(500, 500);
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		frame.setVisible(true);
 
 	}
-	public void loadGameMenu(){
-		
+
+	public void loadGameMenu() {
+
+		aaaBar = getGameMenuBar();
+		this.frame.setJMenuBar(aaaBar);
+
+	}
+
+	public GameController getGameController() {
+		return this.gameController;
+	}
+
+	public void saveGameMenu() {
+
+	}
+
+	public void restartLevelMenu() {
+
+		aaaBar = getGameMenuBar();
+		this.frame.setJMenuBar(aaaBar);
+	}
+
+	/*
+	 * provides the main functions inside the regular level view of the game
+	 * 
+	 * @return
+	 */
+	public JMenuBar getGameMenuBar() {
+
 		// spiel
 		JMenu menuFile = new JMenu("Spiel");
 		JMenuItem itmNew = new JMenuItem("Neues Spiel starten");
@@ -124,7 +157,7 @@ public class StartScreen {
 		// Leveleditor
 		JMenu menuLevelEditor = new JMenu("Level Editor");
 		JMenuItem itmLevelEditorStart = new JMenuItem("Level Editor Starten");
-		
+
 		// Spiel
 		menuFile.add(itmNew);
 		menuFile.addSeparator();
@@ -147,14 +180,12 @@ public class StartScreen {
 
 		// leveleditor
 		menuLevelEditor.add(itmLevelEditorStart);
-
 		aaaBar = new JMenuBar();
-		this.frame.setJMenuBar(aaaBar);
 
 		aaaBar.add(menuFile);
 		aaaBar.add(menuEdit);
 		aaaBar.add(menuLevelEditor);
-		
+
 		// what happens when the user clicks on start new game
 		itmNew.addActionListener(new ActionListener() {
 			@Override
@@ -174,6 +205,54 @@ public class StartScreen {
 				frame.getContentPane().revalidate();
 			}
 		});
+		// what happens when the user clicks on restart level
+		itmReload.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// LevelDimensionDialog.showDimensionDialog(frame);
 
+				GameController controller = new GameController();
+				BoardView view = controller
+						.loadLevel("src/test/resources/ch/bfh/ti/projekt1/sokoban/level1.xml");
+
+				gameController = controller;
+
+				frame.setContentPane(view);
+				// load the game Menu
+				loadGameMenu();
+				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+				view.requestFocusInWindow();
+				frame.getContentPane().revalidate();
+			}
+		});
+		// what happens when the user clicks on save progress
+		itmSave.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				GameController controller = gameController;
+				controller.saveLevelProgress();
+			}
+		});
+		// what happens when the user clicks on load a level
+		itmLoad.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				GameController controller = gameController;
+				controller.saveLevelProgress();
+			}
+		});
+		// exits the current game and return to windows
+		itmClose.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				frame.setVisible(false);
+                frame.dispose();
+                System.exit(0);
+			}
+		});
+		return aaaBar;
 	}
 }

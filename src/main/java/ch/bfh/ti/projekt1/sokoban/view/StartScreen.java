@@ -1,179 +1,180 @@
 package ch.bfh.ti.projekt1.sokoban.view;
 
+import ch.bfh.ti.projekt1.sokoban.controller.BoardController;
+import ch.bfh.ti.projekt1.sokoban.core.CoreConstants;
+import ch.bfh.ti.projekt1.sokoban.core.LevelService;
+import ch.bfh.ti.projekt1.sokoban.core.LevelServiceImpl;
+
+import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-
-import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.WindowConstants;
-
-import ch.bfh.ti.projekt1.sokoban.controller.GameController;
 
 /**
  * @author marcoberger
  * @since 24/10/13 14:29
  */
 public class StartScreen {
-	private JFrame frame;
+    private LevelService levelService = new LevelServiceImpl();
 
-	private JMenuBar menuBar;
-	private JMenuBar aaaBar;
+    private JFrame frame;
 
-	private JMenu menuFile;
+    private JMenuBar menuBar;
+    private JMenuBar aaaBar;
 
-	private JMenuItem menuFileNew;
-	private JMenuItem menuFileLoad;
+    private JMenu menuFile;
 
-	public StartScreen() {
-		frame = new JFrame("Sokoban");
+    private JMenuItem menuFileNew;
+    private JMenuItem menuFileLoad;
 
-		menuBar = new JMenuBar();
-		frame.setJMenuBar(menuBar);
+    public StartScreen() {
+        frame = new JFrame("Sokoban");
 
-		menuFile = new JMenu("Game");
-		menuBar.add(menuFile);
+        menuBar = new JMenuBar();
+        frame.setJMenuBar(menuBar);
 
-		menuFileNew = new JMenuItem("New Game");
-		menuFileLoad = new JMenuItem("Load Game");
-		menuFile.add(menuFileNew);
-		menuFile.add(menuFileLoad);
+        menuFile = new JMenu("Game");
+        menuBar.add(menuFile);
 
-		// what happens when the user clicks on start new game
-		menuFileNew.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// LevelDimensionDialog.showDimensionDialog(frame);
+        menuFileNew = new JMenuItem("New Game");
+        menuFileLoad = new JMenuItem("Load Game");
+        menuFile.add(menuFileNew);
+        menuFile.add(menuFileLoad);
 
-				GameController controller = new GameController();
-				BoardView view = controller
-						.loadLevel("src/test/resources/ch/bfh/ti/projekt1/sokoban/level1.xml");
+        // what happens when the user clicks on start new game
+        menuFileNew.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // LevelDimensionDialog.showDimensionDialog(frame);
 
-				frame.setContentPane(view);
-				// load the game Menu
-				loadGameMenu();
-				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                File firstLevel = new File(CoreConstants.getProperty("game.firstlevel"));
 
-				view.requestFocusInWindow();
-				frame.getContentPane().revalidate();
-			}
-		});
+                BoardController controller = levelService.getLevel(firstLevel);
+                BoardView view = (BoardView) controller.getView();
+                frame.setContentPane(view);  //TODO
+                // load the game Menu
+                loadGameMenu();
+                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                view.requestFocusInWindow();
+                frame.getContentPane().revalidate();
+            }
+        });
 
-		// what happens when the user clicks on load a level
-		menuFileLoad.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
+        // what happens when the user clicks on load a level
+        menuFileLoad.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
 
-				// Create a file chooser
-				JFileChooser fc = new JFileChooser();
-				FileNameExtensionFilter xmlfilter = new FileNameExtensionFilter(
-						"xml files (*.xml)", "xml");
-				// set the filter to only allow xml files
-				fc.setFileFilter(xmlfilter);
-				fc.setDialogTitle("Open schedule file");
-				// set selected filter
-				fc.setFileFilter(xmlfilter);
-				// Handle open button action.
-				int returnVal = fc.showOpenDialog(frame);
+                // Create a file chooser
+                JFileChooser fc = new JFileChooser();
+                FileNameExtensionFilter xmlfilter = new FileNameExtensionFilter(
+                        "xml files (*.xml)", "xml");
+                // set the filter to only allow xml files
+                fc.setFileFilter(xmlfilter);
+                fc.setDialogTitle("Open schedule file");
+                // set selected filter
+                fc.setFileFilter(xmlfilter);
+                // Handle open button action.
+                int returnVal = fc.showOpenDialog(frame);
 
-				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					File file = fc.getSelectedFile();
-					System.out.println(file.toString());
-					// TODO: (also validate)
-					GameController controller = new GameController();
-					BoardView view = controller
-							.loadLevel(file.toString());
-					frame.setJMenuBar(new StartMenuView());
-					frame.setContentPane(view);
+                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                    File file = fc.getSelectedFile();
+                    System.out.println(file.toString());
+                    // TODO: (also validate)
+                    BoardController controller = levelService.getLevel(file);
 
-					frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                    frame.setJMenuBar(new StartMenuView());
+                    BoardView view = (BoardView) controller.getView();
+                    frame.setContentPane(view); //TODO
 
-					view.requestFocusInWindow();
-					frame.getContentPane().revalidate();
-				} else {
-					// show that the file was not applicable in this case
-				}
+                    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                    view.requestFocusInWindow();
+                    frame.getContentPane().revalidate();
+                } else {
+                    // show that the file was not applicable in this case
+                }
 
-				frame.getContentPane().revalidate();
-			}
-		});
-		frame.setSize(500, 500);
-		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		frame.setVisible(true);
+                frame.getContentPane().revalidate();
+            }
+        });
+        frame.setSize(500, 500);
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.setVisible(true);
 
-	}
-	public void loadGameMenu(){
-		
-		// spiel
-		JMenu menuFile = new JMenu("Spiel");
-		JMenuItem itmNew = new JMenuItem("Neues Spiel starten");
-		JMenuItem itmReload = new JMenuItem("Level neu starten");
-		JMenuItem itmSave = new JMenuItem("Spiel speichern");
-		JMenuItem itmLoad = new JMenuItem("Spiel laden");
-		JMenuItem itmClose = new JMenuItem("Spiel beenden");
+    }
 
-		// optionen
-		JMenu menuEdit = new JMenu("Optionen");
-		JMenuItem itmStatistics = new JMenuItem("Levelstatistik anzeigen");
-		JMenuItem itmBest = new JMenuItem("Bestergebnisse anzeigen");
+    public void loadGameMenu() {
 
-		// Leveleditor
-		JMenu menuLevelEditor = new JMenu("Level Editor");
-		JMenuItem itmLevelEditorStart = new JMenuItem("Level Editor Starten");
-		
-		// Spiel
-		menuFile.add(itmNew);
-		menuFile.addSeparator();
+        // spiel
+        JMenu menuFile = new JMenu("Spiel");
+        JMenuItem itmNew = new JMenuItem("Neues Spiel starten");
+        JMenuItem itmReload = new JMenuItem("Level neu starten");
+        JMenuItem itmSave = new JMenuItem("Spiel speichern");
+        JMenuItem itmLoad = new JMenuItem("Spiel laden");
+        JMenuItem itmClose = new JMenuItem("Spiel beenden");
 
-		menuFile.add(itmReload);
-		menuFile.addSeparator();
+        // optionen
+        JMenu menuEdit = new JMenu("Optionen");
+        JMenuItem itmStatistics = new JMenuItem("Levelstatistik anzeigen");
+        JMenuItem itmBest = new JMenuItem("Bestergebnisse anzeigen");
 
-		menuFile.add(itmSave);
-		menuFile.addSeparator();
+        // Leveleditor
+        JMenu menuLevelEditor = new JMenu("Level Editor");
+        JMenuItem itmLevelEditorStart = new JMenuItem("Level Editor Starten");
 
-		menuFile.add(itmLoad);
-		menuFile.addSeparator();
+        // Spiel
+        menuFile.add(itmNew);
+        menuFile.addSeparator();
 
-		menuFile.add(itmClose);
+        menuFile.add(itmReload);
+        menuFile.addSeparator();
 
-		// optionen
-		menuEdit.add(itmStatistics);
-		menuEdit.addSeparator();
-		menuEdit.add(itmBest);
+        menuFile.add(itmSave);
+        menuFile.addSeparator();
 
-		// leveleditor
-		menuLevelEditor.add(itmLevelEditorStart);
+        menuFile.add(itmLoad);
+        menuFile.addSeparator();
 
-		aaaBar = new JMenuBar();
-		this.frame.setJMenuBar(aaaBar);
+        menuFile.add(itmClose);
 
-		aaaBar.add(menuFile);
-		aaaBar.add(menuEdit);
-		aaaBar.add(menuLevelEditor);
-		
-		// what happens when the user clicks on start new game
-		itmNew.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// LevelDimensionDialog.showDimensionDialog(frame);
+        // optionen
+        menuEdit.add(itmStatistics);
+        menuEdit.addSeparator();
+        menuEdit.add(itmBest);
 
-				GameController controller = new GameController();
-				BoardView view = controller
-						.loadLevel("src/test/resources/ch/bfh/ti/projekt1/sokoban/level1.xml");
+        // leveleditor
+        menuLevelEditor.add(itmLevelEditorStart);
 
-				frame.setContentPane(view);
-				// load the game Menu
-				loadGameMenu();
-				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        aaaBar = new JMenuBar();
+        this.frame.setJMenuBar(aaaBar);
 
-				view.requestFocusInWindow();
-				frame.getContentPane().revalidate();
-			}
-		});
+        aaaBar.add(menuFile);
+        aaaBar.add(menuEdit);
+        aaaBar.add(menuLevelEditor);
 
-	}
+        // what happens when the user clicks on start new game
+        itmNew.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // LevelDimensionDialog.showDimensionDialog(frame);
+
+                File firstLevel = new File(CoreConstants.getProperty("game.firstlevel"));
+
+                BoardController controller = levelService.getLevel(firstLevel);
+
+                BoardView view = (BoardView) controller.getView();
+
+                frame.setContentPane(view);  //TODO
+                // load the game Menu
+                loadGameMenu();
+                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                view.requestFocusInWindow();
+
+                frame.getContentPane().revalidate();
+
+            }
+        });
+
+    }
 }

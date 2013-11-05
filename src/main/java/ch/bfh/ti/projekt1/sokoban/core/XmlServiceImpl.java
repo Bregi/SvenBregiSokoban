@@ -1,4 +1,4 @@
-package ch.bfh.ti.projekt1.sokoban.editor;
+package ch.bfh.ti.projekt1.sokoban.core;
 
 import ch.bfh.ti.projekt1.sokoban.model.Board;
 import ch.bfh.ti.projekt1.sokoban.model.Field;
@@ -7,36 +7,57 @@ import ch.bfh.ti.projekt1.sokoban.xml.Column;
 import ch.bfh.ti.projekt1.sokoban.xml.Level;
 import ch.bfh.ti.projekt1.sokoban.xml.Row;
 import ch.bfh.ti.projekt1.sokoban.xml.StartPosition;
+import org.apache.log4j.Logger;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author svennyffenegger
- * @since 31/10/13 20:41
+ * @since 04/11/13 19:22
  */
-public class LevelServiceImpl implements LevelService {
+public class XmlServiceImpl implements XmlService {
+
+    private static final Logger LOG = Logger.getLogger(XmlServiceImpl.class);
+
     @Override
-    public Level createPlainLevel() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    public Level getLevelFromFile(File path) {
+        if (path.exists()) {
+            try {
+                JAXBContext jaxbContext = JAXBContext.newInstance(Level.class);
+                Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+                Level level = (Level) jaxbUnmarshaller.unmarshal(path);
+                LOG.debug("Successfully read level from Xml:" + path.getName());
+
+                return level;
+            } catch (JAXBException e) {
+                LOG.error(e);
+                return null;
+            }
+        } else {
+            LOG.error("The requested file doesn't exist: " + path);
+            return null;
+        }
     }
 
     @Override
-    public Level createPlainLevel(int columns, int rows) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    public Level getLevelFromPath(String path) {
+        return getLevelFromFile(new File(path));
     }
 
     @Override
     public Level changeLevelDimension(Level existingLevel, int columns, int rows) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return null;
     }
 
     @Override
-    public Level saveLevel(Board board) {
+    public void saveLevel(Board board) {
         Level level = new Level();
 
         Field[][] grid = board.getGrid();
@@ -67,7 +88,7 @@ public class LevelServiceImpl implements LevelService {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
 
 
-        File file = new File("src/test/resources/ch/bfh/ti/projekt1/sokoban/generated/" + simpleDateFormat.format(new Date()) + ".xml");
+        File file = new File(CoreConstants.getProperty("editor.basepath") + simpleDateFormat.format(new Date()) + ".xml");
         try {
             JAXBContext jaxbContext = JAXBContext.newInstance(Level.class);
             Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
@@ -75,12 +96,20 @@ public class LevelServiceImpl implements LevelService {
 
             jaxbMarshaller.marshal(level, file);
         } catch (JAXBException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            LOG.error(e);
         }
 
-
-        return level;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
 
+    @Override
+    public int getMaxColumnCount(List<Row> list) {
+        int count = 0;
+        for (Row rowType : list) {
+            if (rowType.getColumn().size() > count) {
+                count = rowType.getColumn().size();
+            }
+        }
+        return count;
+    }
 }

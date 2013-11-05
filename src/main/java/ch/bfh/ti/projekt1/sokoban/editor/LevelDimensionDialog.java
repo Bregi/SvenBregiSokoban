@@ -67,6 +67,8 @@ public class LevelDimensionDialog {
 
         dialog.setContentPane(content);
 
+        dialog.setSize(250, 150);
+
         dialog.setModal(true);
         dialog.setVisible(true);
         dialog.dispose();

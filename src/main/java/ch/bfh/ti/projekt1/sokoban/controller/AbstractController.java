@@ -2,11 +2,11 @@ package ch.bfh.ti.projekt1.sokoban.controller;
 
 import ch.bfh.ti.projekt1.sokoban.model.AbstractModel;
 import ch.bfh.ti.projekt1.sokoban.view.AbstractView;
+import org.apache.log4j.Logger;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 
 /**
  * @author svennyffenegger
@@ -19,47 +19,43 @@ public abstract class AbstractController implements PropertyChangeListener {
     /**
      * The properties that can change
      */
-    public static final String PROPERTY_POSITION = "position";
+    public static final String PROPERTY_POSITION = "Position";
     public static final String PROPERTY_NEXT_FIELD = "NextField";
-    public static final String PROPERTY_FIELD = "field";
+    public static final String PROPERTY_FIELD = "Field";
     public static final String PROPERTY_FIELD_STATE = "State";
     public static final String PROPERTY_LEVEL_NAME = "LevelName";
-
-
-    private ArrayList<AbstractView> registeredViews;
-    private ArrayList<AbstractModel> registeredModels;
+    private static final Logger LOG = Logger.getLogger(AbstractController.class);
+    private AbstractView view;
+    private AbstractModel model;
 
     public AbstractController() {
-        registeredViews = new ArrayList<AbstractView>();
-        registeredModels = new ArrayList<AbstractModel>();
+
     }
 
-    public void addModel(AbstractModel model) {
-        registeredModels.add(model);
-        model.addPropertyChangeListener(this);
+    public AbstractController(AbstractModel model, AbstractView view) {
+        this.view = view;
+        this.model = model;
     }
-
-    public void removeModel(AbstractModel model) {
-        registeredModels.remove(model);
-        model.removePropertyChangeListener(this);
-    }
-
-    public void addView(AbstractView view) {
-        registeredViews.add(view);
-    }
-
-    public void removeView(AbstractView view) {
-        registeredViews.remove(view);
-    }
-
-    // Use this to observe property changes from registered models
-    // and propagate them on to all the views.
 
     public void propertyChange(PropertyChangeEvent evt) {
+        view.modelPropertyChange(evt);
+    }
 
-        for (AbstractView view : registeredViews) {
-            view.modelPropertyChange(evt);
-        }
+    public AbstractView getView() {
+        return view;
+    }
+
+    public void setView(AbstractView view) {
+        this.view = view;
+    }
+
+    public AbstractModel getModel() {
+        return model;
+    }
+
+    public void setModel(AbstractModel model) {
+        this.model = model;
+        this.model.addPropertyChangeListener(this);
     }
 
     /**
@@ -74,19 +70,17 @@ public abstract class AbstractController implements PropertyChangeListener {
      */
     protected void setModelProperty(String propertyName, Object newValue) {
 
-        for (AbstractModel model : registeredModels) {
-            try {
+        try {
+            Method method = model.getClass().getMethod(
+                    "set" + propertyName,
+                    new Class[]{newValue.getClass()}
 
-                Method method = model.getClass().getMethod(
-                        "set" + propertyName,
-                        new Class[]{newValue.getClass()}
+            );
+            method.invoke(model, newValue);
 
-                );
-                method.invoke(model, newValue);
-
-            } catch (Exception ex) {
-                // Handle exception.
-            }
+        } catch (Exception ex) {
+            LOG.error(ex);
         }
     }
+
 }

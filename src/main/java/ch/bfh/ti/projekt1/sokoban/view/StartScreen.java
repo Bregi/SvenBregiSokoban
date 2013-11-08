@@ -4,15 +4,17 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 
-import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.WindowConstants;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import ch.bfh.ti.projekt1.sokoban.controller.GameController;
+import ch.bfh.ti.projekt1.sokoban.editor.SokobanEditor;
 
 /**
  * @author marcoberger
@@ -25,6 +27,7 @@ public class StartScreen {
 
 	public GameController gameController;
 
+	private BoardView view;
 	private JMenuBar menuBar;
 	private JMenuBar aaaBar;
 
@@ -55,7 +58,7 @@ public class StartScreen {
 
 				GameController controller = new GameController();
 				gameController = controller;
-				BoardView view = controller
+				view = controller
 						.loadLevel("src/test/resources/ch/bfh/ti/projekt1/sokoban/level1.xml");
 
 				frame.setContentPane(view);
@@ -91,7 +94,7 @@ public class StartScreen {
 					levelName = file.toString();
 					// TODO: (also validate)
 					GameController controller = new GameController();
-					BoardView view = controller.loadLevel(file.toString());
+					view = controller.loadLevel(file.toString());
 					frame.setJMenuBar(new StartMenuView());
 					frame.setContentPane(view);
 
@@ -192,16 +195,17 @@ public class StartScreen {
 			public void actionPerformed(ActionEvent e) {
 				// LevelDimensionDialog.showDimensionDialog(frame);
 
+				// TODO unschön
 				GameController controller = new GameController();
-				BoardView view = controller
-						.loadLevel("src/test/resources/ch/bfh/ti/projekt1/sokoban/level1.xml");
+
+				view = controller.loadLevel("src/test/resources/ch/bfh/ti/projekt1/sokoban/level1.xml");
 
 				frame.setContentPane(view);
+
 				// load the game Menu
 				loadGameMenu();
 				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-				view.requestFocusInWindow();
 				frame.getContentPane().revalidate();
 			}
 		});
@@ -211,20 +215,32 @@ public class StartScreen {
 			public void actionPerformed(ActionEvent e) {
 				// LevelDimensionDialog.showDimensionDialog(frame);
 
-				GameController controller = new GameController();
-				BoardView view = controller
-						.loadLevel("src/test/resources/ch/bfh/ti/projekt1/sokoban/level1.xml");
+				Object[] options = { "Ja", "Nein" };
+				int response = JOptionPane
+						.showOptionDialog(
+								frame,
+								"Bist du sicher, dass du das Level neu laden willst? Ungespeicherter Fortschritt geht dabei verloren. ",
+								"Level neu laden", JOptionPane.YES_NO_OPTION,
+								JOptionPane.QUESTION_MESSAGE, null, options,
+								options[1]);
+				if (response == JOptionPane.YES_OPTION) {
+					GameController controller = new GameController();
+					
+					view = controller
+							.loadLevel("src/test/resources/ch/bfh/ti/projekt1/sokoban/level1.xml");
 
-				gameController = controller;
+					gameController = controller;
 
-				frame.setContentPane(view);
-				// load the game Menu
-				loadGameMenu();
-				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+					frame.setContentPane(view);
+					// load the game Menu
+					loadGameMenu();
+					frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-				view.requestFocusInWindow();
-				frame.getContentPane().revalidate();
-			}
+					view.requestFocusInWindow();
+					frame.getContentPane().revalidate();
+
+				}
+							}
 		});
 		// what happens when the user clicks on save progress
 		itmSave.addActionListener(new ActionListener() {
@@ -232,16 +248,53 @@ public class StartScreen {
 			public void actionPerformed(ActionEvent e) {
 
 				GameController controller = gameController;
-				controller.saveLevelProgress();
+				controller.saveLevelProgress(controller.getBoard());
+			}
+		});
+		
+		// start the level editor
+		itmLevelEditorStart.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e){
+	           SokobanEditor editor =  new SokobanEditor();
+	           //frame.setContentPane(editor.);
 			}
 		});
 		// what happens when the user clicks on load a level
 		itmLoad.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				// LevelDimensionDialog.showDimensionDialog(frame);
 
-				GameController controller = gameController;
-				controller.saveLevelProgress();
+				Object[] options = { "Ja", "Nein" };
+				int response = JOptionPane
+						.showOptionDialog(
+								frame,
+								"Bist du sicher, dass du ein neues Spiel starten willst? Ungespeicherter Fortschritt geht dabei verloren. ",
+								"Level neu starten", JOptionPane.YES_NO_OPTION,
+								JOptionPane.QUESTION_MESSAGE, null, options,
+								options[1]);
+
+				if (response == JOptionPane.YES_OPTION) {
+
+					// TODO unschön
+					GameController controller = new GameController();
+
+					JFileChooser jFileChooser = new JFileChooser(
+							"src/test/resources/ch/bfh/ti/projekt1/sokoban/generated");
+
+					jFileChooser.showOpenDialog(null);
+
+					view = controller.loadLevel(jFileChooser
+							.getSelectedFile());
+					frame.setContentPane(view);
+				}
+
+				// load the game Menu
+				loadGameMenu();
+				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+				frame.getContentPane().revalidate();
 			}
 		});
 		// exits the current game and return to windows
@@ -249,8 +302,25 @@ public class StartScreen {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				frame.setVisible(false);
-                frame.dispose();
-                System.exit(0);
+				frame.dispose();
+				System.exit(0);
+			}
+		});
+		
+		itmStatistics.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int steps = view.getStepsUsed();
+				JOptionPane.showMessageDialog(null ,"Schritte:"+steps+"\nFortschritt:\n");
+			}
+		});
+		
+		itmBest.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String message = "Level: 10";
+				JOptionPane.showMessageDialog(null ,message);
+
 			}
 		});
 		return aaaBar;

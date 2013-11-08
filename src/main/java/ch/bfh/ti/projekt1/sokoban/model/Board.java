@@ -2,6 +2,7 @@ package ch.bfh.ti.projekt1.sokoban.model;
 
 
 import ch.bfh.ti.projekt1.sokoban.controller.AbstractController;
+import ch.bfh.ti.projekt1.sokoban.view.element.Diamond;
 
 /**
  * @author svennyffenegger
@@ -13,9 +14,12 @@ public class Board extends AbstractModel {
 
     // the current position of the player
     private Position position;
+    private Position oldDiamondPosition;
+    private Position diamondPosition;
     // grid of the fields
     private Field[][] grid;
     private String levelName;
+    private boolean diamondMove;
 
     //used for the editor mainly
     public Board(int width, int height) {
@@ -25,6 +29,7 @@ public class Board extends AbstractModel {
     //used for the game
     public Board(int width, int height, Position startPosition) {
         this.position = startPosition;
+        this.diamondMove = false;
         grid = new Field[width][height];
     }
 
@@ -82,8 +87,14 @@ public class Board extends AbstractModel {
 
         switch (direction) {
             case DOWN:
-                if (grid[position.getX()].length > position.getY() + 1 && grid[position.getX()][position.getY() + 1].getState() == FieldState.EMPTY) {
-                    this.position = new Position(position.getX(), position.getY() + 1);
+                if (grid[position.getX()].length > position.getY() + 1 && (grid[position.getX()][position.getY() + 1].getState() == FieldState.EMPTY || grid[position.getX()][position.getY() + 1].getState() == FieldState.GOAL)) {
+                	if(grid[position.getX()][position.getY() + 1].getState() == FieldState.GOAL){
+                		this.oldDiamondPosition = new Position(position.getX(),position.getY() + 1 );
+                		this.diamondPosition = new Position(position.getX(),position.getY() + 2 );
+                		diamondMove = true;
+                	}
+                	System.out.println(grid[position.getX()][position.getY() + 1].getState());
+                	this.position = new Position(position.getX(), position.getY() + 1);
                 }
                 break;
             case UP:
@@ -106,6 +117,12 @@ public class Board extends AbstractModel {
         // check if the position has been changed and a property change needs to be fired
         if (oldPosition != position) {
             firePropertyChange(AbstractController.PROPERTY_POSITION, oldPosition, position);
+            //move the diamond also if diamond was in the way
+            if(diamondMove == true){
+            	firePropertyChange(AbstractController.PROPERTY_NEXT_FIELD, oldDiamondPosition, diamondPosition);
+            System.out.println("diamond move: "+oldDiamondPosition +"to" + diamondPosition);
+            }
+            diamondMove = false;
         }
     }
 }

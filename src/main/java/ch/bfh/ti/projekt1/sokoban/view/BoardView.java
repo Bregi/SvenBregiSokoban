@@ -1,16 +1,26 @@
 package ch.bfh.ti.projekt1.sokoban.view;
 
-import ch.bfh.ti.projekt1.sokoban.controller.BoardController;
-import ch.bfh.ti.projekt1.sokoban.model.Board;
-import ch.bfh.ti.projekt1.sokoban.model.Field;
-import ch.bfh.ti.projekt1.sokoban.model.Position;
-import ch.bfh.ti.projekt1.sokoban.view.element.*;
-
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.beans.PropertyChangeEvent;
+import java.util.ArrayList;
+
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+
+import ch.bfh.ti.projekt1.sokoban.controller.BoardController;
+import ch.bfh.ti.projekt1.sokoban.model.Board;
+import ch.bfh.ti.projekt1.sokoban.model.Field;
+import ch.bfh.ti.projekt1.sokoban.model.FieldState;
+import ch.bfh.ti.projekt1.sokoban.model.Position;
+import ch.bfh.ti.projekt1.sokoban.view.element.Diamond;
+import ch.bfh.ti.projekt1.sokoban.view.element.Element;
+import ch.bfh.ti.projekt1.sokoban.view.element.Finish;
+import ch.bfh.ti.projekt1.sokoban.view.element.Floor;
+import ch.bfh.ti.projekt1.sokoban.view.element.Player;
+import ch.bfh.ti.projekt1.sokoban.view.element.Wall;
 
 /**
  * @author svennyffenegger
@@ -26,6 +36,7 @@ public class BoardView extends JPanel implements KeyListener, AbstractView {
 	private int stepsUsed;
 	private Player p;
 	private Floor f;
+	private Diamond[][] diamonds;
 	private Board board;
 	private Field[][] grid;
 	private boolean levelLoaded;
@@ -38,6 +49,8 @@ public class BoardView extends JPanel implements KeyListener, AbstractView {
 		this.levelName = levelName;
 		this.board = board;
 		this.grid = board.getGrid();
+		this.diamonds = new Diamond[grid.length][grid.length];// TODO SET SIZE
+																// CORRECT
 		this.playerPosition = playerPosition;
 		this.numberOfGoals = 0;
 		setLayout(null);
@@ -56,6 +69,7 @@ public class BoardView extends JPanel implements KeyListener, AbstractView {
 		// we have a new position, the player was moved
 		if (evt.getNewValue() instanceof Position) {
 			this.stepsUsed++;
+
 			// repaint the board and the parent
 			SwingUtilities.invokeLater(new Runnable() {
 				@Override
@@ -90,15 +104,18 @@ public class BoardView extends JPanel implements KeyListener, AbstractView {
 			int oldY) {
 		p.setBounds(newX * 40, newY * 40, 40, 40);
 		f.setBounds(oldX * 40, oldY * 40, 40, 40);
-
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
 				repaint();
 			}
 		});
+		if (grid[newX][newY].getState() == FieldState.DIAMOND) {
+			moveDiamond(diamonds[newX][newY], newX+(newX-oldX), newY+(newY-oldY), newX, newY);
+		}
 
 		System.out.println("Player moved to:" + p.getBounds().toString());
+
 	}
 
 	/**
@@ -112,12 +129,13 @@ public class BoardView extends JPanel implements KeyListener, AbstractView {
 	 * @param oldX
 	 * @param oldY
 	 */
-	public void movePlayerWithDiamond(Player p, Floor f, Diamond d, int newX,
-			int newY, int oldX, int oldY) {
-		p.setBounds(newX * 40, newY * 40, 40, 40);
-		f.setBounds(oldX * 40, oldY * 40, 40, 40);
-		d.setBounds((2 * newX - oldX) * 40, (2 * newY - oldY) * 40, 40, 40);
-
+	public void moveDiamond(Diamond d, int newX, int newY,int oldX, int oldY) {
+		//d.setBounds(newX * 40, newY * 40, 40, 40);
+		grid[newX][newY].setState(FieldState.DIAMOND);
+		
+		diamonds[oldX][oldY].setBounds(newX * 40, newY * 40, 40, 40);
+		diamonds[newX][newY]=diamonds[oldX][oldY];
+		diamonds[oldX][oldY] = null;
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
@@ -125,7 +143,7 @@ public class BoardView extends JPanel implements KeyListener, AbstractView {
 			}
 		});
 
-		System.out.println("Player moved to:" + p.getBounds().toString());
+		System.out.println("Diamond moved to:" + d.getBounds().toString());
 	}
 
 	/**
@@ -145,6 +163,7 @@ public class BoardView extends JPanel implements KeyListener, AbstractView {
 				switch (grid[i][n].getState()) {
 				case WALL:
 					Wall w = new Wall();
+
 					addComponentToBoard(w, i, n);
 					break;
 				case GOAL:
@@ -158,6 +177,7 @@ public class BoardView extends JPanel implements KeyListener, AbstractView {
 					break;
 				case DIAMOND:
 					Diamond d = new Diamond();
+					diamonds[i][n] = d;
 					addComponentToBoard(d, i, n);
 					break;
 				default:
@@ -167,9 +187,10 @@ public class BoardView extends JPanel implements KeyListener, AbstractView {
 		}
 	}
 
-	public int getStepsUsed(){
+	public int getStepsUsed() {
 		return this.stepsUsed;
 	}
+
 	/*
 	 * Takes an element and adds it to the board at a given position
 	 */

@@ -37,9 +37,7 @@ public class BoardView extends JPanel implements KeyListener, AbstractView {
 	private Player p;
 	private Floor f;
 	private Diamond[][] diamonds;
-	private Board board;
 	private Field[][] grid;
-	private boolean levelLoaded;
 	private int numberOfGoals;
 
 	public BoardView(Board board, BoardController controller,
@@ -47,7 +45,6 @@ public class BoardView extends JPanel implements KeyListener, AbstractView {
 		this.controller = controller;
 		this.stepsUsed = 0;
 		this.levelName = levelName;
-		this.board = board;
 		this.grid = board.getGrid();
 		this.diamonds = new Diamond[grid.length][grid.length];// TODO SET SIZE
 																// CORRECT
@@ -72,13 +69,12 @@ public class BoardView extends JPanel implements KeyListener, AbstractView {
 
 			// repaint the board and the parent
 			SwingUtilities.invokeLater(new Runnable() {
-				@Override
 				public void run() {
 					Position oldPlayerPosition = playerPosition;
 
 					playerPosition = (Position) evt.getNewValue();
 					System.out.println(evt.getNewValue().toString());
-					movePlayer(p, f, playerPosition.getX(),
+					movePlayer(playerPosition.getX(),
 							playerPosition.getY(), oldPlayerPosition.getX(),
 							oldPlayerPosition.getY());
 
@@ -100,21 +96,25 @@ public class BoardView extends JPanel implements KeyListener, AbstractView {
 
 	}
 
-	public void movePlayer(Player p, Floor f, int newX, int newY, int oldX,
+	public void movePlayer(int newX, int newY, int oldX,
 			int oldY) {
-		p.setBounds(newX * 40, newY * 40, 40, 40);
-		f.setBounds(oldX * 40, oldY * 40, 40, 40);
-		SwingUtilities.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				repaint();
-			}
-		});
+		grid[oldX][oldY].setState(FieldState.EMPTY);
 		if (grid[newX][newY].getState() == FieldState.DIAMOND) {
-			moveDiamond(diamonds[newX][newY], newX+(newX-oldX), newY+(newY-oldY), newX, newY);
+			p.setBounds(newX * 40, newY * 40, 40, 40);
+			f.setBounds(oldX * 40, oldY * 40, 40, 40);
+			moveDiamond(newX+(newX-oldX), newY+(newY-oldY), newX, newY);
+		}else{
+
+			p.setBounds(newX * 40, newY * 40, 40, 40);
+			f.setBounds(oldX * 40, oldY * 40, 40, 40);
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
+					repaint();
+				}
+			});
 		}
 
-		System.out.println("Player moved to:" + p.getBounds().toString());
+		//System.out.println("Player moved to:" + p.getBounds().toString());
 
 	}
 
@@ -129,21 +129,26 @@ public class BoardView extends JPanel implements KeyListener, AbstractView {
 	 * @param oldX
 	 * @param oldY
 	 */
-	public void moveDiamond(Diamond d, int newX, int newY,int oldX, int oldY) {
-		//d.setBounds(newX * 40, newY * 40, 40, 40);
-		grid[newX][newY].setState(FieldState.DIAMOND);
+	public void moveDiamond(int newX, int newY,int oldX, int oldY) {
 		
-		diamonds[oldX][oldY].setBounds(newX * 40, newY * 40, 40, 40);
+		grid[oldX][oldY].setState(FieldState.PLAYER);
+		grid[newX][newY].setState(FieldState.DIAMOND);
+		String s="";
+		for(int i = 0; i<5;i++){
+			for(int y=0;y<5;y++){
+				s+=(grid[y][i].getState()+ " ");
+			}
+			s+=("\n");
+		}
+		System.out.println(s);
 		diamonds[newX][newY]=diamonds[oldX][oldY];
 		diamonds[oldX][oldY] = null;
+		diamonds[newX][newY].setBounds(newX * 40, newY * 40, 40, 40);
 		SwingUtilities.invokeLater(new Runnable() {
-			@Override
 			public void run() {
 				repaint();
 			}
 		});
-
-		System.out.println("Diamond moved to:" + d.getBounds().toString());
 	}
 
 	/**
@@ -163,7 +168,6 @@ public class BoardView extends JPanel implements KeyListener, AbstractView {
 				switch (grid[i][n].getState()) {
 				case WALL:
 					Wall w = new Wall();
-
 					addComponentToBoard(w, i, n);
 					break;
 				case GOAL:
@@ -178,7 +182,8 @@ public class BoardView extends JPanel implements KeyListener, AbstractView {
 				case DIAMOND:
 					Diamond d = new Diamond();
 					diamonds[i][n] = d;
-					addComponentToBoard(d, i, n);
+					diamonds[i][n].setBounds(i, n, 40, 40);
+					addComponentToBoard(diamonds[i][n], i, n);
 					break;
 				default:
 					break;

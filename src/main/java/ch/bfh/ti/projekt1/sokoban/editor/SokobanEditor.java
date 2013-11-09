@@ -1,14 +1,16 @@
 package ch.bfh.ti.projekt1.sokoban.editor;
 
-import ch.bfh.ti.projekt1.sokoban.controller.FieldController;
+import ch.bfh.ti.projekt1.sokoban.core.EditorService;
+import ch.bfh.ti.projekt1.sokoban.core.EditorServiceImpl;
 import ch.bfh.ti.projekt1.sokoban.model.Board;
-import ch.bfh.ti.projekt1.sokoban.model.Field;
-import ch.bfh.ti.projekt1.sokoban.model.FieldState;
+import ch.bfh.ti.projekt1.sokoban.view.StartMenuView;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 
 /**
  * @author svennyffenegger
@@ -25,9 +27,11 @@ public class SokobanEditor {
 
     private JMenuItem menuFileSave;
 
-    private Board currentLevel;
+    private JMenuItem menuFileLoad;
 
-    private LevelService levelService = new LevelServiceImpl();
+    private EditorController controller;
+
+    private EditorService editorService = new EditorServiceImpl();
 
     public SokobanEditor() {
         frame = new JFrame("Editor");
@@ -47,30 +51,8 @@ public class SokobanEditor {
                 Dimension dim = dialog.showDimensionDialog(frame);
 
                 if (dim != null) {
-                    EditorController controller = new EditorController();
-                    currentLevel = new Board(dim.width, dim.height);
-
-                    controller.addModel(currentLevel);
-
-                    LevelEditorView editorView = new LevelEditorView(controller, dim.width, dim.height);
-                    controller.addView(editorView);
-
-                    for (int i = 0; i < dim.width; i++) {
-                        for (int j = 0; j < dim.height; j++) {
-                            Field field = new Field(FieldState.EMPTY);
-                            currentLevel.setField(i, j, field);
-                            FieldController fieldController = new FieldController();
-                            DraggableElementDestination elementDestination = new DraggableElementDestination(fieldController);
-
-                            fieldController.addView(elementDestination);
-                            fieldController.addModel(field);
-
-                            editorView.addElement(elementDestination);
-                        }
-                    }
-
-
-                    frame.setContentPane(editorView);
+                    controller = editorService.getNewLevel(dim.width, dim.height);
+                    frame.setContentPane((LevelEditorView) controller.getView());
                     frame.getContentPane().revalidate();
                 }
 
@@ -82,7 +64,35 @@ public class SokobanEditor {
         menuFileSave.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                levelService.saveLevel(currentLevel);
+                editorService.saveLevel((Board) controller.getModel());
+            }
+        });
+
+        menuFileLoad = new JMenuItem("Load");
+        menuFile.add(menuFileLoad);
+        menuFileLoad.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser fc = new JFileChooser("src/test/resources/ch/bfh/ti/projekt1/sokoban/generated");
+                FileNameExtensionFilter xmlfilter = new FileNameExtensionFilter(
+                        "xml files (*.xml)", "xml");
+                fc.setFileFilter(xmlfilter);
+                int returnVal = fc.showOpenDialog(frame);
+
+                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                    File file = fc.getSelectedFile();
+
+                    controller = editorService.getLevel(file);
+
+                    frame.setJMenuBar(new StartMenuView());
+                    frame.setContentPane((LevelEditorView) controller.getView());
+
+                    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+                    frame.getContentPane().revalidate();
+                } else {
+                    // show that the file was not applicable in this case
+                }
             }
         });
 
@@ -91,5 +101,9 @@ public class SokobanEditor {
         frame.setVisible(true);
 
 
+    }
+
+    public JFrame getFrame() {
+        return frame;
     }
 }

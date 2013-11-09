@@ -15,6 +15,7 @@ public class Board extends AbstractModel {
 	private Position position;
 	private Position oldDiamondPosition;
 	private Position diamondPosition;
+	
 	// grid of the fields
 	private Field[][] grid;
 	private String levelName;
@@ -162,12 +163,7 @@ public class Board extends AbstractModel {
 					oldPosition, position);
 			// move the diamond also if diamond was in the way
 			if (diamondMove == true) {
-				grid[position.getX()][position.getY()].setState(FieldState.DIAMOND);
-				System.out.println("DIAMOND MOVED");
-				//firePropertyChange(AbstractController.PROPERTY_POSITION,
-				//		oldDiamondPosition, diamondPosition);
-				//System.out.println("diamond move: " + oldDiamondPosition + "to"
-			//			+ diamondPosition);
+				grid[diamondPosition.getX()][diamondPosition.getY()].setState(FieldState.DIAMOND);
 			}
 			diamondMove = false;
 		}

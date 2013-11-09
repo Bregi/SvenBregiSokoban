@@ -13,7 +13,9 @@ import javax.swing.JOptionPane;
 import javax.swing.WindowConstants;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import ch.bfh.ti.projekt1.sokoban.controller.GameController;
+import ch.bfh.ti.projekt1.sokoban.controller.BoardController;
+import ch.bfh.ti.projekt1.sokoban.core.LevelService;
+import ch.bfh.ti.projekt1.sokoban.core.LevelServiceImpl;
 import ch.bfh.ti.projekt1.sokoban.editor.SokobanEditor;
 
 /**
@@ -22,10 +24,11 @@ import ch.bfh.ti.projekt1.sokoban.editor.SokobanEditor;
  */
 public class StartScreen {
 
+	private LevelService levelService = new LevelServiceImpl();
 	private String levelName;
 	private JFrame frame;
 
-	public GameController gameController;
+	//public GameController gameController;
 
 	private BoardView view;
 	private JMenuBar menuBar;
@@ -56,11 +59,12 @@ public class StartScreen {
 			public void actionPerformed(ActionEvent e) {
 				// LevelDimensionDialog.showDimensionDialog(frame);
 
-				GameController controller = new GameController();
-				gameController = controller;
-				view = controller
-						.loadLevel("src/test/resources/ch/bfh/ti/projekt1/sokoban/level1.xml");
+				//GameController controller = new GameController();
+				//gameController = controller;
+				BoardController board = levelService
+						.getLevel(new File("src/test/resources/ch/bfh/ti/projekt1/sokoban/level1.xml"));
 
+				BoardView view = (BoardView) board.getView();
 				frame.setContentPane(view);
 				// load the game Menu
 				loadGameMenu();
@@ -93,8 +97,11 @@ public class StartScreen {
 					System.out.println(file.toString());
 					levelName = file.toString();
 					// TODO: (also validate)
-					GameController controller = new GameController();
-					view = controller.loadLevel(file.toString());
+					BoardController board = levelService
+							.getLevel(new File("src/test/resources/ch/bfh/ti/projekt1/sokoban/level1.xml"));
+
+					BoardView view = (BoardView) board.getView();
+				//	view = controller.loadLevel(file.toString());
 					frame.setJMenuBar(new StartMenuView());
 					frame.setContentPane(view);
 
@@ -121,10 +128,6 @@ public class StartScreen {
 		aaaBar = getGameMenuBar();
 		this.frame.setJMenuBar(aaaBar);
 
-	}
-
-	public GameController getGameController() {
-		return this.gameController;
 	}
 
 	public void saveGameMenu() {
@@ -196,9 +199,12 @@ public class StartScreen {
 				// LevelDimensionDialog.showDimensionDialog(frame);
 
 				// TODO unschön
-				GameController controller = new GameController();
+				BoardController board = levelService
+						.getLevel(new File("src/test/resources/ch/bfh/ti/projekt1/sokoban/level1.xml"));
 
-				view = controller.loadLevel("src/test/resources/ch/bfh/ti/projekt1/sokoban/level1.xml");
+				BoardView view = (BoardView) board.getView();
+
+				//view = controller.loadLevel("src/test/resources/ch/bfh/ti/projekt1/sokoban/level1.xml");
 
 				frame.setContentPane(view);
 
@@ -224,12 +230,15 @@ public class StartScreen {
 								JOptionPane.QUESTION_MESSAGE, null, options,
 								options[1]);
 				if (response == JOptionPane.YES_OPTION) {
-					GameController controller = new GameController();
-					
-					view = controller
-							.loadLevel("src/test/resources/ch/bfh/ti/projekt1/sokoban/level1.xml");
+					BoardController board = levelService
+							.getLevel(new File("src/test/resources/ch/bfh/ti/projekt1/sokoban/level1.xml"));
 
-					gameController = controller;
+					BoardView view = (BoardView) board.getView();
+					
+					//view = controller
+					//		.loadLevel("src/test/resources/ch/bfh/ti/projekt1/sokoban/level1.xml");
+
+					//gameController = controller;
 
 					frame.setContentPane(view);
 					// load the game Menu
@@ -247,8 +256,8 @@ public class StartScreen {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
-				GameController controller = gameController;
-				controller.saveLevelProgress(controller.getBoard());
+				//GameController controller = gameController;
+				//controller.saveLevelProgress(controller.getBoard());
 			}
 		});
 		
@@ -278,15 +287,19 @@ public class StartScreen {
 				if (response == JOptionPane.YES_OPTION) {
 
 					// TODO unschön
-					GameController controller = new GameController();
+				//	GameController controller = new GameController();
+					
 
 					JFileChooser jFileChooser = new JFileChooser(
 							"src/test/resources/ch/bfh/ti/projekt1/sokoban/generated");
 
 					jFileChooser.showOpenDialog(null);
+					BoardController board = levelService
+							.getLevel(jFileChooser.getSelectedFile());
 
-					view = controller.loadLevel(jFileChooser
-							.getSelectedFile());
+					BoardView view = (BoardView) board.getView();
+				//	view = controller.loadLevel(jFileChooser
+				//			.getSelectedFile());
 					frame.setContentPane(view);
 				}
 

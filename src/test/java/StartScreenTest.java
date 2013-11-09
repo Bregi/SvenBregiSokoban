@@ -1,3 +1,5 @@
+import org.apache.log4j.BasicConfigurator;
+
 import ch.bfh.ti.projekt1.sokoban.view.StartScreen;
 
 
@@ -8,6 +10,10 @@ import ch.bfh.ti.projekt1.sokoban.view.StartScreen;
 public class StartScreenTest {
 
     public static void main(String[] args) {
+
+        BasicConfigurator.configure();
+
+
         new StartScreen();
 
     }

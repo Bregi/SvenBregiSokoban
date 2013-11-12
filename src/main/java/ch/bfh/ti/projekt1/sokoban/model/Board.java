@@ -15,7 +15,7 @@ public class Board extends AbstractModel {
 	private Position position;
 	private Position oldDiamondPosition;
 	private Position diamondPosition;
-	
+
 	// grid of the fields
 	private Field[][] grid;
 	private String levelName;
@@ -94,9 +94,11 @@ public class Board extends AbstractModel {
 		switch (direction) {
 		case DOWN:
 			if (grid[position.getX()].length > position.getY() + 1
-					&& (grid[position.getX()][position.getY() + 1].getState() == FieldState.EMPTY || grid[position
-							.getX()][position.getY() + 1].getState() == FieldState.DIAMOND)) {
-				if (grid[position.getX()][position.getY() + 1].getState() == FieldState.GOAL) {
+					&& (grid[position.getX()][position.getY() + 1].getState() == FieldState.EMPTY || (grid[position
+							.getX()][position.getY() + 1].getState() == FieldState.DIAMOND && (grid[position
+							.getX()][position.getY() + 2].getState() == FieldState.EMPTY || grid[position
+							.getX()][position.getY() + 2].getState() == FieldState.GOAL)))) {
+				if (grid[position.getX()][position.getY() + 1].getState() == FieldState.DIAMOND) {
 					this.oldDiamondPosition = new Position(position.getX(),
 							position.getY() + 1);
 					this.diamondPosition = new Position(position.getX(),
@@ -111,8 +113,10 @@ public class Board extends AbstractModel {
 			break;
 		case UP:
 			if (0 < position.getY()
-					&& (grid[position.getX()][position.getY() - 1].getState() == FieldState.EMPTY)
-					|| grid[position.getX()][position.getY() - 1].getState() == FieldState.DIAMOND) {
+					&& (grid[position.getX()][position.getY() - 1].getState() == FieldState.EMPTY || (grid[position
+							.getX()][position.getY() - 1].getState() == FieldState.DIAMOND && (grid[position
+							.getX()][position.getY() - 2].getState() == FieldState.EMPTY || grid[position
+							.getX()][position.getY() - 2].getState() == FieldState.GOAL)))) {
 				if (grid[position.getX()][position.getY() - 1].getState() == FieldState.DIAMOND) {
 					this.oldDiamondPosition = new Position(position.getX(),
 							position.getY() - 1);
@@ -126,8 +130,10 @@ public class Board extends AbstractModel {
 			break;
 		case LEFT:
 			if (0 < position.getX()
-					&& (grid[position.getX() - 1][position.getY()].getState() == FieldState.EMPTY)
-					|| grid[position.getX() - 1][position.getY()].getState() == FieldState.DIAMOND) {
+					&& (grid[position.getX() - 1][position.getY()].getState() == FieldState.EMPTY || (grid[position
+							.getX() - 1][position.getY()].getState() == FieldState.DIAMOND && (grid[position
+							.getX() - 2][position.getY()].getState() == FieldState.EMPTY || grid[position
+							.getX() - 2][position.getY()].getState() == FieldState.GOAL)))) {
 				if (grid[position.getX() - 1][position.getY()].getState() == FieldState.DIAMOND) {
 					this.oldDiamondPosition = new Position(position.getX() - 1,
 							position.getY());
@@ -141,8 +147,10 @@ public class Board extends AbstractModel {
 			break;
 		case RIGHT:
 			if (grid.length > position.getX() + 1
-					&& (grid[position.getX() + 1][position.getY()].getState() == FieldState.EMPTY)
-					|| grid[position.getX() + 1][position.getY()].getState() == FieldState.DIAMOND) {
+					&& (grid[position.getX() + 1][position.getY()].getState() == FieldState.EMPTY || (grid[position
+							.getX() + 1][position.getY()].getState() == FieldState.DIAMOND && (grid[position
+							.getX() + 2][position.getY()].getState() == FieldState.EMPTY || grid[position
+							.getX() + 2][position.getY()].getState() == FieldState.GOAL)))) {
 				if (grid[position.getX() + 1][position.getY()].getState() == FieldState.DIAMOND) {
 					this.oldDiamondPosition = new Position(position.getX() + 1,
 							position.getY());
@@ -159,13 +167,22 @@ public class Board extends AbstractModel {
 		// check if the position has been changed and a property change needs to
 		// be fired
 		if (oldPosition != position) {
-			firePropertyChange(AbstractController.PROPERTY_POSITION,
-					oldPosition, position);
 			// move the diamond also if diamond was in the way
 			if (diamondMove == true) {
-				grid[diamondPosition.getX()][diamondPosition.getY()].setState(FieldState.DIAMOND);
+				if (grid[diamondPosition.getX()][diamondPosition.getY()]
+						.getState() == FieldState.GOAL) {
+					grid[diamondPosition.getX()][diamondPosition.getY()]
+							.setState(FieldState.COMPLETED);
+
+				} else {
+					grid[diamondPosition.getX()][diamondPosition.getY()]
+							.setState(FieldState.DIAMOND);
+				}
 			}
 			diamondMove = false;
+
+			firePropertyChange(AbstractController.PROPERTY_POSITION,
+					oldPosition, position);
 		}
 	}
 }

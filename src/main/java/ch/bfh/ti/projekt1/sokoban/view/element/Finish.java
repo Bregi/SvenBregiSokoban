@@ -5,5 +5,8 @@ public class Finish extends Element {
     public Finish() {
         addImage(FINISH_PATH);
     }
+    public void setCompleted(){
+    	addImage(GOAL_PATH);
+    }
 
 }

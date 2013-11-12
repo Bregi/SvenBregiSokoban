@@ -5,7 +5,6 @@ import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.beans.PropertyChangeEvent;
-import java.util.ArrayList;
 
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
@@ -37,6 +36,7 @@ public class BoardView extends JPanel implements KeyListener, AbstractView {
 	private Player p;
 	private Floor f;
 	private Diamond[][] diamonds;
+	private Finish[][] goals;
 	private Field[][] grid;
 	private int numberOfGoals;
 
@@ -47,7 +47,7 @@ public class BoardView extends JPanel implements KeyListener, AbstractView {
 		this.levelName = levelName;
 		this.grid = board.getGrid();
 		this.diamonds = new Diamond[grid.length][grid.length];// TODO SET SIZE
-																// CORRECT
+		this.goals = new Finish[grid.length][grid.length];														// CORRECT
 		this.playerPosition = playerPosition;
 		this.numberOfGoals = 0;
 		setLayout(null);
@@ -98,15 +98,14 @@ public class BoardView extends JPanel implements KeyListener, AbstractView {
 
 	public void movePlayer(int newX, int newY, int oldX,
 			int oldY) {
+		
+		p.setBounds(newX * 40, newY * 40, 40, 40);
+		f.setBounds(oldX * 40, oldY * 40, 40, 40);
+		
 		grid[oldX][oldY].setState(FieldState.EMPTY);
 		if (grid[newX][newY].getState() == FieldState.DIAMOND) {
-			p.setBounds(newX * 40, newY * 40, 40, 40);
-			f.setBounds(oldX * 40, oldY * 40, 40, 40);
 			moveDiamond(newX+(newX-oldX), newY+(newY-oldY), newX, newY);
 		}else{
-
-			p.setBounds(newX * 40, newY * 40, 40, 40);
-			f.setBounds(oldX * 40, oldY * 40, 40, 40);
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
 					repaint();
@@ -132,27 +131,36 @@ public class BoardView extends JPanel implements KeyListener, AbstractView {
 	public void moveDiamond(int newX, int newY,int oldX, int oldY) {
 		
 		grid[oldX][oldY].setState(FieldState.PLAYER);
-		grid[newX][newY].setState(FieldState.DIAMOND);
-		String s="";
+		diamonds[newX][newY]=diamonds[oldX][oldY];
+		diamonds[oldX][oldY] = null;
+		if(grid[newX][newY].getState()==FieldState.COMPLETED){
+			this.numberOfGoals--;
+			System.out.println(numberOfGoals+" goals remaing");
+			if(this.numberOfGoals == 0){
+				System.out.println("LEVEL FINISHED!");//TODO: DO SOMETHING!
+			}
+			
+			goals[newX][newY].setCompleted();
+		}else{
+			diamonds[newX][newY].setBounds(newX * 40, newY * 40, 40, 40);
+		}
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				repaint();
+			}
+		});
+		/*String s="";
 		for(int i = 0; i<5;i++){
 			for(int y=0;y<5;y++){
 				s+=(grid[y][i].getState()+ " ");
 			}
 			s+=("\n");
 		}
-		System.out.println(s);
-		diamonds[newX][newY]=diamonds[oldX][oldY];
-		diamonds[oldX][oldY] = null;
-		diamonds[newX][newY].setBounds(newX * 40, newY * 40, 40, 40);
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				repaint();
-			}
-		});
+		System.out.println(s);*/
 	}
 
 	/**
-	 * takes the predefined level file and draws the elements on screen
+	 * takes the level file and draws the elements on screen
 	 */
 	public void drawLevel() {
 
@@ -173,7 +181,9 @@ public class BoardView extends JPanel implements KeyListener, AbstractView {
 				case GOAL:
 					Finish fi = new Finish();
 					numberOfGoals++;
-					addComponentToBoard(fi, i, n);
+					goals[i][n] = fi;
+					goals[i][n].setBounds(i,n,40,40);
+					addComponentToBoard(goals[i][n], i, n);
 					break;
 				case EMPTY:
 					Floor f = new Floor();

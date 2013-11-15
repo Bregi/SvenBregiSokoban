@@ -147,20 +147,19 @@ public class BoardView extends JPanel implements KeyListener, AbstractView {
             for (int n = 0; n < grid[i].length; n++) {
                 switch (grid[i][n].getState()) {
                     case WALL:
-                        Wall w = new Wall();
-                        addComponentToBoard(w, i, n);
+                        addComponentToBoard(new Wall(), i, n);
                         break;
                     case GOAL:
-                        Finish fi = new Finish();
-                        addComponentToBoard(fi, i, n);
+                        addComponentToBoard(new Goal(), i, n);
                         break;
                     case EMPTY:
-                        Floor f = new Floor();
-                        addComponentToBoard(f, i, n);
+                        addComponentToBoard(new Floor(), i, n);
                         break;
                     case DIAMOND:
-                        Diamond d = new Diamond();
-                        addComponentToBoard(d, i, n);
+                        addComponentToBoard(new Diamond(), i, n);
+                        break;
+                    case COMPLETED:
+                        addComponentToBoard(new Finish(), i, n);
                         break;
                     default:
                         break;

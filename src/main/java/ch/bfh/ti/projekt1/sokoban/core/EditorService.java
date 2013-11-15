@@ -1,9 +1,9 @@
 package ch.bfh.ti.projekt1.sokoban.core;
 
+import java.io.File;
+
 import ch.bfh.ti.projekt1.sokoban.editor.EditorController;
 import ch.bfh.ti.projekt1.sokoban.model.Board;
-
-import java.io.File;
 
 /**
  * Provides certain functionalities for the level editor

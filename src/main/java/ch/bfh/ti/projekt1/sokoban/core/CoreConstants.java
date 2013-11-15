@@ -1,11 +1,10 @@
 package ch.bfh.ti.projekt1.sokoban.core;
 
-import org.apache.log4j.Logger;
-
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
+import org.apache.log4j.Logger;
 
 /**
  * Class is used to load properties of the application

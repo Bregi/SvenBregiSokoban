@@ -47,7 +47,7 @@ public class BoardView extends JPanel implements KeyListener, AbstractView {
 		this.levelName = levelName;
 		this.grid = board.getGrid();
 		this.diamonds = new Diamond[grid.length][grid.length];// TODO SET SIZE
-		this.goals = new Finish[grid.length][grid.length];														// CORRECT
+		this.goals = new Finish[grid.length][grid.length]; // CORRECT
 		this.playerPosition = playerPosition;
 		this.numberOfGoals = 0;
 		setLayout(null);
@@ -73,10 +73,8 @@ public class BoardView extends JPanel implements KeyListener, AbstractView {
 					Position oldPlayerPosition = playerPosition;
 
 					playerPosition = (Position) evt.getNewValue();
-					System.out.println(evt.getNewValue().toString());
-					movePlayer(playerPosition.getX(),
-							playerPosition.getY(), oldPlayerPosition.getX(),
-							oldPlayerPosition.getY());
+					movePlayer(playerPosition.getX(), playerPosition.getY(),
+							oldPlayerPosition.getX(), oldPlayerPosition.getY());
 
 				}
 			});
@@ -96,24 +94,43 @@ public class BoardView extends JPanel implements KeyListener, AbstractView {
 
 	}
 
-	public void movePlayer(int newX, int newY, int oldX,
-			int oldY) {
-		
+	public void movePlayer(int newX, int newY, int oldX, int oldY) {
+
 		p.setBounds(newX * 40, newY * 40, 40, 40);
-		f.setBounds(oldX * 40, oldY * 40, 40, 40);
-		
-		grid[oldX][oldY].setState(FieldState.EMPTY);
+
+		// player moved away from goal
+		if (goals[oldX][oldY] != null) {
+			// make goal again
+			grid[oldX][oldY].setState(FieldState.GOAL);
+		} else {
+			// set empty
+			grid[oldX][oldY].setState(FieldState.EMPTY);
+			f.setBounds(oldX * 40, oldY * 40, 40, 40);
+		}
 		if (grid[newX][newY].getState() == FieldState.DIAMOND) {
-			moveDiamond(newX+(newX-oldX), newY+(newY-oldY), newX, newY);
-		}else{
+			moveDiamond(newX + (newX - oldX), newY + (newY - oldY), newX, newY);
+		} else if (grid[newX][newY].getState() == FieldState.COMPLETED) {
+			numberOfGoals++;
+			System.out.println(numberOfGoals + " goals remaing");
+			moveDiamond(newX + (newX - oldX), newY + (newY - oldY), newX, newY);
+		} else {
 			SwingUtilities.invokeLater(new Runnable() {
 				public void run() {
 					repaint();
 				}
 			});
 		}
+		String s = "";
+		for (int i = 0; i < 5; i++) {
+			for (int y = 0; y < 5; y++) {
+				s += (grid[y][i].getState() + " ");
+			}
+			s += ("\n");
+		}
 
-		//System.out.println("Player moved to:" + p.getBounds().toString());
+		System.out.println(s);
+
+		// System.out.println("Player moved to:" + p.getBounds().toString());
 
 	}
 
@@ -128,35 +145,31 @@ public class BoardView extends JPanel implements KeyListener, AbstractView {
 	 * @param oldX
 	 * @param oldY
 	 */
-	public void moveDiamond(int newX, int newY,int oldX, int oldY) {
-		
+	public void moveDiamond(int newX, int newY, int oldX, int oldY) {
+
 		grid[oldX][oldY].setState(FieldState.PLAYER);
-		diamonds[newX][newY]=diamonds[oldX][oldY];
+		diamonds[newX][newY] = diamonds[oldX][oldY];
 		diamonds[oldX][oldY] = null;
-		if(grid[newX][newY].getState()==FieldState.COMPLETED){
+		if (grid[newX][newY].getState() == FieldState.COMPLETED) {
 			this.numberOfGoals--;
-			System.out.println(numberOfGoals+" goals remaing");
-			if(this.numberOfGoals == 0){
-				System.out.println("LEVEL FINISHED!");//TODO: DO SOMETHING!
+			diamonds[newX][newY].setBounds(newX * 40, newY * 40, 0, 0);
+			System.out.println(numberOfGoals + " goals remaing");
+			if (this.numberOfGoals == 0) {
+				System.out.println("LEVEL FINISHED!");// TODO: DO SOMETHING!
 			}
-			
 			goals[newX][newY].setCompleted();
-		}else{
+		} else {
 			diamonds[newX][newY].setBounds(newX * 40, newY * 40, 40, 40);
+			if (goals[oldX][oldY] != null) {
+				goals[oldX][oldY].setLeft();
+			}
 		}
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				repaint();
 			}
 		});
-		/*String s="";
-		for(int i = 0; i<5;i++){
-			for(int y=0;y<5;y++){
-				s+=(grid[y][i].getState()+ " ");
-			}
-			s+=("\n");
-		}
-		System.out.println(s);*/
+
 	}
 
 	/**
@@ -182,7 +195,7 @@ public class BoardView extends JPanel implements KeyListener, AbstractView {
 					Finish fi = new Finish();
 					numberOfGoals++;
 					goals[i][n] = fi;
-					goals[i][n].setBounds(i,n,40,40);
+					goals[i][n].setBounds(i, n, 40, 40);
 					addComponentToBoard(goals[i][n], i, n);
 					break;
 				case EMPTY:

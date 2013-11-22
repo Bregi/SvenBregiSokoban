@@ -28,8 +28,6 @@ public class StartScreen {
 	private String levelName;
 	private JFrame frame;
 
-	//public GameController gameController;
-
 	private BoardView view;
 	private JMenuBar menuBar;
 	private JMenuBar aaaBar;

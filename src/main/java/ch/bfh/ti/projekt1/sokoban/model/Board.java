@@ -204,7 +204,7 @@ public class Board extends AbstractModel {
     private boolean doesFieldContainType(FieldState state) {
         for (Field[] arr : grid) {
             for (Field field : arr) {
-                if (state == field.getState()) {
+                if (field != null && state == field.getState()) {
                     return true;
                 }
             }

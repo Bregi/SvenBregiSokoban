@@ -9,7 +9,7 @@ import ch.bfh.ti.projekt1.sokoban.xml.FieldType;
  *        All the possible states for a field on the board
  */
 public enum FieldState {
-    EMPTY, PLAYER, DIAMOND, GOAL, COMPLETED, WALL, FLOOR;
+    EMPTY, PLAYER, DIAMOND, GOAL, COMPLETED, WALL;
 
     /**
      * Helper Method for transforming XML Enum to model enum

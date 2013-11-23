@@ -1,10 +1,6 @@
 package ch.bfh.ti.projekt1.sokoban.model;
 
-import java.io.File;
-
 import ch.bfh.ti.projekt1.sokoban.controller.AbstractController;
-import ch.bfh.ti.projekt1.sokoban.core.LevelService;
-import ch.bfh.ti.projekt1.sokoban.core.LevelServiceImpl;
 
 /**
  * @author svennyffenegger
@@ -15,8 +11,6 @@ import ch.bfh.ti.projekt1.sokoban.core.LevelServiceImpl;
  */
 public class Board extends AbstractModel {
 
-
-	private LevelService levelService = new LevelServiceImpl();
 	// the current position of the player
 	private Position position;
 	private Position oldDiamondPosition;
@@ -105,7 +99,7 @@ public class Board extends AbstractModel {
 	 */
 	public void setNextField(Direction direction) {
 		Position oldPosition = position;
-		//levelService.getLevel(new File("src/test/resources/ch/bfh/ti/projekt1/sokoban/level1.xml"));
+
 		switch (direction) {
 		case DOWN:
 

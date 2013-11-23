@@ -9,8 +9,9 @@ public class Finish extends Element {
     public void setCompleted() {
         addImage(FINISH_PATH);
     }
-    public void setLeft(){
-    	addImage(GOAL_PATH);
+
+    public void setLeft() {
+        addImage(GOAL_PATH);
     }
 
 }

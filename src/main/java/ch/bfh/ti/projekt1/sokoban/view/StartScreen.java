@@ -17,6 +17,7 @@ import ch.bfh.ti.projekt1.sokoban.controller.BoardController;
 import ch.bfh.ti.projekt1.sokoban.core.LevelService;
 import ch.bfh.ti.projekt1.sokoban.core.LevelServiceImpl;
 import ch.bfh.ti.projekt1.sokoban.editor.SokobanEditor;
+import ch.bfh.ti.projekt1.sokoban.model.Level;
 
 /**
  * @author marcoberger
@@ -26,6 +27,9 @@ public class StartScreen {
 
 	private LevelService levelService = new LevelServiceImpl();
 	private String levelName;
+	private Level levels;
+	private int currentStoryLevel;
+	private String currentLevel;
 	private JFrame frame;
 
 	private BoardView view;
@@ -38,6 +42,7 @@ public class StartScreen {
 	private JMenuItem menuFileLoad;
 
 	public StartScreen() {
+		levels = new Level();
 		frame = new JFrame("Sokoban");
 
 		menuBar = new JMenuBar();
@@ -55,14 +60,16 @@ public class StartScreen {
 		menuFileNew.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				currentStoryLevel = 0;
+				currentLevel = levels.getLevel(currentStoryLevel);
 				// LevelDimensionDialog.showDimensionDialog(frame);
 
-				//GameController controller = new GameController();
-				//gameController = controller;
-				BoardController board = levelService
-						.getLevel(new File("src/test/resources/ch/bfh/ti/projekt1/sokoban/level1.xml"));
+				// GameController controller = new GameController();
+				// gameController = controller;
+				BoardController board = levelService.getLevel(new File(levels
+						.getLevel(currentStoryLevel)));
 
-				BoardView view = (BoardView) board.getView();
+				view = (BoardView) board.getView();
 				frame.setContentPane(view);
 				// load the game Menu
 				loadGameMenu();
@@ -96,10 +103,11 @@ public class StartScreen {
 					levelName = file.toString();
 					// TODO: (also validate)
 					BoardController board = levelService
-							.getLevel(new File("src/test/resources/ch/bfh/ti/projekt1/sokoban/level1.xml"));
+							.getLevel(new File(
+									"src/test/resources/ch/bfh/ti/projekt1/sokoban/level1.xml"));
 
-					BoardView view = (BoardView) board.getView();
-				//	view = controller.loadLevel(file.toString());
+					view = (BoardView) board.getView();
+					// view = controller.loadLevel(file.toString());
 					frame.setJMenuBar(new StartMenuView());
 					frame.setContentPane(view);
 
@@ -128,16 +136,6 @@ public class StartScreen {
 
 	}
 
-	public void saveGameMenu() {
-
-	}
-
-	public void restartLevelMenu() {
-
-		aaaBar = getGameMenuBar();
-		this.frame.setJMenuBar(aaaBar);
-	}
-
 	/*
 	 * provides the main functions inside the regular level view of the game
 	 * 
@@ -148,6 +146,7 @@ public class StartScreen {
 		// spiel
 		JMenu menuFile = new JMenu("Spiel");
 		JMenuItem itmNew = new JMenuItem("Neues Spiel starten");
+		JMenuItem itmNext = new JMenuItem("N‰chstes Level spielen");
 		JMenuItem itmReload = new JMenuItem("Level neu starten");
 		JMenuItem itmSave = new JMenuItem("Spiel speichern");
 		JMenuItem itmLoad = new JMenuItem("Spiel laden");
@@ -164,6 +163,10 @@ public class StartScreen {
 
 		// Spiel
 		menuFile.add(itmNew);
+		menuFile.addSeparator();
+
+		// itmNext.setEnabled(false);
+		menuFile.add(itmNext);
 		menuFile.addSeparator();
 
 		menuFile.add(itmReload);
@@ -195,14 +198,15 @@ public class StartScreen {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// LevelDimensionDialog.showDimensionDialog(frame);
-
+				currentStoryLevel = 0;
 				// TODO unsch√∂n
-				BoardController board = levelService
-						.getLevel(new File("src/test/resources/ch/bfh/ti/projekt1/sokoban/level1.xml"));
+				BoardController board = levelService.getLevel(new File(levels
+						.getLevel(currentStoryLevel)));
 
-				BoardView view = (BoardView) board.getView();
+				view = (BoardView) board.getView();
 
-				//view = controller.loadLevel("src/test/resources/ch/bfh/ti/projekt1/sokoban/level1.xml");
+				// view =
+				// controller.loadLevel("src/test/resources/ch/bfh/ti/projekt1/sokoban/level1.xml");
 
 				frame.setContentPane(view);
 
@@ -211,6 +215,38 @@ public class StartScreen {
 				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 				frame.getContentPane().revalidate();
+			}
+		});
+
+		// what happens when the user clicks on play next level
+		itmNext.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// LevelDimensionDialog.showDimensionDialog(frame);
+				if ((!view.getIsLevelFinished())) {
+					JOptionPane
+							.showMessageDialog(
+									null,
+									"Sie m¸ssen zuerst das aktuelle Level beenden um zum n‰chsten zu gelangen",
+									"Access denied", JOptionPane.ERROR_MESSAGE);
+				} else {
+					// TODO unsch√∂n
+					levelName = levels.getLevel(currentStoryLevel+1);
+					BoardController board = levelService.getLevel(new File(levelName));
+
+					view = (BoardView) board.getView();
+
+					// view =
+					// controller.loadLevel("src/test/resources/ch/bfh/ti/projekt1/sokoban/level1.xml");
+
+					frame.setContentPane(view);
+
+					// load the game Menu
+					loadGameMenu();
+					frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+					frame.getContentPane().revalidate();
+				}
 			}
 		});
 		// what happens when the user clicks on restart level
@@ -229,14 +265,14 @@ public class StartScreen {
 								options[1]);
 				if (response == JOptionPane.YES_OPTION) {
 					BoardController board = levelService
-							.getLevel(new File("src/test/resources/ch/bfh/ti/projekt1/sokoban/level1.xml"));
+							.getLevel(new File(levelName));
 
-					BoardView view = (BoardView) board.getView();
-					
-					//view = controller
-					//		.loadLevel("src/test/resources/ch/bfh/ti/projekt1/sokoban/level1.xml");
+					view = (BoardView) board.getView();
 
-					//gameController = controller;
+					// view = controller
+					// .loadLevel("src/test/resources/ch/bfh/ti/projekt1/sokoban/level1.xml");
+
+					// gameController = controller;
 
 					frame.setContentPane(view);
 					// load the game Menu
@@ -247,24 +283,24 @@ public class StartScreen {
 					frame.getContentPane().revalidate();
 
 				}
-							}
+			}
 		});
 		// what happens when the user clicks on save progress
 		itmSave.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
-				//GameController controller = gameController;
-				//controller.saveLevelProgress(controller.getBoard());
+				// GameController controller = gameController;
+				// controller.saveLevelProgress(controller.getBoard());
 			}
 		});
-		
+
 		// start the level editor
-		itmLevelEditorStart.addActionListener(new ActionListener(){
+		itmLevelEditorStart.addActionListener(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e){
-	           SokobanEditor editor =  new SokobanEditor();
-	           //frame.setContentPane(editor.);
+			public void actionPerformed(ActionEvent e) {
+				SokobanEditor editor = new SokobanEditor();
+				// frame.setContentPane(editor.);
 			}
 		});
 		// what happens when the user clicks on load a level
@@ -285,19 +321,19 @@ public class StartScreen {
 				if (response == JOptionPane.YES_OPTION) {
 
 					// TODO unsch√∂n
-				//	GameController controller = new GameController();
+					// GameController controller = new GameController();
 					
-
 					JFileChooser jFileChooser = new JFileChooser(
 							"src/test/resources/ch/bfh/ti/projekt1/sokoban/generated");
 
 					jFileChooser.showOpenDialog(null);
-					BoardController board = levelService
-							.getLevel(jFileChooser.getSelectedFile());
+					levelName=jFileChooser.getSelectedFile().toString();
+					BoardController board = levelService.getLevel(jFileChooser
+							.getSelectedFile());
 
-					BoardView view = (BoardView) board.getView();
-				//	view = controller.loadLevel(jFileChooser
-				//			.getSelectedFile());
+					view = (BoardView) board.getView();
+					// view = controller.loadLevel(jFileChooser
+					// .getSelectedFile());
 					frame.setContentPane(view);
 				}
 
@@ -317,20 +353,21 @@ public class StartScreen {
 				System.exit(0);
 			}
 		});
-		
-		itmStatistics.addActionListener(new ActionListener(){
+
+		itmStatistics.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				int steps = view.getStepsUsed();
-				JOptionPane.showMessageDialog(null ,"Schritte:"+steps+"\nFortschritt:\n");
+				JOptionPane.showMessageDialog(null, "Schritte:" + steps
+						+ "\nFortschritt:\n");
 			}
 		});
-		
-		itmBest.addActionListener(new ActionListener(){
+
+		itmBest.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				String message = "Level: 10";
-				JOptionPane.showMessageDialog(null ,message);
+				JOptionPane.showMessageDialog(null, message);
 
 			}
 		});

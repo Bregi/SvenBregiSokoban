@@ -25,6 +25,7 @@ public abstract class Element extends JComponent implements AbstractView {
     public static final String START_PATH = "src/main/resources/ch/bfh/ti/projekt1/sokoban/img/start.jpg";
     public static final String WALL_PATH = "src/main/resources/ch/bfh/ti/projekt1/sokoban/img/wall.jpg";
     public static final String GOAL_PATH = "src/main/resources/ch/bfh/ti/projekt1/sokoban/img/finish.jpg";
+    public static final String PLAYER_GOAL_PATH = "src/main/resources/ch/bfh/ti/projekt1/sokoban/img/player.jpg";
     protected FieldController controller;
     private Image backgroundImage;
     private int x, y;

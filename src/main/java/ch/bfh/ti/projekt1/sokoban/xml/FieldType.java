@@ -39,7 +39,8 @@ public enum FieldType {
     DIAMOND,
     GOAL,
     COMPLETED,
-    WALL;
+    WALL,
+    PLAYER_ON_GOAL;
 
     public String value() {
         return name();

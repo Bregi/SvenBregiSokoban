@@ -9,7 +9,7 @@ import ch.bfh.ti.projekt1.sokoban.xml.FieldType;
  *        All the possible states for a field on the board
  */
 public enum FieldState {
-    EMPTY, PLAYER, DIAMOND, GOAL, COMPLETED, WALL;
+    EMPTY, PLAYER, DIAMOND, GOAL, COMPLETED, WALL, PLAYER_ON_GOAL;
 
     /**
      * Helper Method for transforming XML Enum to model enum
@@ -31,6 +31,8 @@ public enum FieldState {
                 return PLAYER;
             case WALL:
                 return WALL;
+            case PLAYER_ON_GOAL:
+                return PLAYER_ON_GOAL;
             default:
                 return EMPTY;
         }
@@ -56,6 +58,8 @@ public enum FieldState {
                 return FieldType.COMPLETED;
             case GOAL:
                 return FieldType.GOAL;
+            case PLAYER_ON_GOAL:
+                return FieldType.PLAYER_ON_GOAL;
             default:
                 return FieldType.EMPTY;
         }

@@ -51,7 +51,13 @@ public class BoardView extends JPanel implements KeyListener, AbstractView {
      * @param evt
      */
     public void modelPropertyChange(final PropertyChangeEvent evt) {
-
+    	String s = "";
+    	for(int i = 0; i<grid.length;i++){
+    		for(int n=0;n<grid[0].length;n++){
+    			s+=grid[n][i].getState();
+    		}s+="\n";
+    	}
+    	System.out.println(s);
         // we have a new position, the player was moved
         if (evt.getNewValue() instanceof Position) {
             this.stepsUsed++;

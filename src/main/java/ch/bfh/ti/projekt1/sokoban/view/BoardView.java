@@ -51,13 +51,14 @@ public class BoardView extends JPanel implements KeyListener, AbstractView {
      * @param evt
      */
     public void modelPropertyChange(final PropertyChangeEvent evt) {
-    	String s = "";
-    	for(int i = 0; i<grid.length;i++){
-    		for(int n=0;n<grid[0].length;n++){
-    			s+=grid[n][i].getState();
-    		}s+="\n";
-    	}
-    	System.out.println(s);
+        String s = "";
+        for (int i = 0; i < grid.length; i++) {
+            for (int n = 0; n < grid[0].length; n++) {
+                s += grid[n][i].getState();
+            }
+            s += "\n";
+        }
+        System.out.println(s);
         // we have a new position, the player was moved
         if (evt.getNewValue() instanceof Position) {
             this.stepsUsed++;
@@ -120,6 +121,11 @@ public class BoardView extends JPanel implements KeyListener, AbstractView {
                         this.add(d);
                         field[i][n] = d;
                         break;
+                    case PLAYER_ON_GOAL:
+                        PlayerOnGoal pl = new PlayerOnGoal();
+                        this.add(pl);
+                        field[i][n] = pl;
+                        break;
                     default:
                         break;
                 }
@@ -132,7 +138,7 @@ public class BoardView extends JPanel implements KeyListener, AbstractView {
      * takes the level file and draws the elements on screen
      */
     public void drawLevel() {
-    	boolean levelFinish = true;
+        boolean levelFinish = true;
         for (int i = 0; i < grid.length; i++) {
             for (int n = 0; n < grid[i].length; n++) {
                 switch (grid[i][n].getState()) {
@@ -155,7 +161,7 @@ public class BoardView extends JPanel implements KeyListener, AbstractView {
                         }
                         break;
                     case GOAL:
-                    	levelFinish = false;
+                        levelFinish = false;
                         if (!(field[i][n] instanceof Goal)) {
                             this.remove(field[i][n]);
                             Goal g = new Goal();
@@ -187,13 +193,22 @@ public class BoardView extends JPanel implements KeyListener, AbstractView {
                             this.add(f);
                             field[i][n] = f;
                         }
+                        break;
+                    case PLAYER_ON_GOAL:
+                        if (!(field[i][n] instanceof PlayerOnGoal)) {
+                            this.remove(field[i][n]);
+                            PlayerOnGoal p = new PlayerOnGoal();
+                            this.add(p);
+                            field[i][n] = p;
+                        }
+                        break;
                     default:
                         break;
                 }
             }
         }
-        if(levelFinish==true){
-        	this.levelIsFinished = true;
+        if (levelFinish == true) {
+            this.levelIsFinished = true;
         }
         repaint();
     }
@@ -213,11 +228,11 @@ public class BoardView extends JPanel implements KeyListener, AbstractView {
      */
     @Override
     protected void paintComponent(Graphics g) {
-    	
-    	//check for finished level
-    	if(getIsLevelFinished()){
-    		
-    	}
+
+        //check for finished level
+        if (getIsLevelFinished()) {
+
+        }
         for (int i = 0; i < field.length; i++) {
             for (int n = 0; n < field[i].length; n++) {
                 field[i][n].setBounds(i * 40, n * 40, 40, 40);

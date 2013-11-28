@@ -40,11 +40,13 @@ public class StartScreen {
 
 	private JMenuItem menuFileNew;
 	private JMenuItem menuFileLoad;
+	private JMenuItem menuFileLoadLevel;
 
 	public StartScreen() {
 		levels = new Level();
 		frame = new JFrame("Sokoban");
-
+		frame.setSize(500,300);
+		frame.setLocationRelativeTo(null);
 		menuBar = new JMenuBar();
 		frame.setJMenuBar(menuBar);
 
@@ -53,9 +55,11 @@ public class StartScreen {
 
 		menuFileNew = new JMenuItem("New Game");
 		menuFileLoad = new JMenuItem("Load Game");
+		menuFileLoadLevel = new JMenuItem("Load Level");
 		menuFile.add(menuFileNew);
 		menuFile.add(menuFileLoad);
-
+		menuFile.add(menuFileLoadLevel);
+		
 		// what happens when the user clicks on start new game
 		menuFileNew.addActionListener(new ActionListener() {
 			@Override
@@ -68,8 +72,9 @@ public class StartScreen {
 				// gameController = controller;
 				BoardController board = levelService.getLevel(new File(levels
 						.getLevel(currentStoryLevel)));
-
 				view = (BoardView) board.getView();
+				frame.setSize(view.getWindowSizeX(),view.getWindowSizeY());
+				frame.setLocationRelativeTo(null);
 				frame.setContentPane(view);
 				// load the game Menu
 				loadGameMenu();
@@ -80,8 +85,53 @@ public class StartScreen {
 			}
 		});
 
-		// what happens when the user clicks on load a level
+		// what happens when the user clicks on load game
 		menuFileLoad.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				// Create a file chooser
+				JFileChooser fc = new JFileChooser();
+				FileNameExtensionFilter sokfilter = new FileNameExtensionFilter(
+						"Sokoban game files (*.sok)", "sok");
+				// set the filter to only allow xml files
+				fc.setFileFilter(sokfilter);
+				fc.setDialogTitle("Open schedule file");
+				// set selected filter
+				fc.setFileFilter(sokfilter);
+				// Handle open button action.
+				int returnVal = fc.showOpenDialog(frame);
+
+				if (returnVal == JFileChooser.APPROVE_OPTION) {
+					File file = fc.getSelectedFile();
+					System.out.println(file.toString());
+					levelName = file.toString();
+					// TODO: (also validate)
+					BoardController board = levelService
+							.getLevel(new File(
+									"src/test/resources/ch/bfh/ti/projekt1/sokoban/level1.xml"));
+
+					view = (BoardView) board.getView();
+					frame.setSize(view.getWindowSizeX(),view.getWindowSizeY());
+					frame.setLocationRelativeTo(null);
+					// view = controller.loadLevel(file.toString());
+					frame.setJMenuBar(new StartMenuView());
+					frame.setContentPane(view);
+
+					frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+					view.requestFocusInWindow();
+					frame.getContentPane().revalidate();
+				} else {
+					// show that the file was not applicable in this case
+				}
+
+				frame.getContentPane().revalidate();
+			}
+		});
+		
+		// what happens when the user clicks on load a level
+		menuFileLoadLevel.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
@@ -107,6 +157,8 @@ public class StartScreen {
 									"src/test/resources/ch/bfh/ti/projekt1/sokoban/level1.xml"));
 
 					view = (BoardView) board.getView();
+					frame.setSize(view.getWindowSizeX(),view.getWindowSizeY());
+					frame.setLocationRelativeTo(null);
 					// view = controller.loadLevel(file.toString());
 					frame.setJMenuBar(new StartMenuView());
 					frame.setContentPane(view);
@@ -122,7 +174,6 @@ public class StartScreen {
 				frame.getContentPane().revalidate();
 			}
 		});
-
 		frame.setSize(500, 500);
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		frame.setVisible(true);
@@ -204,6 +255,8 @@ public class StartScreen {
 						.getLevel(currentStoryLevel)));
 
 				view = (BoardView) board.getView();
+				frame.setSize(view.getWindowSizeX(),view.getWindowSizeY());
+				frame.setLocationRelativeTo(null);
 
 				// view =
 				// controller.loadLevel("src/test/resources/ch/bfh/ti/projekt1/sokoban/level1.xml");
@@ -230,14 +283,12 @@ public class StartScreen {
 									"Sie müssen zuerst das aktuelle Level beenden um zum nächsten zu gelangen",
 									"Access denied", JOptionPane.ERROR_MESSAGE);
 				} else {
-					// TODO unschÃ¶n
 					levelName = levels.getLevel(currentStoryLevel+1);
 					BoardController board = levelService.getLevel(new File(levelName));
 
 					view = (BoardView) board.getView();
-
-					// view =
-					// controller.loadLevel("src/test/resources/ch/bfh/ti/projekt1/sokoban/level1.xml");
+					frame.setSize(view.getWindowSizeX(),view.getWindowSizeY());
+					frame.setLocationRelativeTo(null);
 
 					frame.setContentPane(view);
 
@@ -253,8 +304,7 @@ public class StartScreen {
 		itmReload.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// LevelDimensionDialog.showDimensionDialog(frame);
-
+				
 				Object[] options = { "Ja", "Nein" };
 				int response = JOptionPane
 						.showOptionDialog(
@@ -268,13 +318,10 @@ public class StartScreen {
 							.getLevel(new File(levelName));
 
 					view = (BoardView) board.getView();
-
-					// view = controller
-					// .loadLevel("src/test/resources/ch/bfh/ti/projekt1/sokoban/level1.xml");
-
-					// gameController = controller;
-
+					
+					
 					frame.setContentPane(view);
+					
 					// load the game Menu
 					loadGameMenu();
 					frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -290,8 +337,6 @@ public class StartScreen {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
-				// GameController controller = gameController;
-				// controller.saveLevelProgress(controller.getBoard());
 			}
 		});
 
@@ -320,8 +365,6 @@ public class StartScreen {
 
 				if (response == JOptionPane.YES_OPTION) {
 
-					// TODO unschÃ¶n
-					// GameController controller = new GameController();
 					
 					JFileChooser jFileChooser = new JFileChooser(
 							"src/test/resources/ch/bfh/ti/projekt1/sokoban/generated");
@@ -332,8 +375,7 @@ public class StartScreen {
 							.getSelectedFile());
 
 					view = (BoardView) board.getView();
-					// view = controller.loadLevel(jFileChooser
-					// .getSelectedFile());
+					frame.setSize(view.getWindowSizeX(),view.getWindowSizeY());
 					frame.setContentPane(view);
 				}
 

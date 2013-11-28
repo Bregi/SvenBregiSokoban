@@ -73,7 +73,24 @@ public class BoardView extends JPanel implements KeyListener, AbstractView {
 
         }
     }
+    /**
+     * Used for the resize of the window
+     * 
+     * @return int
+     */
+    public int getWindowSizeX(){
+    	return grid.length*40+16;
+    }
 
+    /**
+     * Used for the resize of the window
+     * 
+     * @return int
+     */
+    public int getWindowSizeY(){
+    	return grid[0].length*40+60;
+    }
+    
     public void keyTyped(KeyEvent e) {
         controller.keyTyped(e);
     }

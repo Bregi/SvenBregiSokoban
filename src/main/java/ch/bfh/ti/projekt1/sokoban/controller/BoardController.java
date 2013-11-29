@@ -8,7 +8,7 @@ import java.awt.event.KeyEvent;
  * @author svennyffenegger
  * @since 11.10.13 13:32
  */
-public class BoardController extends AbstractController {
+public class BoardController extends AbstractMultiController {
 
 	/**
 	 * Key has been typed. Player has to be moved if allowed

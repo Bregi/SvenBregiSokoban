@@ -4,7 +4,10 @@ import ch.bfh.ti.projekt1.sokoban.model.AbstractModel;
 import ch.bfh.ti.projekt1.sokoban.view.AbstractView;
 
 import java.beans.PropertyChangeEvent;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+
+import org.apache.log4j.Logger;
 
 /**
  * This abstract controller adds the functionality of adding multiple views
@@ -17,7 +20,8 @@ public abstract class AbstractMultiController extends AbstractController {
 
     protected ArrayList<AbstractView> registeredViews;
     protected ArrayList<AbstractModel> registeredModels;
-
+    private static final Logger LOG = Logger.getLogger(AbstractController.class);
+    
     public AbstractMultiController() {
         registeredViews = new ArrayList<AbstractView>();
         registeredModels = new ArrayList<AbstractModel>();
@@ -47,4 +51,40 @@ public abstract class AbstractMultiController extends AbstractController {
             view.modelPropertyChange(evt);
         }
     }
+    
+    public AbstractView getView(Class<? extends AbstractView> clazz) {
+    	for (AbstractView view : registeredViews) {
+    		if (clazz.isInstance(view)) {
+    			return view;
+    		}
+    	}
+    	return null;
+    }
+
+	@Override
+	public void setView(AbstractView view) {
+		// TODO Auto-generated method stub
+		addView(view);
+	}
+
+	@Override
+	public void setModel(AbstractModel model) {
+		// TODO Auto-generated method stub
+		addModel(model);
+	}
+    protected void setModelProperty(String propertyName, Object newValue) {
+    	for (AbstractModel model : registeredModels) {
+        try {
+            Method method = model.getClass().getMethod(
+                    "set" + propertyName,
+                    new Class[]{newValue.getClass()}
+            );
+            method.invoke(model, newValue);
+
+        } catch (Exception ex) {
+            LOG.error(ex);
+        }
+    	}
+    }
+    
 }

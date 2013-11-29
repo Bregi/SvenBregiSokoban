@@ -262,20 +262,28 @@ public class Board extends AbstractModel {
 		// check if the position has been changed and a property change needs to
 		// be fired
 		if (oldPosition != position) {
-			// move the diamond also if diamond was in the way
-			/*
-			 * if (diamondMove == true) { if
-			 * (grid[diamondPosition.getX()][diamondPosition.getY()] .getState()
-			 * == FieldState.GOAL) {
-			 * grid[diamondPosition.getX()][diamondPosition.getY()]
-			 * .setState(FieldState.COMPLETED); } else {
-			 * grid[diamondPosition.getX()][diamondPosition.getY()]
-			 * .setState(FieldState.DIAMOND); } }
-			 */
+			checkLevelStatus();
 			diamondMove = false;
 
 			firePropertyChange(AbstractController.PROPERTY_POSITION,
 					oldPosition, position);
+		}
+	}
+	
+	/**
+	 * Checks if the Level is finished
+	 */
+	public void checkLevelStatus(){
+		boolean finished = true;
+		for(int i=0;i<grid.length;i++){
+			for(int n=0;n<grid[0].length;n++){
+				if((grid[i][n].getState() == FieldState.GOAL)||(grid[i][n].getState() == FieldState.PLAYER_ON_GOAL)){
+					finished = false;
+				}
+			}
+		}
+		if(finished){
+			firePropertyChange(AbstractController.PROPERTY_LEVEL_STATUS, true,true);
 		}
 	}
 

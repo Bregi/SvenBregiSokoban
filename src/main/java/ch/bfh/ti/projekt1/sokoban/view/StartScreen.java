@@ -2,7 +2,9 @@ package ch.bfh.ti.projekt1.sokoban.view;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
 import java.io.File;
+import java.io.FileWriter;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -13,6 +15,7 @@ import javax.swing.JOptionPane;
 import javax.swing.WindowConstants;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import ch.bfh.ti.projekt1.sokoban.controller.AbstractController;
 import ch.bfh.ti.projekt1.sokoban.controller.BoardController;
 import ch.bfh.ti.projekt1.sokoban.core.LevelService;
 import ch.bfh.ti.projekt1.sokoban.core.LevelServiceImpl;
@@ -23,7 +26,7 @@ import ch.bfh.ti.projekt1.sokoban.model.Level;
  * @author marcoberger
  * @since 24/10/13 14:29
  */
-public class StartScreen {
+public class StartScreen implements AbstractView {
 
 	private LevelService levelService = new LevelServiceImpl();
 	private String levelName;
@@ -34,17 +37,23 @@ public class StartScreen {
 
 	private BoardView view;
 	private JMenuBar menuBar;
-	private JMenuBar aaaBar;
+	private JMenuBar gameMenuBar;
 
 	private JMenu menuFile;
 
 	private JMenuItem menuFileNew;
 	private JMenuItem menuFileLoad;
+	private JMenuItem menuFileLoadLevel;
 
+	/**
+	 * Method used to initialize the game screen
+	 * 
+	 */
 	public StartScreen() {
 		levels = new Level();
 		frame = new JFrame("Sokoban");
-
+		frame.setSize(500, 300);
+		frame.setLocationRelativeTo(null);
 		menuBar = new JMenuBar();
 		frame.setJMenuBar(menuBar);
 
@@ -53,8 +62,10 @@ public class StartScreen {
 
 		menuFileNew = new JMenuItem("New Game");
 		menuFileLoad = new JMenuItem("Load Game");
+		menuFileLoadLevel = new JMenuItem("Load Level");
 		menuFile.add(menuFileNew);
 		menuFile.add(menuFileLoad);
+		menuFile.add(menuFileLoadLevel);
 
 		// what happens when the user clicks on start new game
 		menuFileNew.addActionListener(new ActionListener() {
@@ -64,12 +75,13 @@ public class StartScreen {
 				currentLevel = levels.getLevel(currentStoryLevel);
 				// LevelDimensionDialog.showDimensionDialog(frame);
 
-				// GameController controller = new GameController();
-				// gameController = controller;
 				BoardController board = levelService.getLevel(new File(levels
 						.getLevel(currentStoryLevel)));
+				board.addView(StartScreen.this);
 
-				view = (BoardView) board.getView();
+				view = (BoardView) board.getView(BoardView.class);
+				frame.setSize(view.getWindowSizeX(), view.getWindowSizeY());
+				frame.setLocationRelativeTo(null);
 				frame.setContentPane(view);
 				// load the game Menu
 				loadGameMenu();
@@ -80,8 +92,52 @@ public class StartScreen {
 			}
 		});
 
-		// what happens when the user clicks on load a level
+		// what happens when the user clicks on load game
 		menuFileLoad.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				// Create a file chooser
+				JFileChooser fc = new JFileChooser();
+				FileNameExtensionFilter sokfilter = new FileNameExtensionFilter(
+						"Sokoban game files (*.sok)", "sok");
+				// set the filter to only allow sok files
+				fc.setFileFilter(sokfilter);
+				fc.setDialogTitle("Open schedule file");
+				// set selected filter
+				fc.setFileFilter(sokfilter);
+				// Handle open button action.
+				int returnVal = fc.showOpenDialog(frame);
+
+				if (returnVal == JFileChooser.APPROVE_OPTION) {
+					File file = fc.getSelectedFile();
+					System.out.println(file.toString());
+					levelName = file.toString();
+					// TODO: (also validate)
+					BoardController board = levelService.getLevel(new File(levelName));
+					board.addView(StartScreen.this);
+
+					view = (BoardView) board.getView(BoardView.class);
+					frame.setSize(view.getWindowSizeX(), view.getWindowSizeY());
+					frame.setLocationRelativeTo(null);
+					// view = controller.loadLevel(file.toString());
+					frame.setJMenuBar(new StartMenuView());
+					frame.setContentPane(view);
+
+					frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+					view.requestFocusInWindow();
+					frame.getContentPane().revalidate();
+				} else {
+					// show that the file was not applicable in this case
+				}
+
+				frame.getContentPane().revalidate();
+			}
+		});
+
+		// what happens when the user clicks on load a level
+		menuFileLoadLevel.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
@@ -105,8 +161,11 @@ public class StartScreen {
 					BoardController board = levelService
 							.getLevel(new File(
 									"src/test/resources/ch/bfh/ti/projekt1/sokoban/level1.xml"));
+					board.addView(StartScreen.this);
 
-					view = (BoardView) board.getView();
+					view = (BoardView) board.getView(BoardView.class);
+					frame.setSize(view.getWindowSizeX(), view.getWindowSizeY());
+					frame.setLocationRelativeTo(null);
 					// view = controller.loadLevel(file.toString());
 					frame.setJMenuBar(new StartMenuView());
 					frame.setContentPane(view);
@@ -122,7 +181,6 @@ public class StartScreen {
 				frame.getContentPane().revalidate();
 			}
 		});
-
 		frame.setSize(500, 500);
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		frame.setVisible(true);
@@ -131,8 +189,8 @@ public class StartScreen {
 
 	public void loadGameMenu() {
 
-		aaaBar = getGameMenuBar();
-		this.frame.setJMenuBar(aaaBar);
+		gameMenuBar = getGameMenuBar();
+		this.frame.setJMenuBar(gameMenuBar);
 
 	}
 
@@ -187,11 +245,11 @@ public class StartScreen {
 
 		// leveleditor
 		menuLevelEditor.add(itmLevelEditorStart);
-		aaaBar = new JMenuBar();
+		gameMenuBar = new JMenuBar();
 
-		aaaBar.add(menuFile);
-		aaaBar.add(menuEdit);
-		aaaBar.add(menuLevelEditor);
+		gameMenuBar.add(menuFile);
+		gameMenuBar.add(menuEdit);
+		gameMenuBar.add(menuLevelEditor);
 
 		// what happens when the user clicks on start new game
 		itmNew.addActionListener(new ActionListener() {
@@ -202,8 +260,11 @@ public class StartScreen {
 				// TODO unsch√∂n
 				BoardController board = levelService.getLevel(new File(levels
 						.getLevel(currentStoryLevel)));
+				board.addView(StartScreen.this);
 
-				view = (BoardView) board.getView();
+				view = (BoardView) board.getView(BoardView.class);
+				frame.setSize(view.getWindowSizeX(), view.getWindowSizeY());
+				frame.setLocationRelativeTo(null);
 
 				// view =
 				// controller.loadLevel("src/test/resources/ch/bfh/ti/projekt1/sokoban/level1.xml");
@@ -230,14 +291,14 @@ public class StartScreen {
 									"Sie m¸ssen zuerst das aktuelle Level beenden um zum n‰chsten zu gelangen",
 									"Access denied", JOptionPane.ERROR_MESSAGE);
 				} else {
-					// TODO unsch√∂n
-					levelName = levels.getLevel(currentStoryLevel+1);
-					BoardController board = levelService.getLevel(new File(levelName));
+					levelName = levels.getLevel(currentStoryLevel + 1);
+					BoardController board = levelService.getLevel(new File(
+							levelName));
+					board.addView(StartScreen.this);
 
-					view = (BoardView) board.getView();
-
-					// view =
-					// controller.loadLevel("src/test/resources/ch/bfh/ti/projekt1/sokoban/level1.xml");
+					view = (BoardView) board.getView(BoardView.class);
+					frame.setSize(view.getWindowSizeX(), view.getWindowSizeY());
+					frame.setLocationRelativeTo(null);
 
 					frame.setContentPane(view);
 
@@ -253,7 +314,6 @@ public class StartScreen {
 		itmReload.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// LevelDimensionDialog.showDimensionDialog(frame);
 
 				Object[] options = { "Ja", "Nein" };
 				int response = JOptionPane
@@ -264,17 +324,14 @@ public class StartScreen {
 								JOptionPane.QUESTION_MESSAGE, null, options,
 								options[1]);
 				if (response == JOptionPane.YES_OPTION) {
-					BoardController board = levelService
-							.getLevel(new File(levelName));
+					BoardController board = levelService.getLevel(new File(
+							levelName));
+					board.addView(StartScreen.this);
 
 					view = (BoardView) board.getView();
 
-					// view = controller
-					// .loadLevel("src/test/resources/ch/bfh/ti/projekt1/sokoban/level1.xml");
-
-					// gameController = controller;
-
 					frame.setContentPane(view);
+
 					// load the game Menu
 					loadGameMenu();
 					frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -289,9 +346,20 @@ public class StartScreen {
 		itmSave.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-
-				// GameController controller = gameController;
-				// controller.saveLevelProgress(controller.getBoard());
+				String sb = "TEST CONTENT";
+				JFileChooser chooser = new JFileChooser();
+				// chooser.setCurrentDirectory(new File("/home/me/Documents"));
+				int retrival = chooser.showSaveDialog(null);
+				if (retrival == JFileChooser.APPROVE_OPTION) {
+					try {
+						FileWriter fw = new FileWriter(chooser
+								.getSelectedFile() + ".sok");
+						fw.write(sb.toString());
+						fw.close();
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					}
+				}
 			}
 		});
 
@@ -320,20 +388,17 @@ public class StartScreen {
 
 				if (response == JOptionPane.YES_OPTION) {
 
-					// TODO unsch√∂n
-					// GameController controller = new GameController();
-					
 					JFileChooser jFileChooser = new JFileChooser(
 							"src/test/resources/ch/bfh/ti/projekt1/sokoban/generated");
 
 					jFileChooser.showOpenDialog(null);
-					levelName=jFileChooser.getSelectedFile().toString();
+					levelName = jFileChooser.getSelectedFile().toString();
 					BoardController board = levelService.getLevel(jFileChooser
 							.getSelectedFile());
+					board.addView(StartScreen.this);
 
-					view = (BoardView) board.getView();
-					// view = controller.loadLevel(jFileChooser
-					// .getSelectedFile());
+					view = (BoardView) board.getView(BoardView.class);
+					frame.setSize(view.getWindowSizeX(), view.getWindowSizeY());
 					frame.setContentPane(view);
 				}
 
@@ -371,6 +436,19 @@ public class StartScreen {
 
 			}
 		});
-		return aaaBar;
+		return gameMenuBar;
 	}
+	
+	/**
+     * Gets called when the model has changed
+     *
+     * @param evt
+     */
+    public void modelPropertyChange(final PropertyChangeEvent evt) {
+    	if(evt.getPropertyName().equals((AbstractController.PROPERTY_LEVEL_STATUS))){
+    		if((boolean)evt.getNewValue()==true){
+    			System.out.println("SDFSDF");
+    		}
+    	}
+    }
 }

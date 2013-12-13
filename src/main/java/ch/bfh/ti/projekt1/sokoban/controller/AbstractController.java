@@ -24,6 +24,7 @@ public abstract class AbstractController implements PropertyChangeListener {
     public static final String PROPERTY_FIELD = "Field";
     public static final String PROPERTY_FIELD_STATE = "State";
     public static final String PROPERTY_LEVEL_NAME = "LevelName";
+    public static final String PROPERTY_LEVEL_STATUS = "LevelStatus";
     private static final Logger LOG = Logger.getLogger(AbstractController.class);
     private AbstractView view;
     private AbstractModel model;

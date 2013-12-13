@@ -265,7 +265,7 @@ public class Board extends AbstractModel {
 		// check if the position has been changed and a property change needs to
 		// be fired
 		if (oldPosition != position) {
-			checkLevelStatus();
+<<<<<<< HEAD
 			// move the diamond also if diamond was in the way
 			/*
 			 * if (diamondMove == true) { if
@@ -277,6 +277,9 @@ public class Board extends AbstractModel {
 			 * .setState(FieldState.DIAMOND); } }
 			 */
             moves.add(direction);
+=======
+			checkLevelStatus();
+>>>>>>> 2b74ac22930adc5198b8e831967d02e4cd594c6d
 			diamondMove = false;
 
 			firePropertyChange(AbstractController.PROPERTY_POSITION,

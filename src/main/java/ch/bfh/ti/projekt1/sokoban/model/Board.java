@@ -297,7 +297,7 @@ public class Board extends AbstractModel {
 			}
 		}
 		if(finished){
-			firePropertyChange(AbstractController.PROPERTY_LEVEL_STATUS, true,true);
+			firePropertyChange(AbstractController.PROPERTY_LEVEL_STATUS, false,true);
 		}
 	}
 

@@ -26,7 +26,7 @@ public class LevelServiceImpl implements LevelService {
 
         Board board = new Board(xmlService.getMaxColumnCount(level.getRow()), level.getRow().size(), startPos);
 
-        BoardController boardControl§ler = new BoardController();
+        BoardController boardController = new BoardController();
 
         for (Row rowType : level.getRow()) {
             for (Column columnType : rowType.getColumn()) {

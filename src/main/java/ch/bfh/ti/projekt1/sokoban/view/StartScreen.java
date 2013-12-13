@@ -231,7 +231,7 @@ public class StartScreen implements AbstractView {
 		// spiel
 		JMenu menuFile = new JMenu("Spiel");
 		JMenuItem itmNew = new JMenuItem("Neues Spiel starten");
-		JMenuItem itmNext = new JMenuItem("Nächstes Level spielen");
+		JMenuItem itmNext = new JMenuItem("Nï¿½chstes Level spielen");
 		JMenuItem itmReload = new JMenuItem("Level neu starten");
 		JMenuItem itmSave = new JMenuItem("Spiel speichern");
 		JMenuItem itmLoad = new JMenuItem("Spiel laden");
@@ -315,25 +315,10 @@ public class StartScreen implements AbstractView {
 					JOptionPane
 							.showMessageDialog(
 									null,
-									"Sie müssen zuerst das aktuelle Level beenden um zum nächsten zu gelangen",
+									"Sie mï¿½ssen zuerst das aktuelle Level beenden um zum nï¿½chsten zu gelangen",
 									"Access denied", JOptionPane.ERROR_MESSAGE);
 				} else {
-					levelName = levels.getLevel(currentStoryLevel + 1);
-					BoardController board = levelService.getLevel(new File(
-							levelName));
-					board.addView(StartScreen.this);
-
-					view = (BoardView) board.getView(BoardView.class);
-					frame.setSize(view.getWindowSizeX(), view.getWindowSizeY());
-					frame.setLocationRelativeTo(null);
-
-					frame.setContentPane(view);
-
-					// load the game Menu
-					loadGameMenu();
-					frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-					frame.getContentPane().revalidate();
+					loadNextLevel();
 				}
 			}
 		});
@@ -474,7 +459,7 @@ public class StartScreen implements AbstractView {
 		if (evt.getPropertyName().equals(
 				(AbstractController.PROPERTY_LEVEL_STATUS))) {
 			if ((boolean) evt.getNewValue() == true) {
-				System.out.println("SDFSDF");
+				loadNextLevel();
 			}
 		}
 	}
@@ -494,5 +479,24 @@ public class StartScreen implements AbstractView {
 		highscore.mkdir();
 		File solutions = new File(basePath + profileName + "/Solutions");
 		solutions.mkdir();
+	}
+	
+	private void loadNextLevel() {
+		levelName = levels.getLevel(currentStoryLevel + 1);
+		BoardController board = levelService.getLevel(new File(
+				levelName));
+		board.addView(StartScreen.this);
+
+		view = (BoardView) board.getView(BoardView.class);
+		frame.setSize(view.getWindowSizeX(), view.getWindowSizeY());
+		frame.setLocationRelativeTo(null);
+
+		frame.setContentPane(view);
+
+		// load the game Menu
+		loadGameMenu();
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+		frame.getContentPane().revalidate();
 	}
 }

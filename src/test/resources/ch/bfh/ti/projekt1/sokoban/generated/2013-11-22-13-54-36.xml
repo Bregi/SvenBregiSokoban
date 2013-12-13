@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<level xmlns="http://bfh.ch" id="asdfdsf23424ar">
+<level xmlns="http://bfh.ch">
     <row id="0">
         <column id="0" type="EMPTY"/>
         <column id="1" type="EMPTY"/>
@@ -13,9 +13,9 @@
         <column id="9" type="EMPTY"/>
     </row>
     <row id="1">
-        <column id="0" type="DIAMOND"/>
-        <column id="1" type="DIAMOND"/>
-        <column id="2" type="DIAMOND"/>
+        <column id="0" type="EMPTY"/>
+        <column id="1" type="EMPTY"/>
+        <column id="2" type="EMPTY"/>
         <column id="3" type="EMPTY"/>
         <column id="4" type="EMPTY"/>
         <column id="5" type="EMPTY"/>
@@ -40,7 +40,7 @@
         <column id="0" type="EMPTY"/>
         <column id="1" type="EMPTY"/>
         <column id="2" type="EMPTY"/>
-        <column id="3" type="EMPTY"/>
+        <column id="3" type="PLAYER"/>
         <column id="4" type="EMPTY"/>
         <column id="5" type="EMPTY"/>
         <column id="6" type="EMPTY"/>
@@ -64,7 +64,7 @@
         <column id="0" type="EMPTY"/>
         <column id="1" type="EMPTY"/>
         <column id="2" type="EMPTY"/>
-        <column id="3" type="EMPTY"/>
+        <column id="3" type="DIAMOND"/>
         <column id="4" type="EMPTY"/>
         <column id="5" type="EMPTY"/>
         <column id="6" type="EMPTY"/>
@@ -121,5 +121,5 @@
         <column id="9" type="EMPTY"/>
     </row>
     <name>Levelnull</name>
-    <startPosition row="0" column="0"/>
+    <startPosition row="3" column="3"/>
 </level>

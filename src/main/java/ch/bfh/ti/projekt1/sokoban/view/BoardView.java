@@ -234,8 +234,14 @@ public class BoardView extends JPanel implements KeyListener, AbstractView {
 
         }
         for (int i = 0; i < field.length; i++) {
+
+            //TODO
             for (int n = 0; n < field[i].length; n++) {
+                if (field[i][n] != null) {
                 field[i][n].setBounds(i * 40, n * 40, 40, 40);
+
+                }
+
             }
         }
         if (playerPosition != null) {

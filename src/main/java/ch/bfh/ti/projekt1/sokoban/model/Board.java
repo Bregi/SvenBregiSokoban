@@ -2,6 +2,9 @@ package ch.bfh.ti.projekt1.sokoban.model;
 
 import ch.bfh.ti.projekt1.sokoban.controller.AbstractController;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * @author svennyffenegger
  * @since 11.10.13 13:32
@@ -13,12 +16,11 @@ public class Board extends AbstractModel {
 
 	// the current position of the player
 	private Position position;
-	// private Position oldDiamondPosition;
-	// private Position diamondPosition;
 	// grid of the fields
 	private Field[][] grid;
 	private String levelName;
 	private boolean diamondMove;
+    private List<Direction> moves;
 
 	// used for the editor mainly
 	public Board(int width, int height) {
@@ -30,6 +32,7 @@ public class Board extends AbstractModel {
 		this.position = startPosition;
 		this.diamondMove = false;
 		grid = new Field[width][height];
+        moves = new LinkedList<Direction>();
 	}
 
 	public String getLevelName() {
@@ -272,6 +275,7 @@ public class Board extends AbstractModel {
 			 * grid[diamondPosition.getX()][diamondPosition.getY()]
 			 * .setState(FieldState.DIAMOND); } }
 			 */
+            moves.add(direction);
 			diamondMove = false;
 
 			firePropertyChange(AbstractController.PROPERTY_POSITION,
@@ -332,4 +336,8 @@ public class Board extends AbstractModel {
 		}
 		return false;
 	}
+
+    public List<Direction> getMoves() {
+        return moves;
+    }
 }

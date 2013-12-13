@@ -5,6 +5,9 @@ import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -33,6 +36,8 @@ public class StartScreen implements AbstractView {
 	private Level levels;
 	private int currentStoryLevel;
 	private String currentLevel;
+	private String basePath;
+	private String player;
 	private JFrame frame;
 
 	private BoardView view;
@@ -51,6 +56,7 @@ public class StartScreen implements AbstractView {
 	 */
 	public StartScreen() {
 		levels = new Level();
+		basePath = "src/test/resources/ch/bfh/ti/projekt1/sokoban/";
 		frame = new JFrame("Sokoban");
 		frame.setSize(500, 300);
 		frame.setLocationRelativeTo(null);
@@ -71,24 +77,33 @@ public class StartScreen implements AbstractView {
 		menuFileNew.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				currentStoryLevel = 0;
-				currentLevel = levels.getLevel(currentStoryLevel);
-				// LevelDimensionDialog.showDimensionDialog(frame);
 
-				BoardController board = levelService.getLevel(new File(levels
-						.getLevel(currentStoryLevel)));
-				board.addView(StartScreen.this);
+				PlayerName playerName = new PlayerName();
+				player = playerName.showDimensionDialog(frame);
 
-				view = (BoardView) board.getView(BoardView.class);
-				frame.setSize(view.getWindowSizeX(), view.getWindowSizeY());
-				frame.setLocationRelativeTo(null);
-				frame.setContentPane(view);
-				// load the game Menu
-				loadGameMenu();
-				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+				// create profile directory
+				createPlayerProfile(player);
 
-				view.requestFocusInWindow();
-				frame.getContentPane().revalidate();
+				if (player != null) {
+					currentStoryLevel = 0;
+					currentLevel = levels.getLevel(currentStoryLevel);
+
+					BoardController board = levelService.getLevel(new File(
+							levels.getLevel(currentStoryLevel)));
+					board.addView(StartScreen.this);
+
+					view = (BoardView) board.getView(BoardView.class);
+					frame.setSize(view.getWindowSizeX(), view.getWindowSizeY());
+					frame.setLocationRelativeTo(null);
+					frame.setContentPane(view);
+					// load the game Menu
+					loadGameMenu();
+					frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+					view.requestFocusInWindow();
+					frame.getContentPane().revalidate();
+
+				}
 			}
 		});
 
@@ -111,16 +126,28 @@ public class StartScreen implements AbstractView {
 
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					File file = fc.getSelectedFile();
-					System.out.println(file.toString());
-					levelName = file.toString();
+					// Get content from file
+					String fileContent = new String();
+					try {
+						fileContent = new String(Files.readAllBytes(Paths
+								.get(file.toString())));
+					} catch (IOException ex) {
+						ex.printStackTrace();
+					}
+					System.out.println(fileContent);
+					String[] content = fileContent.split(":");
+					player = content[0];
+					currentStoryLevel = levels.getLevelByHash(content[1]);
+
+					currentLevel = levels.getLevel(currentStoryLevel);
 					// TODO: (also validate)
-					BoardController board = levelService.getLevel(new File(levelName));
+					BoardController board = levelService.getLevel(new File(
+							levels.getLevel(currentStoryLevel)));
 					board.addView(StartScreen.this);
 
 					view = (BoardView) board.getView(BoardView.class);
 					frame.setSize(view.getWindowSizeX(), view.getWindowSizeY());
 					frame.setLocationRelativeTo(null);
-					// view = controller.loadLevel(file.toString());
 					frame.setJMenuBar(new StartMenuView());
 					frame.setContentPane(view);
 
@@ -346,15 +373,16 @@ public class StartScreen implements AbstractView {
 		itmSave.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String sb = "TEST CONTENT";
+				// String that gets written in file
+				String fileContent = player + ":"
+						+ levels.getLevelHash(currentStoryLevel);
 				JFileChooser chooser = new JFileChooser();
-				// chooser.setCurrentDirectory(new File("/home/me/Documents"));
 				int retrival = chooser.showSaveDialog(null);
 				if (retrival == JFileChooser.APPROVE_OPTION) {
 					try {
-						FileWriter fw = new FileWriter(chooser
-								.getSelectedFile() + ".sok");
-						fw.write(sb.toString());
+						FileWriter fw = new FileWriter(basePath + player
+								+ "/Spielstaende/" + player + ".sok");
+						fw.write(fileContent);
 						fw.close();
 					} catch (Exception ex) {
 						ex.printStackTrace();
@@ -363,19 +391,17 @@ public class StartScreen implements AbstractView {
 			}
 		});
 
-		// start the level editor
+		// Start the level editor
 		itmLevelEditorStart.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				SokobanEditor editor = new SokobanEditor();
-				// frame.setContentPane(editor.);
 			}
 		});
 		// what happens when the user clicks on load a level
 		itmLoad.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// LevelDimensionDialog.showDimensionDialog(frame);
 
 				Object[] options = { "Ja", "Nein" };
 				int response = JOptionPane
@@ -431,24 +457,42 @@ public class StartScreen implements AbstractView {
 		itmBest.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String message = "Level: 10";
+				String message = "Level: 10";// TODO: Load the level statistics
 				JOptionPane.showMessageDialog(null, message);
 
 			}
 		});
 		return gameMenuBar;
 	}
-	
+
 	/**
-     * Gets called when the model has changed
-     *
-     * @param evt
-     */
-    public void modelPropertyChange(final PropertyChangeEvent evt) {
-    	if(evt.getPropertyName().equals((AbstractController.PROPERTY_LEVEL_STATUS))){
-    		if((boolean)evt.getNewValue()==true){
-    			System.out.println("SDFSDF");
-    		}
-    	}
-    }
+	 * Gets called when the model has changed
+	 * 
+	 * @param evt
+	 */
+	public void modelPropertyChange(final PropertyChangeEvent evt) {
+		if (evt.getPropertyName().equals(
+				(AbstractController.PROPERTY_LEVEL_STATUS))) {
+			if ((boolean) evt.getNewValue() == true) {
+				System.out.println("SDFSDF");
+			}
+		}
+	}
+
+	/**
+	 * Creates all the needed folders used for the game
+	 * 
+	 * @param profileName
+	 */
+	public void createPlayerProfile(String profileName) {
+		// TODO try catch
+		File profile = new File(basePath + profileName);
+		profile.mkdir();
+		File spielstaende = new File(basePath + profileName + "/Spielstaende");
+		spielstaende.mkdir();
+		File highscore = new File(basePath + profileName + "/Highscore");
+		highscore.mkdir();
+		File solutions = new File(basePath + profileName + "/Solutions");
+		solutions.mkdir();
+	}
 }

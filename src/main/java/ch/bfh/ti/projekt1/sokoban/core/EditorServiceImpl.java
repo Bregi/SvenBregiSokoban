@@ -30,10 +30,10 @@ public class EditorServiceImpl implements EditorService {
         LevelEditorView editorView = new LevelEditorView(controller, columns, rows);
         controller.setView(editorView);
 
-        for (int i = 0; i < columns; i++) {
-            for (int j = 0; j < rows; j++) {
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
                 Field field = new Field(FieldState.EMPTY);
-                currentLevel.setField(i, j, field);
+                currentLevel.setField(j, i, field);
                 FieldController fieldController = new FieldController();
                 DraggableElementDestination elementDestination = new DraggableElementDestination(fieldController);
 
@@ -47,7 +47,7 @@ public class EditorServiceImpl implements EditorService {
     }
 
     @Override
-    public void saveLevel(Board board) {
+    public void saveLevel(Board board) throws LevelMisconfigurationException{
         xmlService.saveLevel(board);
     }
 

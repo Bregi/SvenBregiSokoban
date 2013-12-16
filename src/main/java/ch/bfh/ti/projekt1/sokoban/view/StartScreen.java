@@ -231,7 +231,7 @@ public class StartScreen implements AbstractView {
 		// spiel
 		JMenu menuFile = new JMenu("Spiel");
 		JMenuItem itmNew = new JMenuItem("Neues Spiel starten");
-		JMenuItem itmNext = new JMenuItem("N�chstes Level spielen");
+		JMenuItem itmNext = new JMenuItem("Nächstes Level spielen");
 		JMenuItem itmReload = new JMenuItem("Level neu starten");
 		JMenuItem itmSave = new JMenuItem("Spiel speichern");
 		JMenuItem itmLoad = new JMenuItem("Spiel laden");
@@ -315,7 +315,7 @@ public class StartScreen implements AbstractView {
 					JOptionPane
 							.showMessageDialog(
 									null,
-									"Sie m�ssen zuerst das aktuelle Level beenden um zum n�chsten zu gelangen",
+									"Sie müssen zuerst das aktuelle Level beenden um zum nächsten zu gelangen",
 									"Access denied", JOptionPane.ERROR_MESSAGE);
 				} else {
 					loadNextLevel();

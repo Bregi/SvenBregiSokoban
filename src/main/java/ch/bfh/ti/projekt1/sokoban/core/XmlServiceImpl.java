@@ -57,34 +57,35 @@ public class XmlServiceImpl implements XmlService {
     }
 
     @Override
-    public void saveLevel(Board board) {
+    public void saveLevel(Board board) throws LevelMisconfigurationException {
         Level level = new Level();
 
         Field[][] grid = board.getGrid();
 
         level.setName("Level" + board.getLevelName());
 
-        //TODO
-        StartPosition startPosition = new StartPosition();
-        startPosition.setColumn(0);
-        startPosition.setRow(0);
-
-        level.setStartPosition(startPosition);
-
-        //TODO ist noch verkehrt rum
-        for (int i = 0; i < grid.length; i++) {
+        for (int i = 0; i < grid[0].length; i++) {
             Row row = new Row();
             row.setId(i);
             level.getRow().add(row);
-
-            for (int j = 0; j < grid[i].length; j++) {
-                Column column = new Column();
+            
+        	for (int j = 0; j < grid.length; j++) {
+        		Column column = new Column();
                 column.setId(j);
-                column.setType(FieldState.convertToXMLFieldType(grid[i][j].getState()));
+                column.setType(FieldState.convertToXMLFieldType(grid[j][i].getState()));
                 row.getColumn().add(column);
-            }
+                if (grid[j][i].getState() == FieldState.PLAYER) {
+                	StartPosition startPosition = new StartPosition();
+                	startPosition.setColumn(j);
+                	startPosition.setRow(i);
+                    level.setStartPosition(startPosition);
+                }
+        	}
         }
-
+        
+        if (level.getStartPosition() == null) {
+        	throw new LevelMisconfigurationException("No Startposition defined!");
+        }
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
 
 

@@ -2,11 +2,15 @@ package ch.bfh.ti.projekt1.sokoban.editor;
 
 import ch.bfh.ti.projekt1.sokoban.core.EditorService;
 import ch.bfh.ti.projekt1.sokoban.core.EditorServiceImpl;
+import ch.bfh.ti.projekt1.sokoban.core.LevelMisconfigurationException;
 import ch.bfh.ti.projekt1.sokoban.model.Board;
 import ch.bfh.ti.projekt1.sokoban.view.StartMenuView;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+
+import org.apache.log4j.Logger;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,7 +21,9 @@ import java.io.File;
  * @since 24/10/13 14:29
  */
 public class SokobanEditor {
-    private JFrame frame;
+    private static final Logger LOG = Logger.getLogger(SokobanEditor.class);
+	
+	private JFrame frame;
 
     private JMenuBar menuBar;
 
@@ -64,7 +70,12 @@ public class SokobanEditor {
         menuFileSave.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                editorService.saveLevel((Board) controller.getModel());
+                try {
+					editorService.saveLevel((Board) controller.getModel());
+				} catch (LevelMisconfigurationException e1) {
+					JOptionPane.showMessageDialog(frame, e1.getMessage());
+					LOG.error(e1.getMessage());
+				}
             }
         });
 
@@ -97,7 +108,7 @@ public class SokobanEditor {
         });
 
         frame.setSize(500, 500);
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         frame.setVisible(true);
 
 

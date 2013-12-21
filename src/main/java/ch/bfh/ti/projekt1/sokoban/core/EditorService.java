@@ -22,6 +22,6 @@ public interface EditorService {
 
     EditorController getLevel(File file);
 
-    void saveLevel(Board board);
+    void saveLevel(Board board) throws LevelMisconfigurationException;
 
 }

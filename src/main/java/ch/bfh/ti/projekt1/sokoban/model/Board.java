@@ -452,6 +452,10 @@ public class Board extends AbstractModel {
 	}
 
 	private boolean isMoveAllowed(Direction direction) {
+		if (isMoveInsideBorders(direction) == false) {
+			return false;
+		}
+		
 		switch (direction) {
 		case DOWN:
 			return (grid[position.getX()][position.getY() + 1].getState() == FieldState.GOAL)
@@ -489,6 +493,20 @@ public class Board extends AbstractModel {
 							.getX() + 1][position.getY()].getState() == FieldState.DIAMOND && (grid[position
 							.getX() + 2][position.getY()].getState() == FieldState.EMPTY || grid[position
 							.getX() + 2][position.getY()].getState() == FieldState.GOAL)))));
+		}
+		return false;
+	}
+	
+	private boolean isMoveInsideBorders(Direction direction) {
+		switch (direction) {
+		case UP:
+			return position.y > 0;
+		case DOWN:
+			return position.y < grid[0].length - 1;
+		case LEFT:
+			return position.x > 0;
+		case RIGHT:
+			return position.x < grid.length -1;
 		}
 		return false;
 	}

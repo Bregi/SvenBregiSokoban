@@ -34,14 +34,14 @@ public class LevelEditorView extends JPanel implements AbstractView {
         BoxLayout boxLayout = new BoxLayout(elementsPanel, BoxLayout.Y_AXIS);
         elementsPanel.setLayout(boxLayout);
 
-        for (FieldState state : FieldState.values()) {
-            DraggableElementSource elementSource = new DraggableElementSource(state);
-            elementSource.setPreferredSize(new Dimension(40, 40));
+        elementsPanel.add(new DraggableElementSource(FieldState.WALL));
+        elementsPanel.add(new DraggableElementSource(FieldState.PLAYER));
+        elementsPanel.add(new DraggableElementSource(FieldState.GOAL));
+        elementsPanel.add(new DraggableElementSource(FieldState.EMPTY));
+        elementsPanel.add(new DraggableElementSource(FieldState.DIAMOND));
 
-            elementsPanel.add(elementSource);
-        }
 
-        elementsPanel.setPreferredSize(new Dimension(40, 6 * 40));
+        elementsPanel.setPreferredSize(new Dimension(40, 5 * 40));
         add(elementsPanel);
         elementsPanel.setBackground(Color.RED);
     }

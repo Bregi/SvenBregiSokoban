@@ -1,8 +1,10 @@
 package ch.bfh.ti.projekt1.sokoban.controller;
 
-import ch.bfh.ti.projekt1.sokoban.model.Direction;
-
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+
+import ch.bfh.ti.projekt1.sokoban.model.Direction;
+import ch.bfh.ti.projekt1.sokoban.model.Position;
 
 /**
  * @author svennyffenegger
@@ -32,4 +34,12 @@ public class BoardController extends AbstractMultiController {
 	public void keyPressed(KeyEvent evt) {
 
 	}
+	
+	/**
+	 * A mouse has been clicked
+	 * timer?
+	 */
+    public void mousePressed(MouseEvent e) {
+		setModelProperty(PROPERTY_WALK, new Position((int)java.lang.Math.floor(e.getX()/40), (int)java.lang.Math.floor(e.getY()/40)));
+    }
 }

@@ -1,6 +1,13 @@
 package ch.bfh.ti.projekt1.sokoban.model;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
 import ch.bfh.ti.projekt1.sokoban.controller.AbstractController;
+import ch.bfh.ti.projekt1.sokoban.core.Dijkstra;
+import ch.bfh.ti.projekt1.sokoban.core.Edge;
+import ch.bfh.ti.projekt1.sokoban.core.Vertex;
 
 /**
  * @author svennyffenegger
@@ -13,12 +20,13 @@ public class Board extends AbstractModel {
 
 	// the current position of the player
 	private Position position;
-	// private Position oldDiamondPosition;
-	// private Position diamondPosition;
 	// grid of the fields
 	private Field[][] grid;
 	private String levelName;
+	private int startIndex;
+	private int endIndex;
 	private boolean diamondMove;
+	private List<Direction> moves;
 
 	// used for the editor mainly
 	public Board(int width, int height) {
@@ -30,6 +38,7 @@ public class Board extends AbstractModel {
 		this.position = startPosition;
 		this.diamondMove = false;
 		grid = new Field[width][height];
+		moves = new LinkedList<Direction>();
 	}
 
 	public String getLevelName() {
@@ -91,6 +100,145 @@ public class Board extends AbstractModel {
 	}
 
 	/**
+	 * Checks if a given field can be walked on
+	 * 
+	 * @param state
+	 * @return boolean
+	 */
+	public boolean isWalkable(FieldState state) {
+		if ((state == FieldState.EMPTY) || (state == FieldState.GOAL)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public int getIndexOfNextRow(int currentPos, int height) {
+		return currentPos + height;
+	}
+
+	/**
+	 * Method that gives the distances each available field
+	 * 
+	 * @return ArrayList<Vertex>
+	 */
+	public Object[] getDistances(int nStart, int iStart, int nEnd, int iEnd) {
+		ArrayList<Vertex> distances = new ArrayList<Vertex>();
+		this.startIndex = -1;
+		this.endIndex = -1;
+
+		// Iterate through all the fields to check the distances
+		int nextRow = grid.length;
+		int position = 0;
+
+		// First initialize with all the vertices
+		for (int i = 0; i < grid.length; i++) { // i = x achse [][][][][]
+			for (int n = 0; n < grid[0].length; n++) { // n = y achse
+
+				String vertexName = "" + n + ":" + i;
+				Vertex v = new Vertex(vertexName, n, i);
+				distances.add(v);
+
+				if ((i == iStart) && (n == nStart)) {
+					this.startIndex = position;
+				}
+				if ((i == iEnd) && (n == nEnd)) {
+					this.endIndex = position;
+				}
+				position++;
+			}
+		}
+
+		position = 0;
+
+		// Then set the adjacences
+		for (int i = 0; i < grid.length; i++) { // i = y achse
+			for (int n = 0; n < grid[0].length; n++) { // n = x achse [][][][][]
+				ArrayList<Edge> edges = new ArrayList<Edge>();
+
+				if (n + 1 < grid[0].length) {
+					if (isWalkable(grid[n + 1][i].getState())) {
+						edges.add(new Edge(distances.get(position + 1), 1));
+					}
+				}
+				if (n > 0) {
+					if (isWalkable(grid[n - 1][i].getState())) {
+						edges.add(new Edge(distances.get(position - 1), 1));
+					}
+				}
+				if (i + 1 < grid.length) {
+					if (isWalkable(grid[n][i + 1].getState())) {
+						edges.add(new Edge(distances.get(position + nextRow), 1));
+					}
+				}
+				if (i > 0) {
+					if (isWalkable(grid[n][i - 1].getState())) {
+						edges.add(new Edge(distances.get(position - nextRow), 1));
+					}
+				}
+
+				Edge[] edgees = new Edge[edges.size()];
+				int c = 0;
+				for (Edge e : edges) {
+					edgees[c] = e;
+					c++;
+				}
+				distances.get(position).adjacencies = edgees;
+				position++;
+			}
+
+		}
+
+		Object[] dijkstraValues = new Object[3];
+		dijkstraValues[0] = distances;
+		dijkstraValues[1] = this.startIndex;
+		dijkstraValues[2] = this.endIndex;
+		return dijkstraValues;
+
+	}
+
+	public Position getPlayerPosition() {
+		for (int i = 0; i < grid.length; i++) {
+			for (int n = 0; n < grid.length; n++) {
+				if (grid[n][i].getState() == FieldState.PLAYER) {
+					return new Position(n, i);
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Walks the distance with the shortest available path (using the dijkstra
+	 * algorithm)
+	 * 
+	 * @param position
+	 */
+	public void setWalk(Position position) {
+		Position playerPosition = getPlayerPosition();
+		Object[] dijkstraObject = getDistances(playerPosition.getX(),
+				playerPosition.getY(), position.getX(), position.getY());
+		ArrayList<Vertex> directions = new ArrayList<Vertex>();
+		directions = (ArrayList<Vertex>) dijkstraObject[0];
+		Dijkstra findShortestPath = new Dijkstra();
+		List<Vertex> path = findShortestPath.getPath(directions,
+				directions.get((int) dijkstraObject[1]),
+				directions.get((int) dijkstraObject[2]));
+		for(Vertex x:path){
+			if(x.getX() > playerPosition.getX()){
+				setNextField(Direction.RIGHT);
+			}else if(x.getY()>playerPosition.getY()){
+				setNextField(Direction.DOWN);
+			}else if(x.getX()<playerPosition.getX()){
+				setNextField(Direction.LEFT);
+			}else if(x.getY()<playerPosition.getY()){
+				setNextField(Direction.UP);
+			}
+		}
+		// setNextField(Direction.RIGHT);
+	}
+
+	/**
 	 * tries to move the player in a direction (up, down, left or right). the
 	 * change on the model is only done, if it is a valid move.
 	 * 
@@ -120,7 +268,7 @@ public class Board extends AbstractModel {
 							.setState(FieldState.PLAYER_ON_GOAL);
 					grid[position.x][position.y + 2]
 							.setState(FieldState.DIAMOND);
-				}else if ((grid[position.getX()][position.getY() + 1]
+				} else if ((grid[position.getX()][position.getY() + 1]
 						.getState() == FieldState.GOAL)) {
 					grid[position.x][position.y + 1]
 							.setState(FieldState.PLAYER_ON_GOAL);
@@ -159,7 +307,7 @@ public class Board extends AbstractModel {
 							.setState(FieldState.PLAYER_ON_GOAL);
 					grid[position.x][position.y - 2]
 							.setState(FieldState.DIAMOND);
-				}else if ((grid[position.getX()][position.getY() - 1]
+				} else if ((grid[position.getX()][position.getY() - 1]
 						.getState() == FieldState.GOAL)) {
 					grid[position.x][position.y - 1]
 							.setState(FieldState.PLAYER_ON_GOAL);
@@ -182,25 +330,25 @@ public class Board extends AbstractModel {
 		case LEFT:
 			if (isMoveAllowed(direction)) {
 				// PLAYER MOVES A DIAMOND
-				if ((grid[position.getX()-1][position.getY()].getState() == FieldState.DIAMOND)) {
-					if ((grid[position.getX()-2][position.getY() ].getState() == FieldState.GOAL)) {
-						grid[position.x-2][position.y]
+				if ((grid[position.getX() - 1][position.getY()].getState() == FieldState.DIAMOND)) {
+					if ((grid[position.getX() - 2][position.getY()].getState() == FieldState.GOAL)) {
+						grid[position.x - 2][position.y]
 								.setState(FieldState.COMPLETED);
 					} else {
-						grid[position.x-2][position.y ]
+						grid[position.x - 2][position.y]
 								.setState(FieldState.DIAMOND);
 					}
-				} else if ((grid[position.getX()-1][position.getY()]
+				} else if ((grid[position.getX() - 1][position.getY()]
 						.getState() == FieldState.COMPLETED)) {
 					// TODO: Player jetzt auf Goal, Diamant aus Ziel
 
-					grid[position.x-1][position.y ]
+					grid[position.x - 1][position.y]
 							.setState(FieldState.PLAYER_ON_GOAL);
-					grid[position.x-2][position.y ]
+					grid[position.x - 2][position.y]
 							.setState(FieldState.DIAMOND);
-				}else if ((grid[position.getX()-1][position.getY() ]
+				} else if ((grid[position.getX() - 1][position.getY()]
 						.getState() == FieldState.GOAL)) {
-					grid[position.x-1][position.y]
+					grid[position.x - 1][position.y]
 							.setState(FieldState.PLAYER_ON_GOAL);
 				}
 				if (grid[oldPosition.x][oldPosition.y].getState() == FieldState.PLAYER_ON_GOAL) {
@@ -210,8 +358,8 @@ public class Board extends AbstractModel {
 					grid[oldPosition.x][oldPosition.y]
 							.setState(FieldState.EMPTY);
 				}
-				if (grid[position.x-1][position.y ].getState() != FieldState.PLAYER_ON_GOAL) {
-					grid[position.x-1][position.y ]
+				if (grid[position.x - 1][position.y].getState() != FieldState.PLAYER_ON_GOAL) {
+					grid[position.x - 1][position.y]
 							.setState(FieldState.PLAYER);
 				}
 				this.position = new Position(position.getX() - 1,
@@ -221,25 +369,25 @@ public class Board extends AbstractModel {
 		case RIGHT:
 			if (isMoveAllowed(direction)) {
 				// PLAYER MOVES A DIAMOND
-				if ((grid[position.getX()+1][position.getY()].getState() == FieldState.DIAMOND)) {
-					if ((grid[position.getX()+2][position.getY() ].getState() == FieldState.GOAL)) {
-						grid[position.x+2][position.y]
+				if ((grid[position.getX() + 1][position.getY()].getState() == FieldState.DIAMOND)) {
+					if ((grid[position.getX() + 2][position.getY()].getState() == FieldState.GOAL)) {
+						grid[position.x + 2][position.y]
 								.setState(FieldState.COMPLETED);
 					} else {
-						grid[position.x+2][position.y ]
+						grid[position.x + 2][position.y]
 								.setState(FieldState.DIAMOND);
 					}
-				} else if ((grid[position.getX()+1][position.getY()]
+				} else if ((grid[position.getX() + 1][position.getY()]
 						.getState() == FieldState.COMPLETED)) {
 					// TODO: Player jetzt auf Goal, Diamant aus Ziel
 
-					grid[position.x+1][position.y ]
+					grid[position.x + 1][position.y]
 							.setState(FieldState.PLAYER_ON_GOAL);
-					grid[position.x+2][position.y ]
+					grid[position.x + 2][position.y]
 							.setState(FieldState.DIAMOND);
-				}else if ((grid[position.getX()+1][position.getY() ]
+				} else if ((grid[position.getX() + 1][position.getY()]
 						.getState() == FieldState.GOAL)) {
-					grid[position.x+1][position.y ]
+					grid[position.x + 1][position.y]
 							.setState(FieldState.PLAYER_ON_GOAL);
 				}
 				if (grid[oldPosition.x][oldPosition.y].getState() == FieldState.PLAYER_ON_GOAL) {
@@ -249,8 +397,8 @@ public class Board extends AbstractModel {
 					grid[oldPosition.x][oldPosition.y]
 							.setState(FieldState.EMPTY);
 				}
-				if (grid[position.x+1][position.y ].getState() != FieldState.PLAYER_ON_GOAL) {
-					grid[position.x+1][position.y ]
+				if (grid[position.x + 1][position.y].getState() != FieldState.PLAYER_ON_GOAL) {
+					grid[position.x + 1][position.y]
 							.setState(FieldState.PLAYER);
 				}
 				this.position = new Position(position.getX() + 1,
@@ -263,27 +411,30 @@ public class Board extends AbstractModel {
 		// be fired
 		if (oldPosition != position) {
 			checkLevelStatus();
+			moves.add(direction);
 			diamondMove = false;
 
 			firePropertyChange(AbstractController.PROPERTY_POSITION,
 					oldPosition, position);
 		}
 	}
-	
+
 	/**
 	 * Checks if the Level is finished
 	 */
-	public void checkLevelStatus(){
+	public void checkLevelStatus() {
 		boolean finished = true;
-		for(int i=0;i<grid.length;i++){
-			for(int n=0;n<grid[0].length;n++){
-				if((grid[i][n].getState() == FieldState.GOAL)||(grid[i][n].getState() == FieldState.PLAYER_ON_GOAL)){
+		for (int i = 0; i < grid.length; i++) {
+			for (int n = 0; n < grid[0].length; n++) {
+				if ((grid[i][n].getState() == FieldState.GOAL)
+						|| (grid[i][n].getState() == FieldState.PLAYER_ON_GOAL)) {
 					finished = false;
 				}
 			}
 		}
-		if(finished){
-			firePropertyChange(AbstractController.PROPERTY_LEVEL_STATUS, true,true);
+		if (finished) {
+			firePropertyChange(AbstractController.PROPERTY_LEVEL_STATUS, false,
+					true);
 		}
 	}
 
@@ -340,4 +491,9 @@ public class Board extends AbstractModel {
 		}
 		return false;
 	}
+
+	public List<Direction> getMoves() {
+		return moves;
+	}
+
 }

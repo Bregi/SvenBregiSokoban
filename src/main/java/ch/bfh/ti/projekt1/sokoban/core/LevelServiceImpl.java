@@ -1,16 +1,14 @@
 package ch.bfh.ti.projekt1.sokoban.core;
 
 import ch.bfh.ti.projekt1.sokoban.controller.BoardController;
-import ch.bfh.ti.projekt1.sokoban.model.Board;
-import ch.bfh.ti.projekt1.sokoban.model.Field;
-import ch.bfh.ti.projekt1.sokoban.model.FieldState;
-import ch.bfh.ti.projekt1.sokoban.model.Position;
+import ch.bfh.ti.projekt1.sokoban.model.*;
 import ch.bfh.ti.projekt1.sokoban.view.BoardView;
 import ch.bfh.ti.projekt1.sokoban.xml.Column;
 import ch.bfh.ti.projekt1.sokoban.xml.Level;
 import ch.bfh.ti.projekt1.sokoban.xml.Row;
 
 import java.io.File;
+import java.util.List;
 
 /**
  * @author svennyffenegger
@@ -44,5 +42,14 @@ public class LevelServiceImpl implements LevelService {
         boardController.setView(boardView);
 
         return boardController;
+    }
+
+    @Override
+    public void saveLevelMoves(List<Direction> directionList, String levelName) {
+        String homeFolder = CoreConstants.getProperty("game.homefolder");
+        File f = new File(homeFolder + levelName);
+        for (Direction direction : directionList) {
+
+        }
     }
 }

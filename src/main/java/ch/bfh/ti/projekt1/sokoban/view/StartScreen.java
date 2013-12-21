@@ -45,10 +45,12 @@ public class StartScreen implements AbstractView {
 	private JMenuBar gameMenuBar;
 
 	private JMenu menuFile;
+	private JMenu menuLevelEditor;
 
 	private JMenuItem menuFileNew;
 	private JMenuItem menuFileLoad;
 	private JMenuItem menuFileLoadLevel;
+	private JMenuItem menuStartLeveleditor;
 
 	/**
 	 * Method used to initialize the game screen
@@ -64,14 +66,19 @@ public class StartScreen implements AbstractView {
 		frame.setJMenuBar(menuBar);
 
 		menuFile = new JMenu("Game");
+		menuLevelEditor = new JMenu("Leveleditor");
 		menuBar.add(menuFile);
+		menuBar.add(menuLevelEditor);
 
-		menuFileNew = new JMenuItem("New Game");
-		menuFileLoad = new JMenuItem("Load Game");
-		menuFileLoadLevel = new JMenuItem("Load Level");
+		menuFileNew = new JMenuItem("Neues Spiel");
+		menuFileLoad = new JMenuItem("Lade Spiel");
+		menuFileLoadLevel = new JMenuItem("Lade Level");
 		menuFile.add(menuFileNew);
 		menuFile.add(menuFileLoad);
 		menuFile.add(menuFileLoadLevel);
+		
+		menuStartLeveleditor = new JMenuItem("Starte Leveleditor");
+		menuLevelEditor.add(menuStartLeveleditor);
 
 		// what happens when the user clicks on start new game
 		menuFileNew.addActionListener(new ActionListener() {
@@ -207,6 +214,14 @@ public class StartScreen implements AbstractView {
 				frame.getContentPane().revalidate();
 			}
 		});
+		
+		// Start the level editor
+		menuStartLeveleditor.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						SokobanEditor editor = new SokobanEditor();
+					}
+				});
 		frame.setSize(500, 500);
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		frame.setVisible(true);
@@ -247,7 +262,6 @@ public class StartScreen implements AbstractView {
 		// Spiel
 		menuFile.add(itmNew);
 		menuFile.addSeparator();
-
 		menuFile.add(itmReload);
 		menuFile.addSeparator();
 
@@ -434,7 +448,7 @@ public class StartScreen implements AbstractView {
 		if (evt.getPropertyName().equals(
 				(AbstractController.PROPERTY_LEVEL_STATUS))) {
 			if ((boolean) evt.getNewValue() == true) {
-				System.out.println("SDFSDF");
+				loadNextLevel();
 			}
 		}
 	}
@@ -454,5 +468,25 @@ public class StartScreen implements AbstractView {
 		highscore.mkdir();
 		File solutions = new File(basePath + profileName + "/Solutions");
 		solutions.mkdir();
+	}
+	
+	private void loadNextLevel() {
+		currentStoryLevel++;
+		levelName = levels.getLevel(currentStoryLevel);
+		BoardController board = levelService.getLevel(new File(
+				levelName));
+		board.addView(StartScreen.this);
+
+		view = (BoardView) board.getView(BoardView.class);
+		frame.setSize(view.getWindowSizeX(), view.getWindowSizeY());
+		frame.setLocationRelativeTo(null);
+
+		frame.setContentPane(view);
+
+		// load the game Menu
+		loadGameMenu();
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+		frame.getContentPane().revalidate();
 	}
 }

@@ -82,6 +82,7 @@ public abstract class AbstractMultiController extends AbstractController {
             method.invoke(model, newValue);
 
         } catch (Exception ex) {
+        	ex.printStackTrace();
             LOG.error(ex);
         }
     	}

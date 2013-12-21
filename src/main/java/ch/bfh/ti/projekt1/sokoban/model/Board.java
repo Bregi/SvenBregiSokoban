@@ -417,6 +417,7 @@ public class Board extends AbstractModel {
 			firePropertyChange(AbstractController.PROPERTY_POSITION,
 					oldPosition, position);
 		}
+		System.out.println("Test");
 	}
 
 	/**

@@ -25,6 +25,8 @@ public class Board extends AbstractModel {
 	private String levelName;
 	private int startIndex;
 	private int endIndex;
+	private ArrayList<String> playerPath;
+
 	private boolean diamondMove;
 	private List<Direction> moves;
 
@@ -37,6 +39,7 @@ public class Board extends AbstractModel {
 	public Board(int width, int height, Position startPosition) {
 		this.position = startPosition;
 		this.diamondMove = false;
+		this.playerPath = new ArrayList<String>();
 		grid = new Field[width][height];
 		moves = new LinkedList<Direction>();
 	}
@@ -49,6 +52,15 @@ public class Board extends AbstractModel {
 		this.levelName = levelName;
 		firePropertyChange(AbstractController.PROPERTY_LEVEL_NAME,
 				this.levelName, this.levelName);
+	}
+
+	/**
+	 * Returns the Path the player has made so far.
+	 * 
+	 * @return String
+	 */
+	public String getPlayerPath() {
+		return playerPath.toString();
 	}
 
 	public Field[][] getGrid() {
@@ -224,14 +236,14 @@ public class Board extends AbstractModel {
 		List<Vertex> path = findShortestPath.getPath(directions,
 				directions.get((int) dijkstraObject[1]),
 				directions.get((int) dijkstraObject[2]));
-		for(Vertex x:path){
-			if(x.getX() > playerPosition.getX()){
+		for (Vertex x : path) {
+			if (x.getX() > playerPosition.getX()) {
 				setNextField(Direction.RIGHT);
-			}else if(x.getY()>playerPosition.getY()){
+			} else if (x.getY() > playerPosition.getY()) {
 				setNextField(Direction.DOWN);
-			}else if(x.getX()<playerPosition.getX()){
+			} else if (x.getX() < playerPosition.getX()) {
 				setNextField(Direction.LEFT);
-			}else if(x.getY()<playerPosition.getY()){
+			} else if (x.getY() < playerPosition.getY()) {
 				setNextField(Direction.UP);
 			}
 		}
@@ -250,6 +262,8 @@ public class Board extends AbstractModel {
 		switch (direction) {
 		case DOWN:
 			if (isMoveAllowed(direction)) {
+
+				playerPath.add("DOWN");
 
 				// PLAYER MOVES A DIAMOND
 				if ((grid[position.getX()][position.getY() + 1].getState() == FieldState.DIAMOND)) {
@@ -290,6 +304,7 @@ public class Board extends AbstractModel {
 			break;
 		case UP:
 			if (isMoveAllowed(direction)) {
+				playerPath.add("UP");
 				// PLAYER MOVES A DIAMOND
 				if ((grid[position.getX()][position.getY() - 1].getState() == FieldState.DIAMOND)) {
 					if ((grid[position.getX()][position.getY() - 2].getState() == FieldState.GOAL)) {
@@ -329,6 +344,7 @@ public class Board extends AbstractModel {
 			break;
 		case LEFT:
 			if (isMoveAllowed(direction)) {
+				playerPath.add("LEFT");
 				// PLAYER MOVES A DIAMOND
 				if ((grid[position.getX() - 1][position.getY()].getState() == FieldState.DIAMOND)) {
 					if ((grid[position.getX() - 2][position.getY()].getState() == FieldState.GOAL)) {
@@ -368,6 +384,7 @@ public class Board extends AbstractModel {
 			break;
 		case RIGHT:
 			if (isMoveAllowed(direction)) {
+				this.playerPath.add("RIGHT");
 				// PLAYER MOVES A DIAMOND
 				if ((grid[position.getX() + 1][position.getY()].getState() == FieldState.DIAMOND)) {
 					if ((grid[position.getX() + 2][position.getY()].getState() == FieldState.GOAL)) {
@@ -455,7 +472,7 @@ public class Board extends AbstractModel {
 		if (isMoveInsideBorders(direction) == false) {
 			return false;
 		}
-		
+
 		switch (direction) {
 		case DOWN:
 			return (grid[position.getX()][position.getY() + 1].getState() == FieldState.GOAL)
@@ -496,7 +513,7 @@ public class Board extends AbstractModel {
 		}
 		return false;
 	}
-	
+
 	private boolean isMoveInsideBorders(Direction direction) {
 		switch (direction) {
 		case UP:
@@ -506,7 +523,7 @@ public class Board extends AbstractModel {
 		case LEFT:
 			return position.x > 0;
 		case RIGHT:
-			return position.x < grid.length -1;
+			return position.x < grid.length - 1;
 		}
 		return false;
 	}

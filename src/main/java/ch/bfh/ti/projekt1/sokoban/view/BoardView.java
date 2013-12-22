@@ -40,6 +40,7 @@ public class BoardView extends JPanel implements KeyListener, MouseListener, Abs
     private Element[][] field;
     private int numberOfGoals;
     private boolean levelIsFinished;
+    public Board board;
 
     public BoardView(Board board, BoardController controller,
                      Position playerPosition, String levelName) {
@@ -48,6 +49,7 @@ public class BoardView extends JPanel implements KeyListener, MouseListener, Abs
         this.levelName = levelName;
         this.levelIsFinished = false;
         this.grid = board.getGrid();
+        this.board = board;
         this.field = new Element[grid.length][grid[0].length];
         this.playerPosition = playerPosition;
         this.numberOfGoals = 0;

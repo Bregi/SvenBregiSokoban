@@ -37,6 +37,12 @@ public class Level {
 	 */
 	public String getLevel(int level) {
 		return levels[level];
+	}	
+	/**
+	 *  Returns just the level String
+	 */
+	public String getLevelOnly(int level) {
+		return "level"+level;
 	}
 	
 	/**

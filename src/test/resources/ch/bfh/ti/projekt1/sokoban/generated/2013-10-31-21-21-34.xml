@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<level xmlns="http://bfh.ch" id="asdfdsf23424ar">
+<level xmlns="http://bfh.ch">
     <row id="0">
         <column id="0" type="EMPTY"/>
         <column id="1" type="EMPTY"/>

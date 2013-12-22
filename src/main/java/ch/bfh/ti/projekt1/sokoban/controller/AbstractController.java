@@ -21,6 +21,7 @@ public abstract class AbstractController implements PropertyChangeListener {
      */
     public static final String PROPERTY_POSITION = "Position";
     public static final String PROPERTY_NEXT_FIELD = "NextField";
+    public static final String PROPERTY_WALK = "Walk";
     public static final String PROPERTY_FIELD = "Field";
     public static final String PROPERTY_FIELD_STATE = "State";
     public static final String PROPERTY_LEVEL_NAME = "LevelName";

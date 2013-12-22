@@ -45,10 +45,12 @@ public class StartScreen implements AbstractView {
 	private JMenuBar gameMenuBar;
 
 	private JMenu menuFile;
+	private JMenu menuLevelEditor;
 
 	private JMenuItem menuFileNew;
 	private JMenuItem menuFileLoad;
 	private JMenuItem menuFileLoadLevel;
+	private JMenuItem menuStartLeveleditor;
 
 	/**
 	 * Method used to initialize the game screen
@@ -64,14 +66,19 @@ public class StartScreen implements AbstractView {
 		frame.setJMenuBar(menuBar);
 
 		menuFile = new JMenu("Game");
+		menuLevelEditor = new JMenu("Leveleditor");
 		menuBar.add(menuFile);
+		menuBar.add(menuLevelEditor);
 
-		menuFileNew = new JMenuItem("New Game");
-		menuFileLoad = new JMenuItem("Load Game");
-		menuFileLoadLevel = new JMenuItem("Load Level");
+		menuFileNew = new JMenuItem("Neues Spiel");
+		menuFileLoad = new JMenuItem("Lade Spiel");
+		menuFileLoadLevel = new JMenuItem("Lade Level");
 		menuFile.add(menuFileNew);
 		menuFile.add(menuFileLoad);
 		menuFile.add(menuFileLoadLevel);
+		
+		menuStartLeveleditor = new JMenuItem("Starte Leveleditor");
+		menuLevelEditor.add(menuStartLeveleditor);
 
 		// what happens when the user clicks on start new game
 		menuFileNew.addActionListener(new ActionListener() {
@@ -129,8 +136,7 @@ public class StartScreen implements AbstractView {
 					// Get content from file
 					String fileContent = new String();
 					try {
-						fileContent = new String(Files.readAllBytes(Paths
-								.get(file.toString())));
+						fileContent = new String(Files.readAllBytes(Paths.get(file.toString())));
 					} catch (IOException ex) {
 						ex.printStackTrace();
 					}
@@ -148,9 +154,9 @@ public class StartScreen implements AbstractView {
 					view = (BoardView) board.getView(BoardView.class);
 					frame.setSize(view.getWindowSizeX(), view.getWindowSizeY());
 					frame.setLocationRelativeTo(null);
-					frame.setJMenuBar(new StartMenuView());
 					frame.setContentPane(view);
-
+					// load the game Menu
+					loadGameMenu();
 					frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 					view.requestFocusInWindow();
@@ -208,6 +214,14 @@ public class StartScreen implements AbstractView {
 				frame.getContentPane().revalidate();
 			}
 		});
+		
+		// Start the level editor
+		menuStartLeveleditor.addActionListener(new ActionListener() {
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						SokobanEditor editor = new SokobanEditor();
+					}
+				});
 		frame.setSize(500, 500);
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		frame.setVisible(true);
@@ -231,7 +245,6 @@ public class StartScreen implements AbstractView {
 		// spiel
 		JMenu menuFile = new JMenu("Spiel");
 		JMenuItem itmNew = new JMenuItem("Neues Spiel starten");
-		JMenuItem itmNext = new JMenuItem("Nächstes Level spielen");
 		JMenuItem itmReload = new JMenuItem("Level neu starten");
 		JMenuItem itmSave = new JMenuItem("Spiel speichern");
 		JMenuItem itmLoad = new JMenuItem("Spiel laden");
@@ -249,11 +262,6 @@ public class StartScreen implements AbstractView {
 		// Spiel
 		menuFile.add(itmNew);
 		menuFile.addSeparator();
-
-		// itmNext.setEnabled(false);
-		menuFile.add(itmNext);
-		menuFile.addSeparator();
-
 		menuFile.add(itmReload);
 		menuFile.addSeparator();
 
@@ -293,9 +301,6 @@ public class StartScreen implements AbstractView {
 				frame.setSize(view.getWindowSizeX(), view.getWindowSizeY());
 				frame.setLocationRelativeTo(null);
 
-				// view =
-				// controller.loadLevel("src/test/resources/ch/bfh/ti/projekt1/sokoban/level1.xml");
-
 				frame.setContentPane(view);
 
 				// load the game Menu
@@ -306,22 +311,6 @@ public class StartScreen implements AbstractView {
 			}
 		});
 
-		// what happens when the user clicks on play next level
-		itmNext.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// LevelDimensionDialog.showDimensionDialog(frame);
-				if ((!view.getIsLevelFinished())) {
-					JOptionPane
-							.showMessageDialog(
-									null,
-									"Sie müssen zuerst das aktuelle Level beenden um zum nächsten zu gelangen",
-									"Access denied", JOptionPane.ERROR_MESSAGE);
-				} else {
-					loadNextLevel();
-				}
-			}
-		});
 		// what happens when the user clicks on restart level
 		itmReload.addActionListener(new ActionListener() {
 			@Override
@@ -359,8 +348,8 @@ public class StartScreen implements AbstractView {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// String that gets written in file
-				String fileContent = player + ":"
-						+ levels.getLevelHash(currentStoryLevel);
+				System.out.println("TEST");
+				String fileContent = player + ":"+ levels.getLevelHash(currentStoryLevel);
 				JFileChooser chooser = new JFileChooser();
 				int retrival = chooser.showSaveDialog(null);
 				if (retrival == JFileChooser.APPROVE_OPTION) {
@@ -482,7 +471,8 @@ public class StartScreen implements AbstractView {
 	}
 	
 	private void loadNextLevel() {
-		levelName = levels.getLevel(currentStoryLevel + 1);
+		currentStoryLevel++;
+		levelName = levels.getLevel(currentStoryLevel);
 		BoardController board = levelService.getLevel(new File(
 				levelName));
 		board.addView(StartScreen.this);

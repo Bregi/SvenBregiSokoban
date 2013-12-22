@@ -1,9 +1,13 @@
 package ch.bfh.ti.projekt1.sokoban.model;
 
-import ch.bfh.ti.projekt1.sokoban.controller.AbstractController;
-
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+
+import ch.bfh.ti.projekt1.sokoban.controller.AbstractController;
+import ch.bfh.ti.projekt1.sokoban.core.Dijkstra;
+import ch.bfh.ti.projekt1.sokoban.core.Edge;
+import ch.bfh.ti.projekt1.sokoban.core.Vertex;
 
 /**
  * @author svennyffenegger
@@ -19,6 +23,8 @@ public class Board extends AbstractModel {
 	// grid of the fields
 	private Field[][] grid;
 	private String levelName;
+	private int startIndex;
+	private int endIndex;
 	private boolean diamondMove;
 	private List<Direction> moves;
 
@@ -91,6 +97,145 @@ public class Board extends AbstractModel {
 	 */
 	public Position getPosition() {
 		return position;
+	}
+
+	/**
+	 * Checks if a given field can be walked on
+	 * 
+	 * @param state
+	 * @return boolean
+	 */
+	public boolean isWalkable(FieldState state) {
+		if ((state == FieldState.EMPTY) || (state == FieldState.GOAL)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public int getIndexOfNextRow(int currentPos, int height) {
+		return currentPos + height;
+	}
+
+	/**
+	 * Method that gives the distances each available field
+	 * 
+	 * @return ArrayList<Vertex>
+	 */
+	public Object[] getDistances(int nStart, int iStart, int nEnd, int iEnd) {
+		ArrayList<Vertex> distances = new ArrayList<Vertex>();
+		this.startIndex = -1;
+		this.endIndex = -1;
+
+		// Iterate through all the fields to check the distances
+		int nextRow = grid.length;
+		int position = 0;
+
+		// First initialize with all the vertices
+		for (int i = 0; i < grid.length; i++) { // i = x achse [][][][][]
+			for (int n = 0; n < grid[0].length; n++) { // n = y achse
+
+				String vertexName = "" + n + ":" + i;
+				Vertex v = new Vertex(vertexName, n, i);
+				distances.add(v);
+
+				if ((i == iStart) && (n == nStart)) {
+					this.startIndex = position;
+				}
+				if ((i == iEnd) && (n == nEnd)) {
+					this.endIndex = position;
+				}
+				position++;
+			}
+		}
+
+		position = 0;
+
+		// Then set the adjacences
+		for (int i = 0; i < grid.length; i++) { // i = y achse
+			for (int n = 0; n < grid[0].length; n++) { // n = x achse [][][][][]
+				ArrayList<Edge> edges = new ArrayList<Edge>();
+
+				if (n + 1 < grid[0].length) {
+					if (isWalkable(grid[n + 1][i].getState())) {
+						edges.add(new Edge(distances.get(position + 1), 1));
+					}
+				}
+				if (n > 0) {
+					if (isWalkable(grid[n - 1][i].getState())) {
+						edges.add(new Edge(distances.get(position - 1), 1));
+					}
+				}
+				if (i + 1 < grid.length) {
+					if (isWalkable(grid[n][i + 1].getState())) {
+						edges.add(new Edge(distances.get(position + nextRow), 1));
+					}
+				}
+				if (i > 0) {
+					if (isWalkable(grid[n][i - 1].getState())) {
+						edges.add(new Edge(distances.get(position - nextRow), 1));
+					}
+				}
+
+				Edge[] edgees = new Edge[edges.size()];
+				int c = 0;
+				for (Edge e : edges) {
+					edgees[c] = e;
+					c++;
+				}
+				distances.get(position).adjacencies = edgees;
+				position++;
+			}
+
+		}
+
+		Object[] dijkstraValues = new Object[3];
+		dijkstraValues[0] = distances;
+		dijkstraValues[1] = this.startIndex;
+		dijkstraValues[2] = this.endIndex;
+		return dijkstraValues;
+
+	}
+
+	public Position getPlayerPosition() {
+		for (int i = 0; i < grid.length; i++) {
+			for (int n = 0; n < grid.length; n++) {
+				if (grid[n][i].getState() == FieldState.PLAYER) {
+					return new Position(n, i);
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Walks the distance with the shortest available path (using the dijkstra
+	 * algorithm)
+	 * 
+	 * @param position
+	 */
+	public void setWalk(Position position) {
+		Position playerPosition = getPlayerPosition();
+		Object[] dijkstraObject = getDistances(playerPosition.getX(),
+				playerPosition.getY(), position.getX(), position.getY());
+		ArrayList<Vertex> directions = new ArrayList<Vertex>();
+		directions = (ArrayList<Vertex>) dijkstraObject[0];
+		Dijkstra findShortestPath = new Dijkstra();
+		List<Vertex> path = findShortestPath.getPath(directions,
+				directions.get((int) dijkstraObject[1]),
+				directions.get((int) dijkstraObject[2]));
+		for(Vertex x:path){
+			if(x.getX() > playerPosition.getX()){
+				setNextField(Direction.RIGHT);
+			}else if(x.getY()>playerPosition.getY()){
+				setNextField(Direction.DOWN);
+			}else if(x.getX()<playerPosition.getX()){
+				setNextField(Direction.LEFT);
+			}else if(x.getY()<playerPosition.getY()){
+				setNextField(Direction.UP);
+			}
+		}
+		// setNextField(Direction.RIGHT);
 	}
 
 	/**
@@ -266,22 +411,13 @@ public class Board extends AbstractModel {
 		// be fired
 		if (oldPosition != position) {
 			checkLevelStatus();
-			// move the diamond also if diamond was in the way
-			/*
-			 * if (diamondMove == true) { if
-			 * (grid[diamondPosition.getX()][diamondPosition.getY()] .getState()
-			 * == FieldState.GOAL) {
-			 * grid[diamondPosition.getX()][diamondPosition.getY()]
-			 * .setState(FieldState.COMPLETED); } else {
-			 * grid[diamondPosition.getX()][diamondPosition.getY()]
-			 * .setState(FieldState.DIAMOND); } }
-			 */
 			moves.add(direction);
 			diamondMove = false;
 
 			firePropertyChange(AbstractController.PROPERTY_POSITION,
 					oldPosition, position);
 		}
+		System.out.println("Test");
 	}
 
 	/**
@@ -378,4 +514,5 @@ public class Board extends AbstractModel {
 	public List<Direction> getMoves() {
 		return moves;
 	}
+
 }

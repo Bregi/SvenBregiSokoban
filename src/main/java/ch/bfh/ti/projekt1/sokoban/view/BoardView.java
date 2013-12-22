@@ -1,16 +1,28 @@
 package ch.bfh.ti.projekt1.sokoban.view;
 
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.beans.PropertyChangeEvent;
+
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
+
 import ch.bfh.ti.projekt1.sokoban.controller.BoardController;
 import ch.bfh.ti.projekt1.sokoban.model.Board;
 import ch.bfh.ti.projekt1.sokoban.model.Field;
 import ch.bfh.ti.projekt1.sokoban.model.Position;
-import ch.bfh.ti.projekt1.sokoban.view.element.*;
-
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.beans.PropertyChangeEvent;
+import ch.bfh.ti.projekt1.sokoban.view.element.Diamond;
+import ch.bfh.ti.projekt1.sokoban.view.element.Element;
+import ch.bfh.ti.projekt1.sokoban.view.element.Finish;
+import ch.bfh.ti.projekt1.sokoban.view.element.Floor;
+import ch.bfh.ti.projekt1.sokoban.view.element.Goal;
+import ch.bfh.ti.projekt1.sokoban.view.element.Player;
+import ch.bfh.ti.projekt1.sokoban.view.element.PlayerOnGoal;
+import ch.bfh.ti.projekt1.sokoban.view.element.Wall;
 
 /**
  * @author svennyffenegger
@@ -18,7 +30,7 @@ import java.beans.PropertyChangeEvent;
  *        <p/>
  *        Implementation of the board view
  */
-public class BoardView extends JPanel implements KeyListener, AbstractView {
+public class BoardView extends JPanel implements KeyListener, MouseListener, AbstractView {
 
     private BoardController controller;
     private Position playerPosition;
@@ -39,6 +51,8 @@ public class BoardView extends JPanel implements KeyListener, AbstractView {
         this.field = new Element[grid.length][grid[0].length];
         this.playerPosition = playerPosition;
         this.numberOfGoals = 0;
+        //blankArea.addMouseListener(this);
+        addMouseListener(this);
         setLayout(null);
         addKeyListener(this);
         setFocusable(true);
@@ -51,14 +65,7 @@ public class BoardView extends JPanel implements KeyListener, AbstractView {
      * @param evt
      */
     public void modelPropertyChange(final PropertyChangeEvent evt) {
-        /*String s = "";
-        for (int i = 0; i < grid.length; i++) {
-            for (int n = 0; n < grid[0].length; n++) {
-                s += grid[n][i].getState();
-            }
-            s += "\n";
-        }
-        System.out.println(s);*/
+       
         // we have a new position, the player was moved
         if (evt.getNewValue() instanceof Position) {
             this.stepsUsed++;
@@ -102,6 +109,28 @@ public class BoardView extends JPanel implements KeyListener, AbstractView {
     public void keyReleased(KeyEvent e) {
 
     }
+    
+    public void mousePressed(MouseEvent e){
+    }
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+    	controller.mousePressed(e);
+    	
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+	}
 
     /**
      * takes the level file and draws the elements on screen
@@ -270,4 +299,5 @@ public class BoardView extends JPanel implements KeyListener, AbstractView {
             g.drawString(levelName, 10, 20);
         }
     }
+
 }

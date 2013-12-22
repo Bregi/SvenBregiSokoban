@@ -20,7 +20,7 @@ public class Board extends AbstractModel {
 	private Field[][] grid;
 	private String levelName;
 	private boolean diamondMove;
-    private List<Direction> moves;
+	private List<Direction> moves;
 
 	// used for the editor mainly
 	public Board(int width, int height) {
@@ -32,7 +32,7 @@ public class Board extends AbstractModel {
 		this.position = startPosition;
 		this.diamondMove = false;
 		grid = new Field[width][height];
-        moves = new LinkedList<Direction>();
+		moves = new LinkedList<Direction>();
 	}
 
 	public String getLevelName() {
@@ -123,7 +123,7 @@ public class Board extends AbstractModel {
 							.setState(FieldState.PLAYER_ON_GOAL);
 					grid[position.x][position.y + 2]
 							.setState(FieldState.DIAMOND);
-				}else if ((grid[position.getX()][position.getY() + 1]
+				} else if ((grid[position.getX()][position.getY() + 1]
 						.getState() == FieldState.GOAL)) {
 					grid[position.x][position.y + 1]
 							.setState(FieldState.PLAYER_ON_GOAL);
@@ -162,7 +162,7 @@ public class Board extends AbstractModel {
 							.setState(FieldState.PLAYER_ON_GOAL);
 					grid[position.x][position.y - 2]
 							.setState(FieldState.DIAMOND);
-				}else if ((grid[position.getX()][position.getY() - 1]
+				} else if ((grid[position.getX()][position.getY() - 1]
 						.getState() == FieldState.GOAL)) {
 					grid[position.x][position.y - 1]
 							.setState(FieldState.PLAYER_ON_GOAL);
@@ -185,25 +185,25 @@ public class Board extends AbstractModel {
 		case LEFT:
 			if (isMoveAllowed(direction)) {
 				// PLAYER MOVES A DIAMOND
-				if ((grid[position.getX()-1][position.getY()].getState() == FieldState.DIAMOND)) {
-					if ((grid[position.getX()-2][position.getY() ].getState() == FieldState.GOAL)) {
-						grid[position.x-2][position.y]
+				if ((grid[position.getX() - 1][position.getY()].getState() == FieldState.DIAMOND)) {
+					if ((grid[position.getX() - 2][position.getY()].getState() == FieldState.GOAL)) {
+						grid[position.x - 2][position.y]
 								.setState(FieldState.COMPLETED);
 					} else {
-						grid[position.x-2][position.y ]
+						grid[position.x - 2][position.y]
 								.setState(FieldState.DIAMOND);
 					}
-				} else if ((grid[position.getX()-1][position.getY()]
+				} else if ((grid[position.getX() - 1][position.getY()]
 						.getState() == FieldState.COMPLETED)) {
 					// TODO: Player jetzt auf Goal, Diamant aus Ziel
 
-					grid[position.x-1][position.y ]
+					grid[position.x - 1][position.y]
 							.setState(FieldState.PLAYER_ON_GOAL);
-					grid[position.x-2][position.y ]
+					grid[position.x - 2][position.y]
 							.setState(FieldState.DIAMOND);
-				}else if ((grid[position.getX()-1][position.getY() ]
+				} else if ((grid[position.getX() - 1][position.getY()]
 						.getState() == FieldState.GOAL)) {
-					grid[position.x-1][position.y]
+					grid[position.x - 1][position.y]
 							.setState(FieldState.PLAYER_ON_GOAL);
 				}
 				if (grid[oldPosition.x][oldPosition.y].getState() == FieldState.PLAYER_ON_GOAL) {
@@ -213,8 +213,8 @@ public class Board extends AbstractModel {
 					grid[oldPosition.x][oldPosition.y]
 							.setState(FieldState.EMPTY);
 				}
-				if (grid[position.x-1][position.y ].getState() != FieldState.PLAYER_ON_GOAL) {
-					grid[position.x-1][position.y ]
+				if (grid[position.x - 1][position.y].getState() != FieldState.PLAYER_ON_GOAL) {
+					grid[position.x - 1][position.y]
 							.setState(FieldState.PLAYER);
 				}
 				this.position = new Position(position.getX() - 1,
@@ -224,25 +224,25 @@ public class Board extends AbstractModel {
 		case RIGHT:
 			if (isMoveAllowed(direction)) {
 				// PLAYER MOVES A DIAMOND
-				if ((grid[position.getX()+1][position.getY()].getState() == FieldState.DIAMOND)) {
-					if ((grid[position.getX()+2][position.getY() ].getState() == FieldState.GOAL)) {
-						grid[position.x+2][position.y]
+				if ((grid[position.getX() + 1][position.getY()].getState() == FieldState.DIAMOND)) {
+					if ((grid[position.getX() + 2][position.getY()].getState() == FieldState.GOAL)) {
+						grid[position.x + 2][position.y]
 								.setState(FieldState.COMPLETED);
 					} else {
-						grid[position.x+2][position.y ]
+						grid[position.x + 2][position.y]
 								.setState(FieldState.DIAMOND);
 					}
-				} else if ((grid[position.getX()+1][position.getY()]
+				} else if ((grid[position.getX() + 1][position.getY()]
 						.getState() == FieldState.COMPLETED)) {
 					// TODO: Player jetzt auf Goal, Diamant aus Ziel
 
-					grid[position.x+1][position.y ]
+					grid[position.x + 1][position.y]
 							.setState(FieldState.PLAYER_ON_GOAL);
-					grid[position.x+2][position.y ]
+					grid[position.x + 2][position.y]
 							.setState(FieldState.DIAMOND);
-				}else if ((grid[position.getX()+1][position.getY() ]
+				} else if ((grid[position.getX() + 1][position.getY()]
 						.getState() == FieldState.GOAL)) {
-					grid[position.x+1][position.y ]
+					grid[position.x + 1][position.y]
 							.setState(FieldState.PLAYER_ON_GOAL);
 				}
 				if (grid[oldPosition.x][oldPosition.y].getState() == FieldState.PLAYER_ON_GOAL) {
@@ -252,8 +252,8 @@ public class Board extends AbstractModel {
 					grid[oldPosition.x][oldPosition.y]
 							.setState(FieldState.EMPTY);
 				}
-				if (grid[position.x+1][position.y ].getState() != FieldState.PLAYER_ON_GOAL) {
-					grid[position.x+1][position.y ]
+				if (grid[position.x + 1][position.y].getState() != FieldState.PLAYER_ON_GOAL) {
+					grid[position.x + 1][position.y]
 							.setState(FieldState.PLAYER);
 				}
 				this.position = new Position(position.getX() + 1,
@@ -276,28 +276,30 @@ public class Board extends AbstractModel {
 			 * grid[diamondPosition.getX()][diamondPosition.getY()]
 			 * .setState(FieldState.DIAMOND); } }
 			 */
-            moves.add(direction);
+			moves.add(direction);
 			diamondMove = false;
 
 			firePropertyChange(AbstractController.PROPERTY_POSITION,
 					oldPosition, position);
 		}
 	}
-	
+
 	/**
 	 * Checks if the Level is finished
 	 */
-	public void checkLevelStatus(){
+	public void checkLevelStatus() {
 		boolean finished = true;
-		for(int i=0;i<grid.length;i++){
-			for(int n=0;n<grid[0].length;n++){
-				if((grid[i][n].getState() == FieldState.GOAL)||(grid[i][n].getState() == FieldState.PLAYER_ON_GOAL)){
+		for (int i = 0; i < grid.length; i++) {
+			for (int n = 0; n < grid[0].length; n++) {
+				if ((grid[i][n].getState() == FieldState.GOAL)
+						|| (grid[i][n].getState() == FieldState.PLAYER_ON_GOAL)) {
 					finished = false;
 				}
 			}
 		}
-		if(finished){
-			firePropertyChange(AbstractController.PROPERTY_LEVEL_STATUS, false,true);
+		if (finished) {
+			firePropertyChange(AbstractController.PROPERTY_LEVEL_STATUS, false,
+					true);
 		}
 	}
 
@@ -317,7 +319,7 @@ public class Board extends AbstractModel {
 		if (isMoveInsideBorders(direction) == false) {
 			return false;
 		}
-		
+
 		switch (direction) {
 		case DOWN:
 			return (grid[position.getX()][position.getY() + 1].getState() == FieldState.GOAL)
@@ -358,7 +360,7 @@ public class Board extends AbstractModel {
 		}
 		return false;
 	}
-	
+
 	private boolean isMoveInsideBorders(Direction direction) {
 		switch (direction) {
 		case UP:
@@ -368,12 +370,12 @@ public class Board extends AbstractModel {
 		case LEFT:
 			return position.x > 0;
 		case RIGHT:
-			return position.x < grid.length -1;
+			return position.x < grid.length - 1;
 		}
 		return false;
 	}
 
-    public List<Direction> getMoves() {
-        return moves;
-    }
+	public List<Direction> getMoves() {
+		return moves;
+	}
 }

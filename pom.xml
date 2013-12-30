@@ -4,7 +4,9 @@
 	<groupId>ch.bfh.ti.projekt1</groupId>
 	<artifactId>sokoban</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
 	<build>
 		<directory>target</directory>
 		<outputDirectory>target/classes</outputDirectory>

@@ -177,6 +177,12 @@ public class BoardView extends JPanel implements KeyListener, MouseListener, Abs
                         this.add(pl);
                         field[i][n] = pl;
                         break;
+                    case COMPLETED:
+                    	Finish finish = new Finish();
+                    	finish.setCompleted();
+                    	this.add(finish);
+                    	field[i][n] = finish;
+                    	break;
                     default:
                         break;
                 }

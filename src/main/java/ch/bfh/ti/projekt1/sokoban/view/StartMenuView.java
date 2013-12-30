@@ -14,7 +14,7 @@ import ch.bfh.ti.projekt1.sokoban.core.LevelService;
 import ch.bfh.ti.projekt1.sokoban.core.LevelServiceImpl;
 import ch.bfh.ti.projekt1.sokoban.editor.SokobanEditor;
 
-public class StartMenuView extends JMenuBar implements ActionListener {
+public class StartMenuView extends JMenuBar {
 
     // spiel
     JMenu menuFile = new JMenu("Spiel");
@@ -32,7 +32,7 @@ public class StartMenuView extends JMenuBar implements ActionListener {
     JMenuItem itmLevelEditorStart = new JMenuItem("Level Editor Starten");
     private LevelService levelService = new LevelServiceImpl();
 
-    public StartMenuView() {
+    public StartMenuView(ActionListener actionListener) {
 
         // Spiel
         menuFile.add(itmNew);
@@ -63,71 +63,24 @@ public class StartMenuView extends JMenuBar implements ActionListener {
 
         // spiel
         itmNew.setActionCommand("new");
-        itmNew.addActionListener(this);
+        itmNew.addActionListener(actionListener);
         itmReload.setActionCommand("reload");
-        itmReload.addActionListener(this);
+        itmReload.addActionListener(actionListener);
         itmSave.setActionCommand("save");
-        itmSave.addActionListener(this);
+        itmSave.addActionListener(actionListener);
         itmLoad.setActionCommand("load");
-        itmLoad.addActionListener(this);
+        itmLoad.addActionListener(actionListener);
         itmClose.setActionCommand("close");
-        itmClose.addActionListener(this);
+        itmClose.addActionListener(actionListener);
 
         // optionen
         itmStatistics.setActionCommand("undo");
-        itmStatistics.addActionListener(this);
+        itmStatistics.addActionListener(actionListener);
         itmBest.setActionCommand("cut");
-        itmBest.addActionListener(this);
+        itmBest.addActionListener(actionListener);
 
         // leveleditor
         itmLevelEditorStart.setActionCommand("leveleditorstart");
-        itmLevelEditorStart.addActionListener(this);
-    }
-
-    public void actionPerformed(ActionEvent e) {
-        if (e.getActionCommand().equals("new")) {
-            Object[] options = {"Ja", "Nein"};
-            int response = JOptionPane.showOptionDialog(
-                    this,
-                    "Bist du sicher, dass du ein neues Spiel starten willst? Ungespeicherter Fortschritt geht dabei verloren. ",
-                    "Level neu starten", JOptionPane.YES_NO_OPTION,
-                    JOptionPane.QUESTION_MESSAGE, null, options,
-                    options[1]);
-
-            if (response == JOptionPane.YES_OPTION) {
-
-
-                JFileChooser jFileChooser = new JFileChooser("src/test/resources/ch/bfh/ti/projekt1/sokoban/generated");
-
-                jFileChooser.showOpenDialog(null);
-
-                BoardController controller = levelService.getLevel(jFileChooser.getSelectedFile());
-
-                getRootPane().setContentPane((BoardView) controller.getView());
-            }
-        } else if (e.getActionCommand().equals("close")) {
-            Object[] options = {"Ja", "Nein"};
-            JOptionPane
-                    .showOptionDialog(
-                            this,
-                            "Bist du sicher, dass du das Spiel beenden willst? Ungespeicherter Fortschritt geht dabei verloren. ",
-                            "Spiel beenden", JOptionPane.YES_NO_OPTION,
-                            JOptionPane.QUESTION_MESSAGE, null, options,
-                            options[1]);
-        } else if (e.getActionCommand().equals("reload")) {
-            Object[] options = {"Ja", "Nein"};
-            JOptionPane
-                    .showOptionDialog(
-                            this,
-                            "Bist du sicher, dass du das Level neu laden willst? Ungespeicherter Fortschritt geht dabei verloren. ",
-                            "Level neu laden", JOptionPane.YES_NO_OPTION,
-                            JOptionPane.QUESTION_MESSAGE, null, options,
-                            options[1]);
-        } else if (e.getActionCommand().equals("load")) {
-            JOptionPane.showMessageDialog(null, "load");
-        } else if (e.getActionCommand().equals("save")) {
-        } else if (e.getActionCommand().equals("leveleditorstart")) {
-            new SokobanEditor();
-        }
+        itmLevelEditorStart.addActionListener(actionListener);
     }
 }

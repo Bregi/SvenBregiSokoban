@@ -60,8 +60,20 @@ public class XmlServiceImpl implements XmlService {
     }
 
     @Override
-    public void saveLevel(Board board) throws LevelMisconfigurationException {
-        Level level = new Level();
+    public int getMaxColumnCount(List<Row> list) {
+        int count = 0;
+        for (Row rowType : list) {
+            if (rowType.getColumn().size() > count) {
+                count = rowType.getColumn().size();
+            }
+        }
+        return count;
+    }
+
+	@Override
+	public void saveLevel(Board board, File parentFolder)
+			throws LevelMisconfigurationException {
+		Level level = new Level();
 
         Field[][] grid = board.getGrid();
 
@@ -70,8 +82,12 @@ public class XmlServiceImpl implements XmlService {
         }
         
         level.setUuid(board.getUuid());
-        level.setName("Level" + board.getLevelName());
+        level.setName(board.getLevelName());
 
+        if (board.getDiamondMoveCounter() > 0) {
+        	level.setMoves(board.getDiamondMoveCounter());
+        }
+        
         for (int i = 0; i < grid[0].length; i++) {
             Row row = new Row();
             row.setId(i);
@@ -94,10 +110,8 @@ public class XmlServiceImpl implements XmlService {
         if (level.getStartPosition() == null) {
         	throw new LevelMisconfigurationException("No Startposition defined!");
         }
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
 
-
-        File file = new File(CoreConstants.getProperty("editor.basepath") + simpleDateFormat.format(new Date()) + ".xml");
+        File file = new File(parentFolder, level.getName() + ".xml");
         try {
             JAXBContext jaxbContext = JAXBContext.newInstance(Level.class);
             Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
@@ -107,18 +121,6 @@ public class XmlServiceImpl implements XmlService {
         } catch (JAXBException e) {
             LOG.error(e);
         }
+	}
 
-    }
-
-
-    @Override
-    public int getMaxColumnCount(List<Row> list) {
-        int count = 0;
-        for (Row rowType : list) {
-            if (rowType.getColumn().size() > count) {
-                count = rowType.getColumn().size();
-            }
-        }
-        return count;
-    }
 }

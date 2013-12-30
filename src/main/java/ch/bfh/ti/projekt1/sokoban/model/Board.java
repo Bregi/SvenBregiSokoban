@@ -30,6 +30,14 @@ public class Board extends AbstractModel {
 	private String uuid;
 	private int diamondMoveCounter;
 
+	public int getDiamondMoveCounter() {
+		return diamondMoveCounter;
+	}
+
+	public void setDiamondMoveCounter(int diamondMoveCounter) {
+		this.diamondMoveCounter = diamondMoveCounter;
+	}
+
 	public String getUuid() {
 		return uuid;
 	}
@@ -483,7 +491,8 @@ public class Board extends AbstractModel {
 			}
 		}
 		if (finished) {
-			firePropertyChange(AbstractController.PROPERTY_LEVEL_SCORE, 0, diamondMoveCounter);
+			firePropertyChange(AbstractController.PROPERTY_LEVEL_SCORE, 0,
+					diamondMoveCounter);
 			firePropertyChange(AbstractController.PROPERTY_LEVEL_STATUS, false,
 					true);
 		}

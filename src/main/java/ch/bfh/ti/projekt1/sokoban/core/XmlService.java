@@ -27,7 +27,7 @@ public interface XmlService {
      */
     Level changeLevelDimension(Level existingLevel, int columns, int rows);
 
-    void saveLevel(Board board) throws LevelMisconfigurationException;
-
+    void saveLevel(Board board, File parentFolder) throws LevelMisconfigurationException;
+    
     int getMaxColumnCount(List<Row> list);
 }

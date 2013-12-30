@@ -48,7 +48,8 @@ public class EditorServiceImpl implements EditorService {
 
     @Override
     public void saveLevel(Board board) throws LevelMisconfigurationException{
-        xmlService.saveLevel(board);
+    	File parentFolder = new File(CoreConstants.getProperty("editor.basepath"));
+        xmlService.saveLevel(board, parentFolder);
     }
 
     @Override

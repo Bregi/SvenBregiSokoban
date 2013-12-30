@@ -1,6 +1,7 @@
 package ch.bfh.ti.projekt1.sokoban.core;
 
 import ch.bfh.ti.projekt1.sokoban.controller.BoardController;
+import ch.bfh.ti.projekt1.sokoban.model.Board;
 import ch.bfh.ti.projekt1.sokoban.model.Direction;
 
 import java.io.File;
@@ -18,4 +19,6 @@ public interface LevelService {
     public void saveLevelMoves(List<Direction> directionList, String levelName);
 
     public Map<String, String> getLevelNameUUIDMap();
+    
+    public void saveLevelProgress(Board board, String player) throws LevelMisconfigurationException;
 }

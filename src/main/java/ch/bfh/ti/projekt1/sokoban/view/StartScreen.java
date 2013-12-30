@@ -26,6 +26,7 @@ import ch.bfh.ti.projekt1.sokoban.controller.AbstractController;
 import ch.bfh.ti.projekt1.sokoban.controller.BoardController;
 import ch.bfh.ti.projekt1.sokoban.core.CoreConstants;
 import ch.bfh.ti.projekt1.sokoban.core.Highscore;
+import ch.bfh.ti.projekt1.sokoban.core.LevelMisconfigurationException;
 import ch.bfh.ti.projekt1.sokoban.core.LevelService;
 import ch.bfh.ti.projekt1.sokoban.core.LevelServiceImpl;
 import ch.bfh.ti.projekt1.sokoban.core.XmlServiceImpl;
@@ -37,7 +38,7 @@ import ch.bfh.ti.projekt1.sokoban.model.Level;
  * @author marcoberger
  * @since 24/10/13 14:29
  */
-public class StartScreen implements AbstractView {
+public class StartScreen implements AbstractView, ActionListener {
 	private static final Logger LOG = Logger.getLogger(StartScreen.class);
 
 	private LevelService levelService = new LevelServiceImpl();
@@ -172,7 +173,7 @@ public class StartScreen implements AbstractView {
 					board.addView(StartScreen.this);
 
 					view = (BoardView) board.getView(BoardView.class);
-					model = (Board) board.getModel();
+					model = (Board) board.getModel(Board.class);
 					frame.setSize(view.getWindowSizeX(), view.getWindowSizeY());
 					frame.setLocationRelativeTo(null);
 					frame.setContentPane(view);
@@ -218,11 +219,11 @@ public class StartScreen implements AbstractView {
 					board.addView(StartScreen.this);
 
 					view = (BoardView) board.getView(BoardView.class);
-					model = (Board) board.getModel();
+					model = (Board) board.getModel(Board.class);
 					frame.setSize(view.getWindowSizeX(), view.getWindowSizeY());
 					frame.setLocationRelativeTo(null);
 					// view = controller.loadLevel(file.toString());
-					frame.setJMenuBar(new StartMenuView());
+					frame.setJMenuBar(new StartMenuView(this));
 					frame.setContentPane(view);
 
 					frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -320,7 +321,7 @@ public class StartScreen implements AbstractView {
 				board.addView(StartScreen.this);
 
 				view = (BoardView) board.getView(BoardView.class);
-				model = (Board) board.getModel();
+				model = (Board) board.getModel(Board.class);
 				frame.setSize(view.getWindowSizeX(), view.getWindowSizeY());
 				frame.setLocationRelativeTo(null);
 
@@ -353,7 +354,7 @@ public class StartScreen implements AbstractView {
 					board.addView(StartScreen.this);
 
 					view = (BoardView) board.getView();
-					model = (Board)board.getModel();
+					model = (Board)board.getModel(Board.class);
 					frame.setContentPane(view);
 
 					// load the game Menu
@@ -370,21 +371,11 @@ public class StartScreen implements AbstractView {
 		itmSave.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// String that gets written in file
-				System.out.println("TEST");
-				String fileContent = player + ":"
-						+ levels.getLevelHash(currentStoryLevel);
-				JFileChooser chooser = new JFileChooser();
-				int retrival = chooser.showSaveDialog(null);
-				if (retrival == JFileChooser.APPROVE_OPTION) {
-					try {
-						FileWriter fw = new FileWriter(basePath + player + "/"
-								+ FOLDER_PROGRESS + "/" + player + ".sok");
-						fw.write(fileContent);
-						fw.close();
-					} catch (Exception ex) {
-						ex.printStackTrace();
-					}
+				try {
+					levelService.saveLevelProgress(model, player);
+				} catch (LevelMisconfigurationException e1) {
+					JOptionPane.showConfirmDialog(frame, e1.getMessage());
+					LOG.error(e1.getMessage());
 				}
 			}
 		});
@@ -422,7 +413,7 @@ public class StartScreen implements AbstractView {
 					board.addView(StartScreen.this);
 
 					view = (BoardView) board.getView(BoardView.class);
-					model = (Board) board.getModel();
+					model = (Board) board.getModel(Board.class);
 					frame.setSize(view.getWindowSizeX(), view.getWindowSizeY());
 					frame.setContentPane(view);
 				}
@@ -523,7 +514,7 @@ public class StartScreen implements AbstractView {
 		board.addView(StartScreen.this);
 
 		view = (BoardView) board.getView(BoardView.class);
-		model = (Board) board.getModel();
+		model = (Board) board.getModel(Board.class);
 		frame.setSize(view.getWindowSizeX(), view.getWindowSizeY());
 		frame.setLocationRelativeTo(null);
 
@@ -534,5 +525,56 @@ public class StartScreen implements AbstractView {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		frame.getContentPane().revalidate();
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		 if (e.getActionCommand().equals("new")) {
+	            Object[] options = {"Ja", "Nein"};
+	            int response = JOptionPane.showOptionDialog(
+	                    frame,
+	                    "Bist du sicher, dass du ein neues Spiel starten willst? Ungespeicherter Fortschritt geht dabei verloren. ",
+	                    "Level neu starten", JOptionPane.YES_NO_OPTION,
+	                    JOptionPane.QUESTION_MESSAGE, null, options,
+	                    options[1]);
+
+	            if (response == JOptionPane.YES_OPTION) {
+
+
+	                JFileChooser jFileChooser = new JFileChooser("src/test/resources/ch/bfh/ti/projekt1/sokoban/generated");
+
+	                jFileChooser.showOpenDialog(null);
+
+	                BoardController controller = levelService.getLevel(jFileChooser.getSelectedFile());
+	                view = (BoardView) controller.getView(BoardView.class);
+	        		model = (Board) controller.getModel(Board.class);
+	                
+	                frame.getRootPane().setContentPane((BoardView) controller.getView());
+	            }
+	        } else if (e.getActionCommand().equals("close")) {
+	            Object[] options = {"Ja", "Nein"};
+	            JOptionPane
+	                    .showOptionDialog(
+	                            frame,
+	                            "Bist du sicher, dass du das Spiel beenden willst? Ungespeicherter Fortschritt geht dabei verloren. ",
+	                            "Spiel beenden", JOptionPane.YES_NO_OPTION,
+	                            JOptionPane.QUESTION_MESSAGE, null, options,
+	                            options[1]);
+	        } else if (e.getActionCommand().equals("reload")) {
+	            Object[] options = {"Ja", "Nein"};
+	            JOptionPane
+	                    .showOptionDialog(
+	                            frame,
+	                            "Bist du sicher, dass du das Level neu laden willst? Ungespeicherter Fortschritt geht dabei verloren. ",
+	                            "Level neu laden", JOptionPane.YES_NO_OPTION,
+	                            JOptionPane.QUESTION_MESSAGE, null, options,
+	                            options[1]);
+	        } else if (e.getActionCommand().equals("load")) {
+	            JOptionPane.showMessageDialog(null, "load");
+	        } else if (e.getActionCommand().equals("save")) {
+	        	
+	        } else if (e.getActionCommand().equals("leveleditorstart")) {
+	            new SokobanEditor();
+	        }
 	}
 }

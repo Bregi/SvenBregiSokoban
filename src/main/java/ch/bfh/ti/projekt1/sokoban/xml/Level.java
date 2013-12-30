@@ -25,6 +25,8 @@ import java.util.List;
  *       &lt;sequence>
  *         &lt;element name="row" type="{http://bfh.ch}row" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="uuid" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="moves" type="{http://www.w3.org/2001/XMLSchema}integer"/>
  *         &lt;element name="startPosition" type="{http://bfh.ch}startPosition"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -38,7 +40,8 @@ import java.util.List;
         "row",
         "name",
         "startPosition",
-        "uuid"
+        "uuid",
+        "moves"
 })
 public class Level {
 
@@ -49,6 +52,8 @@ public class Level {
     protected String uuid;
     @XmlElement(required = true)
     protected StartPosition startPosition;
+    @XmlElement(required = false)
+    protected Integer moves;
 
     /**
      * Gets the value of the row property.
@@ -135,6 +140,26 @@ public class Level {
      */
 	public void setUuid(String uuid) {
 		this.uuid = uuid;
+	}
+
+    /**
+     * Gets the value of the moves property.
+     *
+     * @return possible object is
+     *         {@link String }
+     */
+	public Integer getMoves() {
+		return moves;
+	}
+
+    /**
+     * Sets the value of the moves property.
+     *
+     * @param value allowed object is
+     *              {@link String }
+     */
+	public void setMoves(Integer moves) {
+		this.moves = moves;
 	}
 
 }

@@ -48,6 +48,9 @@ public class LevelServiceImpl implements LevelService {
 		}
 		board.setLevelName(level.getName());
 		board.setUuid(level.getUuid());
+		if (level.getMoves() != null) {
+			board.setDiamondMoveCounter(level.getMoves());
+		}
 		BoardView boardView = new BoardView(board, boardController,
 				board.getPosition(), level.getName());
 
@@ -87,6 +90,12 @@ public class LevelServiceImpl implements LevelService {
 		} catch (IOException ex) {
 		}
 		return fileNames;
+	}
+
+	@Override
+	public void saveLevelProgress(Board board, String player) throws LevelMisconfigurationException {
+		File parentFolder = new File(CoreConstants.getProperty("game.basepath") + player + "/" + CoreConstants.getProperty("game.folder.progress"));
+		xmlService.saveLevel(board, parentFolder);
 	}
 
 }

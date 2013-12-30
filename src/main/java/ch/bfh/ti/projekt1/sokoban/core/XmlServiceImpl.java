@@ -7,16 +7,19 @@ import ch.bfh.ti.projekt1.sokoban.xml.Column;
 import ch.bfh.ti.projekt1.sokoban.xml.Level;
 import ch.bfh.ti.projekt1.sokoban.xml.Row;
 import ch.bfh.ti.projekt1.sokoban.xml.StartPosition;
+
 import org.apache.log4j.Logger;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @author svennyffenegger
@@ -62,6 +65,11 @@ public class XmlServiceImpl implements XmlService {
 
         Field[][] grid = board.getGrid();
 
+        if (board.getUuid() == null || board.getUuid().isEmpty()) {
+        	board.setUuid(UUID.randomUUID().toString());
+        }
+        
+        level.setUuid(board.getUuid());
         level.setName("Level" + board.getLevelName());
 
         for (int i = 0; i < grid[0].length; i++) {

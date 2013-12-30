@@ -36,6 +36,7 @@ public class LevelServiceImpl implements LevelService {
             }
         }
         board.setLevelName(level.getName());
+        board.setUuid(level.getUuid());
         BoardView boardView = new BoardView(board, boardController, board.getPosition(), level.getName());
 
         boardController.setModel(board);

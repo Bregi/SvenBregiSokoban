@@ -27,6 +27,15 @@ public class Board extends AbstractModel {
 	private int endIndex;
 	private boolean diamondMove;
 	private List<Direction> moves;
+	private String uuid;
+
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
 
 	// used for the editor mainly
 	public Board(int width, int height) {
@@ -224,46 +233,47 @@ public class Board extends AbstractModel {
 		List<Vertex> path = findShortestPath.getPath(directions,
 				directions.get((int) dijkstraObject[1]),
 				directions.get((int) dijkstraObject[2]));
-		
-		//führt die aktionen in einem eigenen thread aus
-		//der thread macht nach jedem vertex element x eine pause von 1000 millis
+
+		// führt die aktionen in einem eigenen thread aus
+		// der thread macht nach jedem vertex element x eine pause von 1000
+		// millis
 		class WalkRunnable implements Runnable {
 
 			List<Vertex> path;
 			Position playerPosition;
-			
+
 			WalkRunnable(List<Vertex> path, Position playerPosition) {
 				this.path = path;
 				this.playerPosition = playerPosition;
 			}
-			
+
 			@Override
 			public void run() {
-				for(Vertex x:path){
-					if(x.getX() > playerPosition.getX()){
+				for (Vertex x : path) {
+					if (x.getX() > playerPosition.getX()) {
 						setNextField(Direction.RIGHT);
-					}else if(x.getY()>playerPosition.getY()){
+					} else if (x.getY() > playerPosition.getY()) {
 						setNextField(Direction.DOWN);
-					}else if(x.getX()<playerPosition.getX()){
+					} else if (x.getX() < playerPosition.getX()) {
 						setNextField(Direction.LEFT);
-					}else if(x.getY()<playerPosition.getY()){
+					} else if (x.getY() < playerPosition.getY()) {
 						setNextField(Direction.UP);
 					}
-					
+
 					try {
 						Thread.currentThread().sleep(1000L);
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
-				}	
+				}
 			}
-			
+
 		}
-		
-		//hier wird der thread effektiv erzeugt und gestartet
+
+		// hier wird der thread effektiv erzeugt und gestartet
 		new Thread(new WalkRunnable(path, playerPosition)).start();
-		
+
 		// setNextField(Direction.RIGHT);
 	}
 

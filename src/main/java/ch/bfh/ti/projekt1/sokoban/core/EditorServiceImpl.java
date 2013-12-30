@@ -81,7 +81,7 @@ public class EditorServiceImpl implements EditorService {
         }
 
         board.setLevelName(level.getName());
-
+        board.setUuid(level.getUuid());
         return controller;
     }
 

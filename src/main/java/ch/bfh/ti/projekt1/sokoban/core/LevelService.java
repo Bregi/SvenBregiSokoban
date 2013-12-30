@@ -5,6 +5,7 @@ import ch.bfh.ti.projekt1.sokoban.model.Direction;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author svennyffenegger
@@ -16,4 +17,5 @@ public interface LevelService {
 
     public void saveLevelMoves(List<Direction> directionList, String levelName);
 
+    public Map<String, String> getLevelNameUUIDMap();
 }

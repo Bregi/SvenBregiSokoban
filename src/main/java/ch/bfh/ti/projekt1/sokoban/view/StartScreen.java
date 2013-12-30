@@ -20,6 +20,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import ch.bfh.ti.projekt1.sokoban.controller.AbstractController;
 import ch.bfh.ti.projekt1.sokoban.controller.BoardController;
+import ch.bfh.ti.projekt1.sokoban.core.CoreConstants;
 import ch.bfh.ti.projekt1.sokoban.core.LevelService;
 import ch.bfh.ti.projekt1.sokoban.core.LevelServiceImpl;
 import ch.bfh.ti.projekt1.sokoban.editor.SokobanEditor;
@@ -38,6 +39,9 @@ public class StartScreen implements AbstractView {
 	private String currentLevel;
 	private String basePath;
 	private String player;
+	private final String FOLDER_HIGHSCORE = CoreConstants.getProperty("game.folder.highscore");
+	private final String FOLDER_PROGRESS = CoreConstants.getProperty("game.folder.progress");
+	private final String FOLDER_SOLUTIONS = CoreConstants.getProperty("game.folder.solutions");
 	private JFrame frame;
 
 	private BoardView view;
@@ -58,9 +62,9 @@ public class StartScreen implements AbstractView {
 	 */
 	public StartScreen() {
 		levels = new Level();
-		basePath = "src/test/resources/ch/bfh/ti/projekt1/sokoban/";
-		frame = new JFrame("Sokoban");
-		frame.setSize(500, 300);
+		basePath = CoreConstants.getProperty("game.basepath");
+		frame = new JFrame(CoreConstants.getProperty("game.title"));
+		frame.setSize(new Integer(CoreConstants.getProperty("game.window.width")), new Integer(CoreConstants.getProperty("game.window.height")));
 		frame.setLocationRelativeTo(null);
 		menuBar = new JMenuBar();
 		frame.setJMenuBar(menuBar);
@@ -355,7 +359,7 @@ public class StartScreen implements AbstractView {
 				if (retrival == JFileChooser.APPROVE_OPTION) {
 					try {
 						FileWriter fw = new FileWriter(basePath + player
-								+ "/Spielstaende/" + player + ".sok");
+								+ "/"+ FOLDER_PROGRESS +"/" + player + ".sok");
 						fw.write(fileContent);
 						fw.close();
 					} catch (Exception ex) {
@@ -389,7 +393,7 @@ public class StartScreen implements AbstractView {
 				if (response == JOptionPane.YES_OPTION) {
 
 					JFileChooser jFileChooser = new JFileChooser(
-							"src/test/resources/ch/bfh/ti/projekt1/sokoban/generated");
+							CoreConstants.getProperty("editor.basepath"));
 
 					jFileChooser.showOpenDialog(null);
 					levelName = jFileChooser.getSelectedFile().toString();
@@ -462,11 +466,11 @@ public class StartScreen implements AbstractView {
 		// TODO try catch
 		File profile = new File(basePath + profileName);
 		profile.mkdir();
-		File spielstaende = new File(basePath + profileName + "/Spielstaende");
+		File spielstaende = new File(basePath + profileName + "/" + FOLDER_PROGRESS);
 		spielstaende.mkdir();
-		File highscore = new File(basePath + profileName + "/Highscore");
+		File highscore = new File(basePath + profileName + "/"+ FOLDER_HIGHSCORE);
 		highscore.mkdir();
-		File solutions = new File(basePath + profileName + "/Solutions");
+		File solutions = new File(basePath + profileName + "/"+FOLDER_SOLUTIONS);
 		solutions.mkdir();
 	}
 	

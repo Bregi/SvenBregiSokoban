@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <level xmlns="http://bfh.ch">
     <row id="0">
-        <column id="0" type="EMPTY"/>
+        <column id="0" type="PLAYER"/>
         <column id="1" type="EMPTY"/>
         <column id="2" type="DIAMOND"/>
         <column id="3" type="GOAL"/>
@@ -48,6 +48,7 @@
         <column id="4" type="EMPTY"/>
         <column id="5" type="EMPTY"/>
     </row>
-    <name>Levelnull</name>
+    <name>LevelLevelnull</name>
     <startPosition row="0" column="0"/>
+    <uuid>ec5fc531-449e-4001-89dd-ad035e0eadcd</uuid>
 </level>

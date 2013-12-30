@@ -61,16 +61,23 @@ public abstract class AbstractMultiController extends AbstractController {
 		}
 		return null;
 	}
+	
+	public AbstractModel getModel(Class<? extends AbstractModel> clazz) {
+		for (AbstractModel model : registeredModels) {
+			if (clazz.isInstance(model)) {
+				return model;
+			}
+		}
+		return null;
+	}
 
 	@Override
 	public void setView(AbstractView view) {
-		// TODO Auto-generated method stub
 		addView(view);
 	}
 
 	@Override
 	public void setModel(AbstractModel model) {
-		// TODO Auto-generated method stub
 		addModel(model);
 	}
 

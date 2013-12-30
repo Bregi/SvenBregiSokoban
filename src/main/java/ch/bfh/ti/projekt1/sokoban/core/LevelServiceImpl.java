@@ -69,7 +69,7 @@ public class LevelServiceImpl implements LevelService {
 	@Override
 	public Map<String, String> getLevelNameUUIDMap() {
 		Map<String, String> uuidNameMap = new HashMap<>();
-		List<String> filesNames = fileList(CoreConstants.getProperty("editor.basepath"));
+		List<String> filesNames = fileList(CoreConstants.getProperty("game.levelspath"));
 		for (String file : filesNames) {
 			Level level = xmlService.getLevelFromPath(file);
 			uuidNameMap.put(level.getUuid(), level.getName());
@@ -80,7 +80,7 @@ public class LevelServiceImpl implements LevelService {
 	private List<String> fileList(String directory) {
 		List<String> fileNames = new ArrayList<>();
 		try (DirectoryStream<Path> directoryStream = Files
-				.newDirectoryStream(Paths.get(directory))) {
+				.newDirectoryStream(Paths.get(directory), "*.xml")) {
 			for (Path path : directoryStream) {
 				fileNames.add(path.toString());
 			}

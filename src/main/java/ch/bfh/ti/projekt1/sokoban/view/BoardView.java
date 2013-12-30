@@ -11,6 +11,7 @@ import java.beans.PropertyChangeEvent;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
+import ch.bfh.ti.projekt1.sokoban.controller.AbstractController;
 import ch.bfh.ti.projekt1.sokoban.controller.BoardController;
 import ch.bfh.ti.projekt1.sokoban.model.Board;
 import ch.bfh.ti.projekt1.sokoban.model.Field;
@@ -78,6 +79,10 @@ public class BoardView extends JPanel implements KeyListener, MouseListener, Abs
                 }
             });
 
+        }
+        
+        if (evt.getPropertyName().equals(AbstractController.PROPERTY_LEVEL_SCORE)) {
+        	System.out.println("Level score:"+evt.getNewValue().toString());
         }
     }
     /**

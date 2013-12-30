@@ -2,6 +2,8 @@ package ch.bfh.ti.projekt1.sokoban.model;
 
 import java.util.ArrayList;
 
+import ch.bfh.ti.projekt1.sokoban.core.CoreConstants;
+
 public class Level {
 	private String[] levels;
 	private int numberOfLevels
@@ -12,14 +14,15 @@ public class Level {
 		numberOfLevels = 10;		
 		//TODO: SET ALL THE LEVEL AVAILABLE
 		levels = new String[numberOfLevels];
-		levels[0] = "src/test/resources/ch/bfh/ti/projekt1/sokoban/level1.xml";
-		levels[1] = "src/test/resources/ch/bfh/ti/projekt1/sokoban/level2.xml";
-		levels[2] = "src/test/resources/ch/bfh/ti/projekt1/sokoban/level3.xml";
-		levels[3] = "src/test/resources/ch/bfh/ti/projekt1/sokoban/level4.xml";
-		levels[4] = "src/test/resources/ch/bfh/ti/projekt1/sokoban/level5.xml";
-		levels[5] = "src/test/resources/ch/bfh/ti/projekt1/sokoban/level6.xml";
-		levels[6] = "src/test/resources/ch/bfh/ti/projekt1/sokoban/level7.xml";
-		levels[7] = "src/test/resources/ch/bfh/ti/projekt1/sokoban/level8.xml";
+		String levelPath = CoreConstants.getProperty("game.levelspath");
+		levels[0] = levelPath+"/level1.xml";
+		levels[1] = levelPath+"/level2.xml";
+		levels[2] = levelPath+"/level3.xml";
+		levels[3] = levelPath+"/level4.xml";
+		levels[4] = levelPath+"/level5.xml";
+		levels[5] = levelPath+"/level6.xml";
+		levels[6] = levelPath+"/level7.xml";
+		levels[7] = levelPath+"/level8.xml";
 		
 		levelHashes = new String[numberOfLevels];
 		levelHashes[0] = "4d913082805e39e321efa920a381b3d6473706c9";

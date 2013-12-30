@@ -71,7 +71,7 @@ public class EditorServiceImpl implements EditorService {
                 board.setField(columnType.getId(), rowType.getId(), field);
 
                 FieldController fieldController = new FieldController();
-                DraggableElementDestination elementDestination = new DraggableElementDestination(fieldController);
+                DraggableElementDestination elementDestination = new DraggableElementDestination(fieldController, field.getState());
 
                 fieldController.setView(elementDestination);
                 fieldController.setModel(field);

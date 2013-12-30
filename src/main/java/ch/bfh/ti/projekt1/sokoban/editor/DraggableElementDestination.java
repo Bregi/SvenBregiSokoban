@@ -18,9 +18,13 @@ public class DraggableElementDestination extends Element implements DropTargetLi
     private DropTarget dropTarget;
 
     public DraggableElementDestination(FieldController controller) {
+        this(controller, FieldState.EMPTY);
+    }
+    
+    public DraggableElementDestination(FieldController controller, FieldState fieldState) {
         super(controller);
         dropTarget = new DropTarget(this, this);
-        addImage(FieldState.EMPTY);
+        addImage(fieldState);
     }
 
     @Override

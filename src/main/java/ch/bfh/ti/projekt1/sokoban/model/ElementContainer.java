@@ -1,7 +1,5 @@
 package ch.bfh.ti.projekt1.sokoban.model;
 
-import ch.bfh.ti.projekt1.sokoban.model2.Element;
-
 import java.util.ArrayList;
 
 

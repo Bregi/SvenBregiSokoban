@@ -1,4 +1,5 @@
-package ch.bfh.ti.projekt1.sokoban.model2;
+package ch.bfh.ti.projekt1.sokoban.model;
+
 
 public class Wall extends Element {
     public void initialize() {

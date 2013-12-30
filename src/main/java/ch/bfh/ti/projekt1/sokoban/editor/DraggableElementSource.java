@@ -27,6 +27,11 @@ public class DraggableElementSource extends Element implements DragGestureListen
         setPreferredSize(preferredDimension);
         this.state = state;
     }
+    
+    protected void startDragging(DragGestureEvent dge) {
+    	
+    	
+    }
 
     @Override
     public void dragGestureRecognized(DragGestureEvent dge) {
@@ -36,4 +41,6 @@ public class DraggableElementSource extends Element implements DragGestureListen
         source.startDrag(dge, DragSource.DefaultCopyDrop, transferable, new DragSourceAdapter() {
         });
     }
+    
+    
 }

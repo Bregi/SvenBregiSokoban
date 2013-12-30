@@ -4,14 +4,17 @@ import ch.bfh.ti.projekt1.sokoban.model.FieldState;
 import ch.bfh.ti.projekt1.sokoban.view.AbstractView;
 
 import javax.swing.*;
+
 import java.awt.*;
+import java.awt.dnd.DragGestureEvent;
+import java.awt.dnd.DragGestureListener;
 import java.beans.PropertyChangeEvent;
 
 /**
  * @author svennyffenegger
  * @since 27/10/13 19:19
  */
-public class LevelEditorView extends JPanel implements AbstractView {
+public class LevelEditorView extends JPanel implements AbstractView, DragGestureListener {
 
     private EditorController controller;
 
@@ -54,4 +57,10 @@ public class LevelEditorView extends JPanel implements AbstractView {
     public void addElement(DraggableElementDestination elementDestination) {
         levelPanel.add(elementDestination);
     }
+
+	@Override
+	public void dragGestureRecognized(DragGestureEvent dge) {
+		// TODO Auto-generated method stub
+		
+	}
 }

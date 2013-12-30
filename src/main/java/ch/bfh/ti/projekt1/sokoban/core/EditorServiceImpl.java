@@ -49,6 +49,9 @@ public class EditorServiceImpl implements EditorService {
     @Override
     public void saveLevel(Board board) throws LevelMisconfigurationException{
     	File parentFolder = new File(CoreConstants.getProperty("editor.basepath"));
+    	//prevent to save a modified level with the same uuid again
+    	//when a level is changed in the editor, then it needs a new uuid
+    	board.setUuid(null);
         xmlService.saveLevel(board, parentFolder);
     }
 

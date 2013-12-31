@@ -20,5 +20,7 @@ public interface LevelService {
 
     public Map<String, String> getLevelNameUUIDMap();
     
+    public List<String> getProfiles();
+    
     public void saveLevelProgress(Board board, String player) throws LevelMisconfigurationException;
 }

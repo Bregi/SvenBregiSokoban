@@ -14,9 +14,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.log4j.xml.Log4jEntityResolver;
 
 /**
  * @author svennyffenegger
@@ -72,7 +75,8 @@ public class LevelServiceImpl implements LevelService {
 	@Override
 	public Map<String, String> getLevelNameUUIDMap() {
 		Map<String, String> uuidNameMap = new HashMap<>();
-		List<String> filesNames = fileList(CoreConstants.getProperty("game.levelspath"));
+		List<String> filesNames = fileList(CoreConstants
+				.getProperty("game.levelspath"));
 		for (String file : filesNames) {
 			Level level = xmlService.getLevelFromPath(file);
 			uuidNameMap.put(level.getUuid(), level.getName());
@@ -82,8 +86,8 @@ public class LevelServiceImpl implements LevelService {
 
 	private List<String> fileList(String directory) {
 		List<String> fileNames = new ArrayList<>();
-		try (DirectoryStream<Path> directoryStream = Files
-				.newDirectoryStream(Paths.get(directory), "*.xml")) {
+		try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(
+				Paths.get(directory), "*.xml")) {
 			for (Path path : directoryStream) {
 				fileNames.add(path.toString());
 			}
@@ -93,9 +97,33 @@ public class LevelServiceImpl implements LevelService {
 	}
 
 	@Override
-	public void saveLevelProgress(Board board, String player) throws LevelMisconfigurationException {
-		File parentFolder = new File(CoreConstants.getProperty("game.basepath") + player + "/" + CoreConstants.getProperty("game.folder.progress"));
+	public void saveLevelProgress(Board board, String player)
+			throws LevelMisconfigurationException {
+		File parentFolder = new File(CoreConstants.getProperty("game.basepath")
+				+ player + "/"
+				+ CoreConstants.getProperty("game.folder.progress"));
 		xmlService.saveLevel(board, parentFolder);
+	}
+
+	@Override
+	public List<String> getProfiles() {
+		List<String> dirList = new ArrayList<>();
+		try (DirectoryStream<Path> stream = Files.newDirectoryStream(
+				Paths.get(CoreConstants.getProperty("game.basepath")),
+				new DirectoryStream.Filter<Path>() {
+
+					@Override
+					public boolean accept(Path entry) throws IOException {
+						return Files.isDirectory(entry);
+					}
+				})) {
+			for (Path entry : stream) {
+				dirList.add(entry.getFileName().toString());
+			}
+		} catch (IOException e) {
+		}
+
+		return dirList;
 	}
 
 }

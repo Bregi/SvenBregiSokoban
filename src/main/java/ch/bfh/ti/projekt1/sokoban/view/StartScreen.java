@@ -8,6 +8,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.JDialog;
@@ -245,6 +247,16 @@ public class StartScreen implements AbstractView, ActionListener {
 				SokobanEditor editor = new SokobanEditor();
 			}
 		});
+		
+		frame.setContentPane(new ProfileView(levelService.getProfiles()) {
+
+			@Override
+			protected void profileSelected(String profile) {
+				LOG.info("Profile "+profile+" selected");
+			}
+			
+		});
+		
 		frame.setSize(500, 500);
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		frame.setVisible(true);

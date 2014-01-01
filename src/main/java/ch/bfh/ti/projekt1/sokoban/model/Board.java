@@ -236,18 +236,47 @@ public class Board extends AbstractModel {
 		List<Vertex> path = findShortestPath.getPath(directions,
 				directions.get((int) dijkstraObject[1]),
 				directions.get((int) dijkstraObject[2]));
-		for (Vertex x : path) {
-			if (x.getX() > playerPosition.getX()) {
-				setNextField(Direction.RIGHT);
-			} else if (x.getY() > playerPosition.getY()) {
-				setNextField(Direction.DOWN);
-			} else if (x.getX() < playerPosition.getX()) {
-				setNextField(Direction.LEFT);
-			} else if (x.getY() < playerPosition.getY()) {
-				setNextField(Direction.UP);
+		
+		//führt die aktionen in einem eigenen thread aus
+		//der thread macht nach jedem vertex element x eine pause von 1000 millis
+		class WalkRunnable implements Runnable {
+
+			List<Vertex> path;
+			Position playerPosition;
+			
+			WalkRunnable(List<Vertex> path, Position playerPosition) {
+				this.path = path;
+				this.playerPosition = playerPosition;
 			}
+			
+			@Override
+			public void run() {
+				for(Vertex x:path){
+					if(x.getX() > playerPosition.getX()){
+						setNextField(Direction.RIGHT);
+					}else if(x.getY()>playerPosition.getY()){
+						setNextField(Direction.DOWN);
+					}else if(x.getX()<playerPosition.getX()){
+						setNextField(Direction.LEFT);
+					}else if(x.getY()<playerPosition.getY()){
+						setNextField(Direction.UP);
+					}
+					
+					try {
+						Thread.currentThread().sleep(500L);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					playerPosition = new Position(x.getX(), x.getY());
+				}
+			}
+			
 		}
-		// setNextField(Direction.RIGHT);
+		
+		//hier wird der thread effektiv erzeugt und gestartet
+		new Thread(new WalkRunnable(path, playerPosition)).start();
+		
 	}
 
 	/**
@@ -434,7 +463,6 @@ public class Board extends AbstractModel {
 			firePropertyChange(AbstractController.PROPERTY_POSITION,
 					oldPosition, position);
 		}
-		System.out.println("Test");
 	}
 
 	/**
@@ -476,7 +504,7 @@ public class Board extends AbstractModel {
 		switch (direction) {
 		case DOWN:
 			return (grid[position.getX()][position.getY() + 1].getState() == FieldState.GOAL)
-					|| (((grid[position.getX()][position.getY() + 1].getState() == FieldState.COMPLETED) && (grid[position
+					||  ((grid[position.getX() ][position.getY()+1].getState() == FieldState.COMPLETED)&&(grid[position.getX() ][position.getY()+2].getState() == FieldState.GOAL))||(((grid[position.getX()][position.getY() + 1].getState() == FieldState.COMPLETED) && (grid[position
 							.getX()][position.getY() + 2].getState() == FieldState.EMPTY)) || (grid[position
 							.getX()].length > position.getY() + 1 && (grid[position
 							.getX()][position.getY() + 1].getState() == FieldState.EMPTY || (grid[position
@@ -485,7 +513,8 @@ public class Board extends AbstractModel {
 							.getX()][position.getY() + 2].getState() == FieldState.GOAL)))));
 		case UP:
 			return (grid[position.getX()][position.getY() - 1].getState() == FieldState.GOAL)
-					|| (((grid[position.getX()][position.getY() - 1].getState() == FieldState.COMPLETED) && (grid[position
+					|| ((grid[position.getX() ][position.getY() - 1].getState() == FieldState.COMPLETED)&&(grid[position.getX() ][position.getY()-2].getState() == FieldState.GOAL))||
+					(((grid[position.getX()][position.getY() - 1].getState() == FieldState.COMPLETED) && (grid[position
 							.getX()][position.getY() - 2].getState() == FieldState.EMPTY)) || (0 < position
 							.getY() && (grid[position.getX()][position.getY() - 1]
 							.getState() == FieldState.EMPTY || (grid[position
@@ -494,6 +523,8 @@ public class Board extends AbstractModel {
 							.getX()][position.getY() - 2].getState() == FieldState.GOAL)))));
 		case LEFT:
 			return (grid[position.getX() - 1][position.getY()].getState() == FieldState.GOAL)
+					|| ((grid[position.getX() - 1][position.getY() ].getState() == FieldState.COMPLETED)&&(grid[position.getX()- 2 ][position.getY()].getState() == FieldState.GOAL))||
+					 ((grid[position.getX() - 1][position.getY()].getState() == FieldState.COMPLETED)&&(grid[position.getX() - 2][position.getY()].getState() == FieldState.GOAL))
 					|| (((grid[position.getX() - 1][position.getY()].getState() == FieldState.COMPLETED) && (grid[position
 							.getX() - 2][position.getY()].getState() == FieldState.EMPTY)) || (0 < position
 							.getX() && (grid[position.getX() - 1][position
@@ -503,7 +534,8 @@ public class Board extends AbstractModel {
 							.getX() - 2][position.getY()].getState() == FieldState.GOAL)))));
 		case RIGHT:
 			return (grid[position.getX() + 1][position.getY()].getState() == FieldState.GOAL)
-					|| (((grid[position.getX() + 1][position.getY()].getState() == FieldState.COMPLETED) && (grid[position
+					|| ((grid[position.getX()+ 1 ][position.getY() ].getState() == FieldState.COMPLETED)&&(grid[position.getX()+ 2 ][position.getY()].getState() == FieldState.GOAL))||
+					(((grid[position.getX() + 1][position.getY()].getState() == FieldState.COMPLETED) && (grid[position
 							.getX() + 2][position.getY()].getState() == FieldState.EMPTY)) || (grid.length > position
 							.getX() + 1 && (grid[position.getX() + 1][position
 							.getY()].getState() == FieldState.EMPTY || (grid[position

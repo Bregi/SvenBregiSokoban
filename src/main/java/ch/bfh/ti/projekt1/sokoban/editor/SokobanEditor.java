@@ -1,10 +1,10 @@
 package ch.bfh.ti.projekt1.sokoban.editor;
 
+import ch.bfh.ti.projekt1.sokoban.core.CoreConstants;
 import ch.bfh.ti.projekt1.sokoban.core.EditorService;
 import ch.bfh.ti.projekt1.sokoban.core.EditorServiceImpl;
 import ch.bfh.ti.projekt1.sokoban.core.LevelMisconfigurationException;
 import ch.bfh.ti.projekt1.sokoban.model.Board;
-import ch.bfh.ti.projekt1.sokoban.view.StartMenuView;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -95,19 +95,23 @@ public class SokobanEditor {
 
                     controller = editorService.getLevel(file);
 
-                    frame.setJMenuBar(new StartMenuView());
+                    //frame.setJMenuBar(new StartMenuView());
                     frame.setContentPane((LevelEditorView) controller.getView());
 
-                    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                    //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
                     frame.getContentPane().revalidate();
+                    frame.getContentPane().repaint(); 
                 } else {
                     // show that the file was not applicable in this case
                 }
             }
         });
 
-        frame.setSize(500, 500);
+        Integer width = new Integer(CoreConstants.getProperty("editor.window.width"));
+        Integer height = new Integer(CoreConstants.getProperty("editor.window.height"));
+        
+        frame.setSize(width, height);
         frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         frame.setVisible(true);
 

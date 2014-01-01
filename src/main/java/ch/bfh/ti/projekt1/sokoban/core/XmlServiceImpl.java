@@ -7,16 +7,19 @@ import ch.bfh.ti.projekt1.sokoban.xml.Column;
 import ch.bfh.ti.projekt1.sokoban.xml.Level;
 import ch.bfh.ti.projekt1.sokoban.xml.Row;
 import ch.bfh.ti.projekt1.sokoban.xml.StartPosition;
+
 import org.apache.log4j.Logger;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @author svennyffenegger
@@ -57,13 +60,34 @@ public class XmlServiceImpl implements XmlService {
     }
 
     @Override
-    public void saveLevel(Board board) throws LevelMisconfigurationException {
-        Level level = new Level();
+    public int getMaxColumnCount(List<Row> list) {
+        int count = 0;
+        for (Row rowType : list) {
+            if (rowType.getColumn().size() > count) {
+                count = rowType.getColumn().size();
+            }
+        }
+        return count;
+    }
+
+	@Override
+	public void saveLevel(Board board, File parentFolder)
+			throws LevelMisconfigurationException {
+		Level level = new Level();
 
         Field[][] grid = board.getGrid();
 
-        level.setName("Level" + board.getLevelName());
+        if (board.getUuid() == null || board.getUuid().isEmpty()) {
+        	board.setUuid(UUID.randomUUID().toString());
+        }
+        
+        level.setUuid(board.getUuid());
+        level.setName(board.getLevelName());
 
+        if (board.getDiamondMoveCounter() > 0) {
+        	level.setMoves(board.getDiamondMoveCounter());
+        }
+        
         for (int i = 0; i < grid[0].length; i++) {
             Row row = new Row();
             row.setId(i);
@@ -86,10 +110,8 @@ public class XmlServiceImpl implements XmlService {
         if (level.getStartPosition() == null) {
         	throw new LevelMisconfigurationException("No Startposition defined!");
         }
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
 
-
-        File file = new File(CoreConstants.getProperty("editor.basepath") + simpleDateFormat.format(new Date()) + ".xml");
+        File file = new File(parentFolder, level.getName() + ".xml");
         try {
             JAXBContext jaxbContext = JAXBContext.newInstance(Level.class);
             Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
@@ -99,18 +121,6 @@ public class XmlServiceImpl implements XmlService {
         } catch (JAXBException e) {
             LOG.error(e);
         }
+	}
 
-    }
-
-
-    @Override
-    public int getMaxColumnCount(List<Row> list) {
-        int count = 0;
-        for (Row rowType : list) {
-            if (rowType.getColumn().size() > count) {
-                count = rowType.getColumn().size();
-            }
-        }
-        return count;
-    }
 }

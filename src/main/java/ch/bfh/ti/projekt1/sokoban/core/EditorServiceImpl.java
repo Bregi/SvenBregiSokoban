@@ -48,7 +48,11 @@ public class EditorServiceImpl implements EditorService {
 
     @Override
     public void saveLevel(Board board) throws LevelMisconfigurationException{
-        xmlService.saveLevel(board);
+    	File parentFolder = new File(CoreConstants.getProperty("editor.basepath"));
+    	//prevent to save a modified level with the same uuid again
+    	//when a level is changed in the editor, then it needs a new uuid
+    	board.setUuid(null);
+        xmlService.saveLevel(board, parentFolder);
     }
 
     @Override
@@ -71,7 +75,7 @@ public class EditorServiceImpl implements EditorService {
                 board.setField(columnType.getId(), rowType.getId(), field);
 
                 FieldController fieldController = new FieldController();
-                DraggableElementDestination elementDestination = new DraggableElementDestination(fieldController);
+                DraggableElementDestination elementDestination = new DraggableElementDestination(fieldController, field.getState());
 
                 fieldController.setView(elementDestination);
                 fieldController.setModel(field);
@@ -81,7 +85,7 @@ public class EditorServiceImpl implements EditorService {
         }
 
         board.setLevelName(level.getName());
-
+        board.setUuid(level.getUuid());
         return controller;
     }
 

@@ -26,7 +26,18 @@ public class BoardController extends AbstractMultiController {
 			setModelProperty(PROPERTY_NEXT_FIELD, Direction.RIGHT);
 		}
 	}
-
+	public void moveRight() {
+		setModelProperty(PROPERTY_NEXT_FIELD, Direction.RIGHT);
+	}
+	public void moveLeft() {
+		setModelProperty(PROPERTY_NEXT_FIELD, Direction.LEFT);
+	}
+	public void moveUp() {
+		setModelProperty(PROPERTY_NEXT_FIELD, Direction.UP);
+	}
+	public void moveDown() {
+		setModelProperty(PROPERTY_NEXT_FIELD, Direction.DOWN);
+	}
 	/**
 	 * A key has been pressed (and not released yet). TODO: Move player with a
 	 * timer?

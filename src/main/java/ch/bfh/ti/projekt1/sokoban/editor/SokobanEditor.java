@@ -70,8 +70,12 @@ public class SokobanEditor {
         menuFileSave.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                try {
-					editorService.saveLevel((Board) controller.getModel());
+            	Board board = (Board) controller.getModel();
+            	board.setLevelName(JOptionPane.showInputDialog("Name des Levels:", board.getLevelName()));
+            	
+            	try {
+					editorService.saveLevel(board);
+					JOptionPane.showConfirmDialog(null, "Level wurde gespeichert.");
 				} catch (LevelMisconfigurationException e1) {
 					JOptionPane.showMessageDialog(frame, e1.getMessage());
 					LOG.error(e1.getMessage());

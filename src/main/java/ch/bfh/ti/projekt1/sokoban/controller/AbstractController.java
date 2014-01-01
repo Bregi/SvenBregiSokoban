@@ -2,6 +2,7 @@ package ch.bfh.ti.projekt1.sokoban.controller;
 
 import ch.bfh.ti.projekt1.sokoban.model.AbstractModel;
 import ch.bfh.ti.projekt1.sokoban.view.AbstractView;
+
 import org.apache.log4j.Logger;
 
 import java.beans.PropertyChangeEvent;
@@ -27,6 +28,7 @@ public abstract class AbstractController implements PropertyChangeListener {
     public static final String PROPERTY_LEVEL_NAME = "LevelName";
     public static final String PROPERTY_LEVEL_STATUS = "LevelStatus";
     private static final Logger LOG = Logger.getLogger(AbstractController.class);
+	public static final String PROPERTY_LEVEL_SCORE = "LevelScore";
     private AbstractView view;
     private AbstractModel model;
 

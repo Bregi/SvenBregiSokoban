@@ -18,11 +18,16 @@ import javax.swing.JOptionPane;
 import javax.swing.WindowConstants;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import org.apache.log4j.Logger;
+
 import ch.bfh.ti.projekt1.sokoban.controller.AbstractController;
 import ch.bfh.ti.projekt1.sokoban.controller.BoardController;
+import ch.bfh.ti.projekt1.sokoban.core.CoreConstants;
+import ch.bfh.ti.projekt1.sokoban.core.Highscore;
+import ch.bfh.ti.projekt1.sokoban.core.LevelMisconfigurationException;
 import ch.bfh.ti.projekt1.sokoban.core.LevelService;
-import ch.bfh.ti.projekt1.sokoban.core.LevelServiceImpl;
 import ch.bfh.ti.projekt1.sokoban.editor.SokobanEditor;
+import ch.bfh.ti.projekt1.sokoban.model.Board;
 import ch.bfh.ti.projekt1.sokoban.model.Level;
 
 /**
@@ -30,8 +35,9 @@ import ch.bfh.ti.projekt1.sokoban.model.Level;
  * @since 24/10/13 14:29
  */
 public class GameWindowView implements AbstractView {
+	private static final Logger LOG = Logger.getLogger(GameWindowView.class);
 
-	private LevelService levelService = new LevelServiceImpl();
+	private LevelService levelService = LevelService.getInstance();
 	private String levelName;
 	private Level levels;
 	private int currentStoryLevel;
@@ -41,6 +47,7 @@ public class GameWindowView implements AbstractView {
 	private JFrame frame;
 
 	private BoardView view;
+	private Board model;
 	private JMenuBar menuBar;
 	private JMenuBar gameMenuBar;
 
@@ -52,15 +59,24 @@ public class GameWindowView implements AbstractView {
 	private JMenuItem menuFileLoadLevel;
 	private JMenuItem menuStartLeveleditor;
 
+	private final String FOLDER_HIGHSCORE = CoreConstants
+			.getProperty("game.folder.highscore");
+	private final String FOLDER_PROGRESS = CoreConstants
+			.getProperty("game.folder.progress");
+	private final String FOLDER_SOLUTIONS = CoreConstants
+			.getProperty("game.folder.solutions");
+
 	/**
 	 * Method used to initialize the game screen
 	 * 
 	 */
 	public GameWindowView() {
 		levels = new Level();
-		basePath = "src/test/resources/ch/bfh/ti/projekt1/sokoban/";
-		frame = new JFrame("Sokoban");
-		frame.setSize(500, 300);
+		basePath = CoreConstants.getProperty("game.basepath");
+		frame = new JFrame(CoreConstants.getProperty("game.title"));
+		frame.setSize(
+				new Integer(CoreConstants.getProperty("game.window.width")),
+				new Integer(CoreConstants.getProperty("game.window.height")));
 		frame.setLocationRelativeTo(null);
 		menuBar = new JMenuBar();
 		frame.setJMenuBar(menuBar);
@@ -126,6 +142,7 @@ public class GameWindowView implements AbstractView {
 					board.addView(GameWindowView.this);
 
 					view = (BoardView) board.getView(BoardView.class);
+					model = (Board) board.getModel(Board.class);
 
 					frame.setSize(view.getWindowSizeX(), view.getWindowSizeY());
 					revalidateLevel(frame);
@@ -172,6 +189,7 @@ public class GameWindowView implements AbstractView {
 			board.addView(GameWindowView.this);
 
 			view = (BoardView) board.getView(BoardView.class);
+			model = (Board) board.getModel(Board.class);
 
 			frame.setSize(view.getWindowSizeX(), view.getWindowSizeY());
 			revalidateLevel(frame);
@@ -198,7 +216,7 @@ public class GameWindowView implements AbstractView {
 		JMenuItem itmReload = new JMenuItem("Level neu starten");
 		JMenuItem itmSave = new JMenuItem("Spiel speichern");
 		JMenuItem itmLoad = new JMenuItem("Spiel laden");
-		JMenuItem itmViewSolution = new JMenuItem("Lösung ansehen");
+		JMenuItem itmViewSolution = new JMenuItem("Lï¿½sung ansehen");
 		JMenuItem itmClose = new JMenuItem("Spiel beenden");
 
 		// optionen
@@ -206,7 +224,7 @@ public class GameWindowView implements AbstractView {
 		JMenuItem itmStatistics = new JMenuItem("Levelstatistik anzeigen");
 		JMenuItem itmBest = new JMenuItem("Bestergebnisse anzeigen");
 		JMenuItem itmExportSol = new JMenuItem(
-				"Exportiere beste Lösung dieses Levels");
+				"Exportiere beste Lï¿½sung dieses Levels");
 
 		// Leveleditor
 		JMenu menuLevelEditor = new JMenu("Level Editor");
@@ -270,6 +288,8 @@ public class GameWindowView implements AbstractView {
 					board.addView(GameWindowView.this);
 
 					view = (BoardView) board.getView(BoardView.class);
+					model = (Board) board.getModel(Board.class);
+
 					revalidateLevel(frame);
 
 				}
@@ -279,20 +299,11 @@ public class GameWindowView implements AbstractView {
 		itmSave.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// String that gets written in file
-				String fileContent = player + ":"
-						+ levels.getLevelHash(currentStoryLevel);
-				JFileChooser chooser = new JFileChooser();
-				int retrival = chooser.showSaveDialog(null);
-				if (retrival == JFileChooser.APPROVE_OPTION) {
-					try {
-						FileWriter fw = new FileWriter(basePath + player
-								+ "/Spielstaende/" + player + ".sok");
-						fw.write(fileContent);
-						fw.close();
-					} catch (Exception ex) {
-						ex.printStackTrace();
-					}
+				try {
+					levelService.saveLevelProgress(model, player);
+				} catch (LevelMisconfigurationException e1) {
+					JOptionPane.showConfirmDialog(frame, e1.getMessage());
+					LOG.error(e1.getMessage());
 				}
 			}
 		});
@@ -320,8 +331,8 @@ public class GameWindowView implements AbstractView {
 
 				if (response == JOptionPane.YES_OPTION) {
 
-					JFileChooser jFileChooser = new JFileChooser(
-							basePath+ "/generated");
+					JFileChooser jFileChooser = new JFileChooser(basePath
+							+ "/generated");
 
 					jFileChooser.showOpenDialog(null);
 					levelName = jFileChooser.getSelectedFile().toString();
@@ -330,6 +341,8 @@ public class GameWindowView implements AbstractView {
 					board.addView(GameWindowView.this);
 
 					view = (BoardView) board.getView(BoardView.class);
+					model = (Board) board.getModel(Board.class);
+
 					frame.setSize(view.getWindowSizeX(), view.getWindowSizeY());
 					frame.setContentPane(view);
 				}
@@ -361,7 +374,8 @@ public class GameWindowView implements AbstractView {
 
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					File file = fc.getSelectedFile();
-					levelName = file.getName().substring(0,file.getName().length()-4);
+					levelName = file.getName().substring(0,
+							file.getName().length() - 4);
 					// Get content from file
 					String fileContent = new String();
 					try {
@@ -372,14 +386,17 @@ public class GameWindowView implements AbstractView {
 					}
 					System.out.println(fileContent);
 					String[] content = fileContent.split(":");
-					
+
 					// Load it
-					BoardController board = levelService.getLevel(new File(basePath+"generated/"+levelName+".xml"));
-					BoardView solBoardView = (BoardView) board.getView(BoardView.class);
+					BoardController board = levelService.getLevel(new File(
+							basePath + "generated/" + levelName + ".xml"));
+					BoardView solBoardView = (BoardView) board
+							.getView(BoardView.class);
 					SolutionView solView = new SolutionView(board, content[1]);
 					JFrame soVi = solView.getFrame();
-					soVi.setSize(solBoardView.getWindowSizeX()+80, solBoardView.getWindowSizeY());
-				
+					soVi.setSize(solBoardView.getWindowSizeX() + 80,
+							solBoardView.getWindowSizeY());
+
 					soVi.add(solBoardView);
 				} else {
 					// show that the file was not applicable in this case
@@ -476,12 +493,17 @@ public class GameWindowView implements AbstractView {
 	 * @param evt
 	 */
 	public void modelPropertyChange(final PropertyChangeEvent evt) {
-		if (evt.getPropertyName().equals(
-				(AbstractController.PROPERTY_LEVEL_STATUS))) {
+		switch (evt.getPropertyName()) {
+		case AbstractController.PROPERTY_LEVEL_STATUS:
 			if ((boolean) evt.getNewValue() == true) {
 				exportSolution();
 				loadNextLevel();
 			}
+			break;
+		case AbstractController.PROPERTY_LEVEL_SCORE:
+			Highscore.getInstance().addHighscore(player, model.getUuid(),
+					(Integer) evt.getNewValue());
+			break;
 		}
 	}
 
@@ -493,12 +515,22 @@ public class GameWindowView implements AbstractView {
 	public void createPlayerProfile(String profileName) {
 		// TODO try catch
 		File profile = new File(basePath + profileName);
-		profile.mkdir();
-		File spielstaende = new File(basePath + profileName + "/Spielstaende");
+		profile.mkdirs();
+		File spielstaende = new File(basePath + profileName + "/"
+				+ FOLDER_PROGRESS);
 		spielstaende.mkdir();
-		File highscore = new File(basePath + profileName + "/Highscore");
+		File highscore = new File(basePath + profileName + "/"
+				+ FOLDER_HIGHSCORE);
 		highscore.mkdir();
-		File solutions = new File(basePath + profileName + "/Solutions");
+		File highscoreFile = new File(highscore,
+				CoreConstants.getProperty("game.file.highscore"));
+		try {
+			highscoreFile.createNewFile();
+		} catch (IOException e) {
+			LOG.error(e);
+		}
+		File solutions = new File(basePath + profileName + "/"
+				+ FOLDER_SOLUTIONS);
 		solutions.mkdir();
 	}
 
@@ -509,6 +541,8 @@ public class GameWindowView implements AbstractView {
 		board.addView(GameWindowView.this);
 
 		view = (BoardView) board.getView(BoardView.class);
+		model = (Board) board.getModel(Board.class);
+
 		frame.setSize(view.getWindowSizeX(), view.getWindowSizeY());
 		revalidateLevel(frame);
 	}

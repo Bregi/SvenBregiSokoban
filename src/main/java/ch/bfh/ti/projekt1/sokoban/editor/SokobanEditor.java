@@ -1,20 +1,25 @@
 package ch.bfh.ti.projekt1.sokoban.editor;
 
-import ch.bfh.ti.projekt1.sokoban.core.CoreConstants;
-import ch.bfh.ti.projekt1.sokoban.core.EditorService;
-import ch.bfh.ti.projekt1.sokoban.core.EditorServiceImpl;
-import ch.bfh.ti.projekt1.sokoban.core.LevelMisconfigurationException;
-import ch.bfh.ti.projekt1.sokoban.model.Board;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
 
-import javax.swing.*;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.WindowConstants;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.apache.log4j.Logger;
 
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
+import ch.bfh.ti.projekt1.sokoban.core.CoreConstants;
+import ch.bfh.ti.projekt1.sokoban.core.EditorService;
+import ch.bfh.ti.projekt1.sokoban.core.LevelMisconfigurationException;
+import ch.bfh.ti.projekt1.sokoban.model.Board;
 
 /**
  * @author svennyffenegger
@@ -37,7 +42,7 @@ public class SokobanEditor {
 
     private EditorController controller;
 
-    private EditorService editorService = new EditorServiceImpl();
+    private EditorService editorService = EditorService.getInstance();
 
     public SokobanEditor() {
         frame = new JFrame("Editor");

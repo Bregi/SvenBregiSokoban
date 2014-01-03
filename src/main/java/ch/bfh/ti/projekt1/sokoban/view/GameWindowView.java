@@ -9,8 +9,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -43,6 +45,7 @@ public class GameWindowView implements AbstractView {
 	private int currentStoryLevel;
 	private String currentLevel;
 	private String basePath;
+	private String imagePath;
 	private String player;
 	private JFrame frame;
 
@@ -73,10 +76,13 @@ public class GameWindowView implements AbstractView {
 	public GameWindowView() {
 		levels = new Level();
 		basePath = CoreConstants.getProperty("game.basepath");
+		imagePath = CoreConstants.getProperty("game.imagepath");
 		frame = new JFrame(CoreConstants.getProperty("game.title"));
+		JLabel background=new JLabel(new ImageIcon(imagePath+"/homeBackground.jpg"));
 		frame.setSize(
 				new Integer(CoreConstants.getProperty("game.window.width")),
 				new Integer(CoreConstants.getProperty("game.window.height")));
+		frame.add(background);
 		frame.setLocationRelativeTo(null);
 		menuBar = new JMenuBar();
 		frame.setJMenuBar(menuBar);
@@ -106,51 +112,7 @@ public class GameWindowView implements AbstractView {
 		menuFileLoad.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-
-				// Create a file chooser
-				JFileChooser fc = new JFileChooser();
-				FileNameExtensionFilter sokfilter = new FileNameExtensionFilter(
-						"Sokoban game files (*.sok)", "sok");
-				// set the filter to only allow sok files
-				fc.setFileFilter(sokfilter);
-				fc.setDialogTitle("Open schedule file");
-				// set selected filter
-				fc.setFileFilter(sokfilter);
-				// Handle open button action.
-				int returnVal = fc.showOpenDialog(frame);
-
-				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					File file = fc.getSelectedFile();
-					levelName = file.getName();
-					// Get content from file
-					String fileContent = new String();
-					try {
-						fileContent = new String(Files.readAllBytes(Paths
-								.get(file.toString())));
-					} catch (IOException ex) {
-						ex.printStackTrace();
-					}
-					System.out.println(fileContent);
-					String[] content = fileContent.split(":");
-					player = content[0];
-					currentStoryLevel = levels.getLevelByHash(content[1]);
-
-					currentLevel = levels.getLevel(currentStoryLevel);
-					// TODO: (also validate)
-					BoardController board = levelService.getLevel(new File(
-							levels.getLevel(currentStoryLevel)));
-					board.addView(GameWindowView.this);
-
-					view = (BoardView) board.getView(BoardView.class);
-					model = (Board) board.getModel(Board.class);
-
-					frame.setSize(view.getWindowSizeX(), view.getWindowSizeY());
-					revalidateLevel(frame);
-				} else {
-					// show that the file was not applicable in this case
-				}
-
-				frame.getContentPane().revalidate();
+				loadAGame();
 			}
 		});
 
@@ -161,10 +123,55 @@ public class GameWindowView implements AbstractView {
 				SokobanEditor editor = new SokobanEditor();
 			}
 		});
-		frame.setSize(500, 500);
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		frame.setVisible(true);
 
+	}
+	public void loadAGame(){
+		// Create a file chooser
+		JFileChooser fc = new JFileChooser(basePath);
+		FileNameExtensionFilter sokfilter = new FileNameExtensionFilter(
+				"Sokoban game files (*.sok)", "sok");
+		// set the filter to only allow sok files
+		fc.setFileFilter(sokfilter);
+		fc.setDialogTitle("Open schedule file");
+		// set selected filter
+		fc.setFileFilter(sokfilter);
+		// Handle open button action.
+		int returnVal = fc.showOpenDialog(frame);
+
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+			File file = fc.getSelectedFile();
+			levelName = file.getName();
+			// Get content from file
+			String fileContent = new String();
+			try {
+				fileContent = new String(Files.readAllBytes(Paths
+						.get(file.toString())));
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
+			System.out.println(fileContent);
+			String[] content = fileContent.split(":");
+			player = content[0];
+			currentStoryLevel = levels.getLevelByHash(content[1]);
+
+			currentLevel = levels.getLevel(currentStoryLevel);
+			// TODO: (also validate)
+			BoardController board = levelService.getLevel(new File(
+					levels.getLevel(currentStoryLevel)));
+			board.addView(GameWindowView.this);
+
+			view = (BoardView) board.getView(BoardView.class);
+			model = (Board) board.getModel(Board.class);
+
+			frame.setSize(view.getWindowSizeX(), view.getWindowSizeY());
+			revalidateLevel(frame);
+		} else {
+			// show that the file was not applicable in this case
+		}
+
+		frame.getContentPane().revalidate();
 	}
 
 	public void startNewGame() {

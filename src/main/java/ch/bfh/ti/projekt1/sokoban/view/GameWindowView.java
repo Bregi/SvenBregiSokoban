@@ -11,6 +11,7 @@ import java.nio.file.Paths;
 import java.util.Map;
 
 import javax.swing.ImageIcon;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;

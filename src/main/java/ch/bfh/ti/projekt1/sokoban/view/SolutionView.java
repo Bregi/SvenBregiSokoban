@@ -16,9 +16,7 @@ import org.apache.log4j.Logger;
 
 import ch.bfh.ti.projekt1.sokoban.controller.BoardController;
 import ch.bfh.ti.projekt1.sokoban.core.EditorService;
-import ch.bfh.ti.projekt1.sokoban.core.EditorServiceImpl;
 import ch.bfh.ti.projekt1.sokoban.editor.LevelDimensionDialog;
-import ch.bfh.ti.projekt1.sokoban.model.Direction;
 
 /**
  * @author marcoberger
@@ -45,7 +43,7 @@ public class SolutionView {
 
 	// private EditorController controller;
 
-	private EditorService editorService = new EditorServiceImpl();
+	private EditorService editorService = EditorService.getInstance();
 
 	public SolutionView(final BoardController board, String pathValues) {
 		frame = new JFrame("Solution");

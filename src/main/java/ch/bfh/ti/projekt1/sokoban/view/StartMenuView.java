@@ -1,18 +1,12 @@
 package ch.bfh.ti.projekt1.sokoban.view;
 
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 
-import ch.bfh.ti.projekt1.sokoban.controller.BoardController;
 import ch.bfh.ti.projekt1.sokoban.core.LevelService;
-import ch.bfh.ti.projekt1.sokoban.core.LevelServiceImpl;
-import ch.bfh.ti.projekt1.sokoban.editor.SokobanEditor;
 
 public class StartMenuView extends JMenuBar {
 
@@ -30,7 +24,7 @@ public class StartMenuView extends JMenuBar {
     // Leveleditor
     JMenu menuLevelEditor = new JMenu("Level Editor");
     JMenuItem itmLevelEditorStart = new JMenuItem("Level Editor Starten");
-    private LevelService levelService = new LevelServiceImpl();
+    private LevelService levelService = LevelService.getInstance();
 
     public StartMenuView(ActionListener actionListener) {
 

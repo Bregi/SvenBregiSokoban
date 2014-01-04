@@ -25,6 +25,7 @@ public class Board extends AbstractModel {
 	private String levelName;
 	private int startIndex;
 	private int endIndex;
+	private boolean walkBlock;
 	private ArrayList<String> playerPath;
 
 	private boolean diamondMove;
@@ -55,6 +56,7 @@ public class Board extends AbstractModel {
 
 	// used for the game
 	public Board(int width, int height, Position startPosition) {
+		walkBlock = false;
 		this.position = startPosition;
 		this.diamondMove = false;
 		this.playerPath = new ArrayList<String>();
@@ -65,6 +67,13 @@ public class Board extends AbstractModel {
 
 	public String getLevelName() {
 		return levelName;
+	}
+
+	/*
+	 * used to decide if the player is allowed to walk
+	 */
+	public void setWalkBlock(boolean block) {
+		walkBlock = block;
 	}
 
 	public void setLevelName(String levelName) {
@@ -119,8 +128,8 @@ public class Board extends AbstractModel {
 		grid[xPos][yPos] = field;
 
 		// the view gets notified about the new field on this position
-		firePropertyChange(AbstractController.PROPERTY_FIELD, oldField,
-				grid[xPos][yPos]);
+			firePropertyChange(AbstractController.PROPERTY_FIELD, oldField,
+					grid[xPos][yPos]);
 	}
 
 	/**
@@ -163,8 +172,8 @@ public class Board extends AbstractModel {
 		int position = 0;
 
 		// First initialize with all the vertices
-		for (int i = 0; i < grid.length; i++) { // i = x achse [][][][][]
-			for (int n = 0; n < grid[0].length; n++) { // n = y achse
+		for (int i = 0; i < grid[0].length; i++) { // i = y achse [][][][][]
+			for (int n = 0; n < grid.length; n++) { // n = x achse
 
 				String vertexName = "" + n + ":" + i;
 				Vertex v = new Vertex(vertexName, n, i);
@@ -183,11 +192,11 @@ public class Board extends AbstractModel {
 		position = 0;
 
 		// Then set the adjacences
-		for (int i = 0; i < grid.length; i++) { // i = y achse
-			for (int n = 0; n < grid[0].length; n++) { // n = x achse [][][][][]
+		for (int i = 0; i < grid[0].length; i++) { // i = y achse [][][][][]
+			for (int n = 0; n < grid.length; n++) { // n = x achse 
 				ArrayList<Edge> edges = new ArrayList<Edge>();
 
-				if (n + 1 < grid[0].length) {
+				if (n + 1 < grid.length) {
 					if (isWalkable(grid[n + 1][i].getState())) {
 						edges.add(new Edge(distances.get(position + 1), 1));
 					}
@@ -534,7 +543,9 @@ public class Board extends AbstractModel {
 		switch (direction) {
 		case DOWN:
 			return (grid[position.getX()][position.getY() + 1].getState() == FieldState.GOAL)
-					||  ((grid[position.getX() ][position.getY()+1].getState() == FieldState.COMPLETED)&&(grid[position.getX() ][position.getY()+2].getState() == FieldState.GOAL))||(((grid[position.getX()][position.getY() + 1].getState() == FieldState.COMPLETED) && (grid[position
+					|| ((grid[position.getX()][position.getY() + 1].getState() == FieldState.COMPLETED) && (grid[position
+							.getX()][position.getY() + 2].getState() == FieldState.GOAL))
+					|| (((grid[position.getX()][position.getY() + 1].getState() == FieldState.COMPLETED) && (grid[position
 							.getX()][position.getY() + 2].getState() == FieldState.EMPTY)) || (grid[position
 							.getX()].length > position.getY() + 1 && (grid[position
 							.getX()][position.getY() + 1].getState() == FieldState.EMPTY || (grid[position
@@ -543,8 +554,9 @@ public class Board extends AbstractModel {
 							.getX()][position.getY() + 2].getState() == FieldState.GOAL)))));
 		case UP:
 			return (grid[position.getX()][position.getY() - 1].getState() == FieldState.GOAL)
-					|| ((grid[position.getX() ][position.getY() - 1].getState() == FieldState.COMPLETED)&&(grid[position.getX() ][position.getY()-2].getState() == FieldState.GOAL))||
-					(((grid[position.getX()][position.getY() - 1].getState() == FieldState.COMPLETED) && (grid[position
+					|| ((grid[position.getX()][position.getY() - 1].getState() == FieldState.COMPLETED) && (grid[position
+							.getX()][position.getY() - 2].getState() == FieldState.GOAL))
+					|| (((grid[position.getX()][position.getY() - 1].getState() == FieldState.COMPLETED) && (grid[position
 							.getX()][position.getY() - 2].getState() == FieldState.EMPTY)) || (0 < position
 							.getY() && (grid[position.getX()][position.getY() - 1]
 							.getState() == FieldState.EMPTY || (grid[position
@@ -553,8 +565,10 @@ public class Board extends AbstractModel {
 							.getX()][position.getY() - 2].getState() == FieldState.GOAL)))));
 		case LEFT:
 			return (grid[position.getX() - 1][position.getY()].getState() == FieldState.GOAL)
-					|| ((grid[position.getX() - 1][position.getY() ].getState() == FieldState.COMPLETED)&&(grid[position.getX()- 2 ][position.getY()].getState() == FieldState.GOAL))||
-					 ((grid[position.getX() - 1][position.getY()].getState() == FieldState.COMPLETED)&&(grid[position.getX() - 2][position.getY()].getState() == FieldState.GOAL))
+					|| ((grid[position.getX() - 1][position.getY()].getState() == FieldState.COMPLETED) && (grid[position
+							.getX() - 2][position.getY()].getState() == FieldState.GOAL))
+					|| ((grid[position.getX() - 1][position.getY()].getState() == FieldState.COMPLETED) && (grid[position
+							.getX() - 2][position.getY()].getState() == FieldState.GOAL))
 					|| (((grid[position.getX() - 1][position.getY()].getState() == FieldState.COMPLETED) && (grid[position
 							.getX() - 2][position.getY()].getState() == FieldState.EMPTY)) || (0 < position
 							.getX() && (grid[position.getX() - 1][position
@@ -564,8 +578,9 @@ public class Board extends AbstractModel {
 							.getX() - 2][position.getY()].getState() == FieldState.GOAL)))));
 		case RIGHT:
 			return (grid[position.getX() + 1][position.getY()].getState() == FieldState.GOAL)
-					|| ((grid[position.getX()+ 1 ][position.getY() ].getState() == FieldState.COMPLETED)&&(grid[position.getX()+ 2 ][position.getY()].getState() == FieldState.GOAL))||
-					(((grid[position.getX() + 1][position.getY()].getState() == FieldState.COMPLETED) && (grid[position
+					|| ((grid[position.getX() + 1][position.getY()].getState() == FieldState.COMPLETED) && (grid[position
+							.getX() + 2][position.getY()].getState() == FieldState.GOAL))
+					|| (((grid[position.getX() + 1][position.getY()].getState() == FieldState.COMPLETED) && (grid[position
 							.getX() + 2][position.getY()].getState() == FieldState.EMPTY)) || (grid.length > position
 							.getX() + 1 && (grid[position.getX() + 1][position
 							.getY()].getState() == FieldState.EMPTY || (grid[position

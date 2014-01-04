@@ -47,6 +47,7 @@ public class GameWindowView implements AbstractView {
 	private int currentStoryLevel;
 	private String currentLevel;
 	private String basePath;
+	private String editorBasePath;
 	private String imagePath;
 	private String player;
 	private JFrame frame;
@@ -72,14 +73,14 @@ public class GameWindowView implements AbstractView {
 	private final String FOLDER_SOLUTIONS = CoreConstants
 			.getProperty("game.folder.solutions");
 
-	/**
+	/*
 	 * Method used to initialize the game screen
-	 * 
 	 */
 	public GameWindowView() {
 		levels = new Level();
 		storyMode = false;
 		basePath = CoreConstants.getProperty("game.basepath");
+		editorBasePath = CoreConstants.getProperty("editor.basepath");
 		imagePath = CoreConstants.getProperty("game.imagepath");
 		frame = new JFrame(CoreConstants.getProperty("game.title"));
 		JLabel background = new JLabel(new ImageIcon(imagePath
@@ -133,8 +134,8 @@ public class GameWindowView implements AbstractView {
 
 	}
 
-	/**
-	 * Function used to load an existing game
+	/*
+	 * Used to load an existing game
 	 */
 	public void loadAGame() {
 		storyMode = true;
@@ -183,6 +184,9 @@ public class GameWindowView implements AbstractView {
 		frame.getContentPane().revalidate();
 	}
 
+	/*
+	 * Starts a new game with a new profile
+	 */
 	public void startNewGame() {
 
 		storyMode = true;
@@ -213,7 +217,7 @@ public class GameWindowView implements AbstractView {
 		}
 	}
 
-	/**
+	/*
 	 * Used to load the menu to the window
 	 */
 	public void loadGameMenu() {
@@ -362,11 +366,17 @@ public class GameWindowView implements AbstractView {
 
 				if (response == JOptionPane.YES_OPTION) {
 					storyMode = false;
-					JFileChooser jFileChooser = new JFileChooser(basePath
-							+ "generated");
+					JFileChooser jFileChooser = new JFileChooser(editorBasePath);
 
 					jFileChooser.showOpenDialog(null);
-					levelName = jFileChooser.getSelectedFile().getName();
+					levelName = jFileChooser
+							.getSelectedFile()
+							.getName()
+							.substring(
+									0,
+									jFileChooser.getSelectedFile().getName()
+											.length() - 4);
+					currentLevel = jFileChooser.getSelectedFile().toString();
 					BoardController board = levelService.getLevel(jFileChooser
 							.getSelectedFile());
 					board.addView(GameWindowView.this);
@@ -388,48 +398,7 @@ public class GameWindowView implements AbstractView {
 		itmViewSolution.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// Load the file
-				// Create a file chooser
-				JFileChooser fc = new JFileChooser();
-				FileNameExtensionFilter sokfilter = new FileNameExtensionFilter(
-						"Sokoban solution files (*.sol)", "sol");
-				// set the filter to only allow sol files
-				fc.setFileFilter(sokfilter);
-				fc.setDialogTitle("Open schedule file");
-				// set selected filter
-				fc.setFileFilter(sokfilter);
-				// Handle open button action.
-				int returnVal = fc.showOpenDialog(frame);
-
-				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					File file = fc.getSelectedFile();
-					levelName = file.getName().substring(0,
-							file.getName().length() - 4);
-					// Get content from file
-					String fileContent = new String();
-					try {
-						fileContent = new String(Files.readAllBytes(Paths
-								.get(file.toString())));
-					} catch (IOException ex) {
-						ex.printStackTrace();
-					}
-					System.out.println(fileContent);
-					String[] content = fileContent.split(":");
-
-					// Load it
-					BoardController board = levelService.getLevel(new File(
-							basePath + "generated/" + levelName + ".xml"));
-					BoardView solBoardView = (BoardView) board
-							.getView(BoardView.class);
-					SolutionView solView = new SolutionView(board, content[1]);
-					JFrame soVi = solView.getFrame();
-					soVi.setSize(solBoardView.getWindowSizeX() + 80,
-							solBoardView.getWindowSizeY());
-
-					soVi.add(solBoardView);
-				} else {
-					// show that the file was not applicable in this case
-				}
+				loadSolutionFile();
 			}
 		});
 
@@ -469,11 +438,63 @@ public class GameWindowView implements AbstractView {
 		return gameMenuBar;
 	}
 
+	/**
+	 * Loads the window where a solution can be seen
+	 */
+	public void loadSolutionFile() {
+
+		// Load the file
+		// Create a file chooser
+		JFileChooser fc = new JFileChooser(basePath + player + "/"
+				+ FOLDER_SOLUTIONS);
+		FileNameExtensionFilter sokfilter = new FileNameExtensionFilter(
+				"Sokoban solution files (*.sol)", "sol");
+		// set the filter to only allow sol files
+		fc.setFileFilter(sokfilter);
+		fc.setDialogTitle("Open schedule file");
+		// set selected filter
+		fc.setFileFilter(sokfilter);
+		// Handle open button action.
+		int returnVal = fc.showOpenDialog(frame);
+
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+			File file = fc.getSelectedFile();
+			levelName = file.getName()
+					.substring(0, file.getName().length() - 4);
+			// Get content from file
+			String fileContent = new String();
+			try {
+				fileContent = new String(Files.readAllBytes(Paths.get(file
+						.toString())));
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
+			System.out.println(fileContent);
+			String[] content = fileContent.split(":");
+
+			// Load it
+			BoardController board = levelService.getLevel(new File(
+					editorBasePath + levelName + ".xml"));
+			BoardView solBoardView = (BoardView) board.getView(BoardView.class);
+			SolutionView solView = new SolutionView(board, content[1]);
+			JFrame soVi = solView.getFrame();
+			soVi.setSize(solBoardView.getWindowSizeX() + 20,
+					solBoardView.getWindowSizeY());
+
+			soVi.add(solBoardView);
+		} else {
+			// show that the file was not applicable in this case
+		}
+	}
+
+	/**
+	 * Exports a solution to the solution folder
+	 */
 	public void exportSolution() {
 
 		int steps = view.getStepsUsed();
-		File file = new File(basePath + player + "/solutions/" + levelName.substring(0,levelName.length()-4)
-				+ ".sol");
+		File file = new File(basePath + player + "/" + FOLDER_SOLUTIONS + "/"
+				+ levelName + ".sol");
 
 		// Create the file, if it doesn't already exist
 		try {

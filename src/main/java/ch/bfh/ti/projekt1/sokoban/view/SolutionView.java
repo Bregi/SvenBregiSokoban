@@ -47,8 +47,6 @@ public class SolutionView {
 
 	public SolutionView(final BoardController board, String pathValues) {
 		frame = new JFrame("Solution");
-		menuBar = new JMenuBar();
-		frame.setJMenuBar(menuBar);
 		nextButton = new JButton(">");
 		backButton = new JButton("<");
 		frame.add(nextButton, BorderLayout.LINE_START);
@@ -57,23 +55,6 @@ public class SolutionView {
 		pathValues = pathValues.substring(1, pathValues.length()-1);
 		final String[] path = pathValues.split(", ");
 		
-
-		menuFile = new JMenu("File");
-		menuBar.add(menuFile);
-		menuFileLoad = new JMenuItem("Laden");
-		menuFile.add(menuFileLoad);
-		menuFileLoad.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				LevelDimensionDialog dialog = new LevelDimensionDialog();
-				Dimension dim = dialog.showDimensionDialog(frame);
-
-				if (dim != null) {
-					frame.getContentPane().revalidate();
-				}
-
-			}
-		});
 		nextButton.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {

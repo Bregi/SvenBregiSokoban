@@ -10,24 +10,24 @@
     </row>
     <row id="1">
         <column id="0" type="WALL"/>
-        <column id="1" type="GOAL"/>
-        <column id="2" type="GOAL"/>
-        <column id="3" type="GOAL"/>
+        <column id="1" type="DIAMOND"/>
+        <column id="2" type="COMPLETED"/>
+        <column id="3" type="COMPLETED"/>
         <column id="4" type="WALL"/>
         <column id="5" type="WALL"/>
     </row>
     <row id="2">
         <column id="0" type="WALL"/>
         <column id="1" type="WALL"/>
-        <column id="2" type="DIAMOND"/>
-        <column id="3" type="EMPTY"/>
+        <column id="2" type="EMPTY"/>
+        <column id="3" type="PLAYER"/>
         <column id="4" type="WALL"/>
         <column id="5" type="WALL"/>
     </row>
     <row id="3">
         <column id="0" type="WALL"/>
         <column id="1" type="WALL"/>
-        <column id="2" type="PLAYER"/>
+        <column id="2" type="EMPTY"/>
         <column id="3" type="EMPTY"/>
         <column id="4" type="WALL"/>
         <column id="5" type="WALL"/>
@@ -35,8 +35,8 @@
     <row id="4">
         <column id="0" type="WALL"/>
         <column id="1" type="EMPTY"/>
-        <column id="2" type="DIAMOND"/>
-        <column id="3" type="DIAMOND"/>
+        <column id="2" type="EMPTY"/>
+        <column id="3" type="EMPTY"/>
         <column id="4" type="EMPTY"/>
         <column id="5" type="WALL"/>
     </row>
@@ -64,7 +64,8 @@
         <column id="4" type="WALL"/>
         <column id="5" type="WALL"/>
     </row>
-    <name>Level 1</name>
-    <startPosition row="3" column="2"/>
-    <uuid>fef7c80c-f0e2-471f-902b-baa24fd76f57</uuid>
+    <name>Levelnull</name>
+    <startPosition row="2" column="3"/>
+    <uuid>ad5a0147-143e-474f-80de-7c4725ba3445</uuid>
+    <moves>10</moves>
 </level>

@@ -8,8 +8,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Map;
 
 import javax.swing.ImageIcon;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -435,8 +437,13 @@ public class GameWindowView implements AbstractView {
 		itmBest.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String message = "Level: 10";// TODO: Load the level statistics
-				JOptionPane.showMessageDialog(null, message);
+				JDialog dialog = new JDialog(frame);
+                Map<String, Integer> levelScoreMap = Highscore.getInstance().getHighscoreForPlayer(player);
+                Map<String, String> levelNameMap = levelService.getLevelNameUUIDMap();
+                
+                dialog.setContentPane(new HighscorePanel(levelNameMap, levelScoreMap));
+                dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+                dialog.setVisible(true);
 
 			}
 		});

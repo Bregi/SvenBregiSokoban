@@ -78,7 +78,8 @@ public class GameWindowView implements AbstractView {
 		basePath = CoreConstants.getProperty("game.basepath");
 		imagePath = CoreConstants.getProperty("game.imagepath");
 		frame = new JFrame(CoreConstants.getProperty("game.title"));
-		JLabel background=new JLabel(new ImageIcon(imagePath+"/homeBackground.jpg"));
+		JLabel background = new JLabel(new ImageIcon(imagePath
+				+ "/homeBackground.jpg"));
 		frame.setSize(
 				new Integer(CoreConstants.getProperty("game.window.width")),
 				new Integer(CoreConstants.getProperty("game.window.height")));
@@ -127,7 +128,8 @@ public class GameWindowView implements AbstractView {
 		frame.setVisible(true);
 
 	}
-	public void loadAGame(){
+
+	public void loadAGame() {
 		// Create a file chooser
 		JFileChooser fc = new JFileChooser(basePath);
 		FileNameExtensionFilter sokfilter = new FileNameExtensionFilter(
@@ -146,8 +148,8 @@ public class GameWindowView implements AbstractView {
 			// Get content from file
 			String fileContent = new String();
 			try {
-				fileContent = new String(Files.readAllBytes(Paths
-						.get(file.toString())));
+				fileContent = new String(Files.readAllBytes(Paths.get(file
+						.toString())));
 			} catch (IOException ex) {
 				ex.printStackTrace();
 			}
@@ -158,8 +160,8 @@ public class GameWindowView implements AbstractView {
 
 			currentLevel = levels.getLevel(currentStoryLevel);
 			// TODO: (also validate)
-			BoardController board = levelService.getLevel(new File(
-					levels.getLevel(currentStoryLevel)));
+			BoardController board = levelService.getLevel(new File(levels
+					.getLevel(currentStoryLevel)));
 			board.addView(GameWindowView.this);
 
 			view = (BoardView) board.getView(BoardView.class);
@@ -170,7 +172,6 @@ public class GameWindowView implements AbstractView {
 		} else {
 			// show that the file was not applicable in this case
 		}
-
 		frame.getContentPane().revalidate();
 	}
 
@@ -306,6 +307,7 @@ public class GameWindowView implements AbstractView {
 		itmSave.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				saveGameProgress();
 				try {
 					levelService.saveLevelProgress(model, player);
 				} catch (LevelMisconfigurationException e1) {
@@ -541,6 +543,9 @@ public class GameWindowView implements AbstractView {
 		solutions.mkdir();
 	}
 
+	/**
+	 * Loads the next story mode level
+	 */
 	private void loadNextLevel() {
 		currentStoryLevel++;
 		levelName = levels.getLevel(currentStoryLevel);
@@ -568,5 +573,23 @@ public class GameWindowView implements AbstractView {
 
 		view.requestFocusInWindow();
 		frame.getContentPane().revalidate();
+	}
+
+	/**
+	 * Used to save the current progress
+	 */
+	public void saveGameProgress() {
+		// String that gets written in file
+		String fileContent = player + ":"
+				+ levels.getLevelHash(currentStoryLevel);
+		try {
+			FileWriter fw = new FileWriter(basePath + player + "/" + player
+					+ ".sok");
+			fw.write(fileContent);
+			fw.close();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
 	}
 }

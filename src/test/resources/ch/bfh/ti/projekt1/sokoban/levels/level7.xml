@@ -90,6 +90,7 @@
         <column id="6" type="WALL"/>
         <column id="7" type="WALL"/>
     </row>
-    <name>Levelnull</name>
+    <name>Level 7</name>
     <startPosition row="3" column="6"/>
+    <uuid>af2c99b1-8b36-4b88-8d1f-9446667149fa</uuid>
 </level>

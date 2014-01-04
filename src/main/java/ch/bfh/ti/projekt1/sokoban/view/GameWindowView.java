@@ -50,6 +50,7 @@ public class GameWindowView implements AbstractView {
 	private String imagePath;
 	private String player;
 	private JFrame frame;
+	private boolean storyMode;
 
 	private BoardView view;
 	private Board model;
@@ -77,6 +78,7 @@ public class GameWindowView implements AbstractView {
 	 */
 	public GameWindowView() {
 		levels = new Level();
+		storyMode = false;
 		basePath = CoreConstants.getProperty("game.basepath");
 		imagePath = CoreConstants.getProperty("game.imagepath");
 		frame = new JFrame(CoreConstants.getProperty("game.title"));
@@ -131,7 +133,11 @@ public class GameWindowView implements AbstractView {
 
 	}
 
+	/**
+	 * Function used to load an existing game
+	 */
 	public void loadAGame() {
+		storyMode = true;
 		// Create a file chooser
 		JFileChooser fc = new JFileChooser(basePath);
 		FileNameExtensionFilter sokfilter = new FileNameExtensionFilter(
@@ -179,6 +185,7 @@ public class GameWindowView implements AbstractView {
 
 	public void startNewGame() {
 
+		storyMode = true;
 		PlayerName playerName = new PlayerName();
 		player = playerName.showDimensionDialog(frame);
 
@@ -188,9 +195,9 @@ public class GameWindowView implements AbstractView {
 		if (player != null) {
 
 			// Initialize the level
-			currentStoryLevel = 0;
+			currentStoryLevel = 1;
 			currentLevel = levels.getLevel(currentStoryLevel);
-			levelName = levels.getLevelOnly(1);
+			levelName = levels.getLevelOnly(currentStoryLevel);
 
 			// And load it
 			BoardController board = levelService.getLevel(new File(levels
@@ -206,6 +213,9 @@ public class GameWindowView implements AbstractView {
 		}
 	}
 
+	/**
+	 * Used to load the menu to the window
+	 */
 	public void loadGameMenu() {
 
 		gameMenuBar = getGameMenuBar();
@@ -226,15 +236,14 @@ public class GameWindowView implements AbstractView {
 		JMenuItem itmReload = new JMenuItem("Level neu starten");
 		JMenuItem itmSave = new JMenuItem("Spiel speichern");
 		JMenuItem itmLoad = new JMenuItem("Spiel laden");
-		JMenuItem itmViewSolution = new JMenuItem("Lï¿½sung ansehen");
+		JMenuItem itmLoadLevel = new JMenuItem("Level laden");
+		JMenuItem itmViewSolution = new JMenuItem("Lösung ansehen");
 		JMenuItem itmClose = new JMenuItem("Spiel beenden");
 
 		// optionen
 		JMenu menuEdit = new JMenu("Optionen");
 		JMenuItem itmStatistics = new JMenuItem("Levelstatistik anzeigen");
 		JMenuItem itmBest = new JMenuItem("Bestergebnisse anzeigen");
-		JMenuItem itmExportSol = new JMenuItem(
-				"Exportiere beste Lï¿½sung dieses Levels");
 
 		// Leveleditor
 		JMenu menuLevelEditor = new JMenu("Level Editor");
@@ -252,6 +261,9 @@ public class GameWindowView implements AbstractView {
 		menuFile.add(itmLoad);
 		menuFile.addSeparator();
 
+		menuFile.add(itmLoadLevel);
+		menuFile.addSeparator();
+
 		menuFile.add(itmViewSolution);
 		menuFile.addSeparator();
 
@@ -261,7 +273,6 @@ public class GameWindowView implements AbstractView {
 		menuEdit.add(itmStatistics);
 		menuEdit.addSeparator();
 		menuEdit.add(itmBest);
-		menuEdit.add(itmExportSol);
 
 		// leveleditor
 		menuLevelEditor.add(itmLevelEditorStart);
@@ -330,30 +341,37 @@ public class GameWindowView implements AbstractView {
 		itmLoad.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				loadAGame();
+			}
+
+		});
+
+		// what happens when the user clicks on load a level
+		itmLoadLevel.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
 
 				Object[] options = { "Ja", "Nein" };
 				int response = JOptionPane
 						.showOptionDialog(
 								frame,
-								"Bist du sicher, dass du ein neues Spiel starten willst? Ungespeicherter Fortschritt geht dabei verloren. ",
-								"Level neu starten", JOptionPane.YES_NO_OPTION,
+								"Bist du sicher, dass du ein anderes Level spielen willst? Ungespeicherter Fortschritt geht dabei verloren. ",
+								"Level laden", JOptionPane.YES_NO_OPTION,
 								JOptionPane.QUESTION_MESSAGE, null, options,
 								options[1]);
 
 				if (response == JOptionPane.YES_OPTION) {
-
+					storyMode = false;
 					JFileChooser jFileChooser = new JFileChooser(basePath
-							+ "/generated");
+							+ "generated");
 
 					jFileChooser.showOpenDialog(null);
-					levelName = jFileChooser.getSelectedFile().toString();
+					levelName = jFileChooser.getSelectedFile().getName();
 					BoardController board = levelService.getLevel(jFileChooser
 							.getSelectedFile());
 					board.addView(GameWindowView.this);
 
 					view = (BoardView) board.getView(BoardView.class);
-					model = (Board) board.getModel(Board.class);
-
 					frame.setSize(view.getWindowSizeX(), view.getWindowSizeY());
 					frame.setContentPane(view);
 				}
@@ -364,8 +382,8 @@ public class GameWindowView implements AbstractView {
 
 				frame.getContentPane().revalidate();
 			}
-		});
 
+		});
 		// View the solution from a file
 		itmViewSolution.addActionListener(new ActionListener() {
 			@Override
@@ -415,7 +433,7 @@ public class GameWindowView implements AbstractView {
 			}
 		});
 
-		// exits the current game and return to windows
+		// exits the current game and return to operating system
 		itmClose.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -429,8 +447,7 @@ public class GameWindowView implements AbstractView {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				int steps = view.getStepsUsed();
-				JOptionPane.showMessageDialog(null, "Schritte:" + steps
-						+ "\nFortschritt:\n");
+				JOptionPane.showMessageDialog(null, "Schritte:" + steps);
 			}
 		});
 
@@ -438,20 +455,15 @@ public class GameWindowView implements AbstractView {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				JDialog dialog = new JDialog(frame);
-                Map<String, Integer> levelScoreMap = Highscore.getInstance().getHighscoreForPlayer(player);
-                Map<String, String> levelNameMap = levelService.getLevelNameUUIDMap();
-                
-                dialog.setContentPane(new HighscorePanel(levelNameMap, levelScoreMap));
-                dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-                dialog.setVisible(true);
+				Map<String, Integer> levelScoreMap = Highscore.getInstance()
+						.getHighscoreForPlayer(player);
+				Map<String, String> levelNameMap = levelService
+						.getLevelNameUUIDMap();
 
-			}
-		});
-		// Exports the best solution from this level - only works when
-		itmExportSol.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				exportSolution();
+				dialog.setContentPane(new HighscorePanel(levelNameMap,
+						levelScoreMap));
+				dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+				dialog.setVisible(true);
 			}
 		});
 		return gameMenuBar;
@@ -460,7 +472,7 @@ public class GameWindowView implements AbstractView {
 	public void exportSolution() {
 
 		int steps = view.getStepsUsed();
-		File file = new File(basePath + player + "/Solutions/" + levelName
+		File file = new File(basePath + player + "/solutions/" + levelName.substring(0,levelName.length()-4)
 				+ ".sol");
 
 		// Create the file, if it doesn't already exist
@@ -512,8 +524,11 @@ public class GameWindowView implements AbstractView {
 		switch (evt.getPropertyName()) {
 		case AbstractController.PROPERTY_LEVEL_STATUS:
 			if ((boolean) evt.getNewValue() == true) {
+
 				exportSolution();
-				loadNextLevel();
+				if (storyMode) {
+					loadNextLevel();
+				}
 			}
 			break;
 		case AbstractController.PROPERTY_LEVEL_SCORE:
@@ -555,8 +570,10 @@ public class GameWindowView implements AbstractView {
 	 */
 	private void loadNextLevel() {
 		currentStoryLevel++;
-		levelName = levels.getLevel(currentStoryLevel);
-		BoardController board = levelService.getLevel(new File(levelName));
+		levelName = levels.getLevelOnly(currentStoryLevel);
+		currentLevel = levels.getLevel(currentStoryLevel);
+		saveGameProgress();
+		BoardController board = levelService.getLevel(new File(currentLevel));
 		board.addView(GameWindowView.this);
 
 		view = (BoardView) board.getView(BoardView.class);

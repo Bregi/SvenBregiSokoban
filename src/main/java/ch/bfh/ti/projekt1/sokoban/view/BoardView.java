@@ -36,7 +36,6 @@ public class BoardView extends JPanel implements KeyListener, MouseListener, Abs
     private BoardController controller;
     private Position playerPosition;
     private String levelName;
-    private int stepsUsed;
     private Field[][] grid;
     private Element[][] field;
     private int numberOfGoals;
@@ -46,7 +45,6 @@ public class BoardView extends JPanel implements KeyListener, MouseListener, Abs
     public BoardView(Board board, BoardController controller,
                      Position playerPosition, String levelName) {
         this.controller = controller;
-        this.stepsUsed = 0;
         this.levelName = levelName;
         this.levelIsFinished = false;
         this.grid = board.getGrid();
@@ -71,7 +69,6 @@ public class BoardView extends JPanel implements KeyListener, MouseListener, Abs
        
         // we have a new position, the player was moved
         if (evt.getNewValue() instanceof Position) {
-            this.stepsUsed++;
 
             // repaint the board and the parent
             SwingUtilities.invokeLater(new Runnable() {
@@ -270,10 +267,6 @@ public class BoardView extends JPanel implements KeyListener, MouseListener, Abs
             this.levelIsFinished = true;
         }
         repaint();
-    }
-
-    public int getStepsUsed() {
-        return this.stepsUsed;
     }
 
     public boolean getIsLevelFinished() {

@@ -7,7 +7,6 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import ch.bfh.ti.projekt1.sokoban.controller.AbstractController;
-import ch.bfh.ti.projekt1.sokoban.core.Highscore;
 import ch.bfh.ti.projekt1.sokoban.core.dijkstra.Dijkstra;
 import ch.bfh.ti.projekt1.sokoban.core.dijkstra.Edge;
 import ch.bfh.ti.projekt1.sokoban.core.dijkstra.Vertex;
@@ -199,7 +198,7 @@ public class Board extends AbstractModel {
 									.get(position - 1), 1));
 						}
 					}
-					if (i + 1 < grid.length) {
+					if (i + 1 < grid[0].length) {
 						if (isWalkable(grid[n][i + 1].getState())) {
 							edges.add(new Edge(distance.distances.get(position
 									+ nextRow), 1));
@@ -212,12 +211,7 @@ public class Board extends AbstractModel {
 						}
 					}
 
-					Edge[] edgees = new Edge[edges.size()];
-					int c = 0;
-					for (Edge e : edges) {
-						edgees[c] = e;
-						c++;
-					}
+					Edge[] edgees = edges.toArray(new Edge[edges.size()]);
 					distance.distances.get(position).setAdjacencies(edgees);
 					position++;
 				}
@@ -229,12 +223,6 @@ public class Board extends AbstractModel {
 		return distance;
 
 	}
-
-	/*
-	 * public Position getPlayerPosition() { for (int i = 0; i < grid.length;
-	 * i++) { for (int n = 0; n < grid.length; n++) { if (grid[n][i].getState()
-	 * == FieldState.PLAYER) { return new Position(n, i); } } } return null; }
-	 */
 
 	/**
 	 * Walks the distance with the shortest available path (using the dijkstra

@@ -95,6 +95,10 @@ public class XmlService {
 			level.setMoves(board.getDiamondMoveCounter());
 		}
 
+		int countPlayer = 0;
+		int countDiamonds = 0;
+		int countGoals = 0;
+
 		for (int i = 0; i < grid[0].length; i++) {
 			Row row = new Row();
 			row.setId(i);
@@ -106,13 +110,38 @@ public class XmlService {
 				column.setType(FieldState.convertToXMLFieldType(grid[j][i]
 						.getState()));
 				row.getColumn().add(column);
-				if (grid[j][i].getState() == FieldState.PLAYER) {
+				switch (grid[j][i].getState()) {
+				case PLAYER:
 					StartPosition startPosition = new StartPosition();
 					startPosition.setColumn(j);
 					startPosition.setRow(i);
 					level.setStartPosition(startPosition);
+					countPlayer++;
+
+					break;
+				case DIAMOND:
+					countDiamonds++;
+					break;
+				case GOAL:
+					countGoals++;
+					break;
 				}
 			}
+		}
+
+		if (countDiamonds == 0 || countGoals == 0) {
+			throw new LevelMisconfigurationException(
+					"You have to provide at least one diamond and goal!");
+		}
+
+		if (countDiamonds != countGoals) {
+			throw new LevelMisconfigurationException(
+					"You have to provide an equal number of diamonds and goals!");
+		}
+
+		if (countPlayer > 1) {
+			throw new LevelMisconfigurationException(
+					"More than one start position defined!");
 		}
 
 		if (level.getStartPosition() == null) {

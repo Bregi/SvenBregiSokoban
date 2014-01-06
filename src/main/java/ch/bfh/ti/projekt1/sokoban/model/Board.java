@@ -128,8 +128,8 @@ public class Board extends AbstractModel {
 		grid[xPos][yPos] = field;
 
 		// the view gets notified about the new field on this position
-			firePropertyChange(AbstractController.PROPERTY_FIELD, oldField,
-					grid[xPos][yPos]);
+		firePropertyChange(AbstractController.PROPERTY_FIELD, oldField,
+				grid[xPos][yPos]);
 	}
 
 	/**
@@ -193,7 +193,7 @@ public class Board extends AbstractModel {
 
 		// Then set the adjacences
 		for (int i = 0; i < grid[0].length; i++) { // i = y achse [][][][][]
-			for (int n = 0; n < grid.length; n++) { // n = x achse 
+			for (int n = 0; n < grid.length; n++) { // n = x achse
 				ArrayList<Edge> edges = new ArrayList<Edge>();
 
 				if (n + 1 < grid.length) {
@@ -265,7 +265,7 @@ public class Board extends AbstractModel {
 				directions.get((int) dijkstraObject[1]),
 				directions.get((int) dijkstraObject[2]));
 
-		// f��hrt die aktionen in einem eigenen thread aus
+		// führt die aktionen in einem eigenen thread aus
 		// der thread macht nach jedem vertex element x eine pause von 1000
 		// millis
 		class WalkRunnable implements Runnable {
@@ -292,10 +292,8 @@ public class Board extends AbstractModel {
 					}
 
 					try {
-						Thread.currentThread().sleep(500L);
+						Thread.sleep(500L);
 					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
 					}
 					playerPosition = new Position(x.getX(), x.getY());
 				}

@@ -80,7 +80,7 @@ public class SokobanEditor {
             	
             	try {
 					editorService.saveLevel(board);
-					JOptionPane.showConfirmDialog(null, "Level wurde gespeichert.");
+					JOptionPane.showMessageDialog(frame, "Level wurde gespeichert.");
 				} catch (LevelMisconfigurationException e1) {
 					JOptionPane.showMessageDialog(frame, e1.getMessage());
 					LOG.error(e1.getMessage());

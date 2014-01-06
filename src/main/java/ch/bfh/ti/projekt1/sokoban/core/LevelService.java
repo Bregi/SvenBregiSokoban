@@ -103,6 +103,7 @@ public class LevelService {
 		return fileNames;
 	}
 
+
 	public void saveLevelProgress(Board board, String player)
 			throws LevelMisconfigurationException {
 		File parentFolder = new File(CoreConstants.getProperty("game.basepath")
@@ -129,6 +130,20 @@ public class LevelService {
 		}
 
 		return dirList;
+	}
+	
+	public BoardController getLevelProgressForUser(String user, String levelName) {
+		Level level = XmlService.getInstance().getLevelFromPath(levelName);
+		String path = CoreConstants.getProperty("game.basepath") + user + "/" + CoreConstants.getProperty("game.folder.progress");
+
+		for (String fileStr : fileList(path)) {
+			Level progress = XmlService.getInstance().getLevelFromPath(fileStr);
+			if (progress.getUuid().equals(level.getUuid())) {
+				return getLevel(new File(fileStr));
+			}
+		}
+		
+		return null;
 	}
 
 }

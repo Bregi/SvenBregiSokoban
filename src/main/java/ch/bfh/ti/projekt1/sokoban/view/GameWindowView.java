@@ -168,9 +168,14 @@ public class GameWindowView implements AbstractView {
 			currentStoryLevel = levels.getLevelByHash(content[1]);
 
 			currentLevel = levels.getLevel(currentStoryLevel);
+			
+			BoardController board = levelService.getLevelProgressForUser(player, levels.getLevel(currentStoryLevel));
+			if (board == null) {
+				board = levelService.getLevel(new File(levels
+						.getLevel(currentStoryLevel)));
+			}
+			
 			// TODO: (also validate)
-			BoardController board = levelService.getLevel(new File(levels
-					.getLevel(currentStoryLevel)));
 			board.addView(GameWindowView.this);
 
 			view = (BoardView) board.getView(BoardView.class);
@@ -241,7 +246,7 @@ public class GameWindowView implements AbstractView {
 		JMenuItem itmSave = new JMenuItem("Spiel speichern");
 		JMenuItem itmLoad = new JMenuItem("Spiel laden");
 		JMenuItem itmLoadLevel = new JMenuItem("Level laden");
-		JMenuItem itmViewSolution = new JMenuItem("Lösung ansehen");
+		JMenuItem itmViewSolution = new JMenuItem("LÃ¶sung ansehen");
 		JMenuItem itmClose = new JMenuItem("Spiel beenden");
 
 		// optionen
@@ -260,6 +265,8 @@ public class GameWindowView implements AbstractView {
 		menuFile.addSeparator();
 
 		menuFile.add(itmSave);
+		menuFile.addSeparator();
+		
 		menuFile.addSeparator();
 
 		menuFile.add(itmLoad);
@@ -435,6 +442,7 @@ public class GameWindowView implements AbstractView {
 				dialog.setVisible(true);
 			}
 		});
+		
 		return gameMenuBar;
 	}
 

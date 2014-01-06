@@ -15,14 +15,14 @@ public class Level {
 		//TODO: SET ALL THE LEVEL AVAILABLE
 		levels = new String[numberOfLevels];
 		String levelPath = CoreConstants.getProperty("game.levelspath");
-		levels[1] = levelPath+"/level1.xml";
-		levels[2] = levelPath+"/level2.xml";
-		levels[3] = levelPath+"/level3.xml";
-		levels[4] = levelPath+"/level4.xml";
-		levels[5] = levelPath+"/level5.xml";
-		levels[6] = levelPath+"/level6.xml";
-		levels[7] = levelPath+"/level7.xml";
-		levels[8] = levelPath+"/level8.xml";
+		levels[1] = levelPath+"level1.xml";
+		levels[2] = levelPath+"level2.xml";
+		levels[3] = levelPath+"level3.xml";
+		levels[4] = levelPath+"level4.xml";
+		levels[5] = levelPath+"level5.xml";
+		levels[6] = levelPath+"level6.xml";
+		levels[7] = levelPath+"level7.xml";
+		levels[8] = levelPath+"level8.xml";
 		
 		levelHashes = new String[numberOfLevels];
 		levelHashes[1] = "4d913082805e39e321efa920a381b3d6473706c9";

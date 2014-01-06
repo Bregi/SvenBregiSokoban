@@ -7,65 +7,82 @@
         <column id="3" type="WALL"/>
         <column id="4" type="WALL"/>
         <column id="5" type="WALL"/>
+        <column id="6" type="WALL"/>
     </row>
     <row id="1">
         <column id="0" type="WALL"/>
-        <column id="1" type="DIAMOND"/>
-        <column id="2" type="COMPLETED"/>
-        <column id="3" type="COMPLETED"/>
+        <column id="1" type="WALL"/>
+        <column id="2" type="WALL"/>
+        <column id="3" type="EMPTY"/>
         <column id="4" type="WALL"/>
         <column id="5" type="WALL"/>
+        <column id="6" type="WALL"/>
     </row>
     <row id="2">
         <column id="0" type="WALL"/>
         <column id="1" type="WALL"/>
-        <column id="2" type="EMPTY"/>
-        <column id="3" type="PLAYER"/>
-        <column id="4" type="WALL"/>
+        <column id="2" type="GOAL"/>
+        <column id="3" type="DIAMOND"/>
+        <column id="4" type="EMPTY"/>
         <column id="5" type="WALL"/>
+        <column id="6" type="WALL"/>
     </row>
     <row id="3">
         <column id="0" type="WALL"/>
-        <column id="1" type="WALL"/>
-        <column id="2" type="EMPTY"/>
-        <column id="3" type="EMPTY"/>
-        <column id="4" type="WALL"/>
+        <column id="1" type="COMPLETED"/>
+        <column id="2" type="GOAL"/>
+        <column id="3" type="COMPLETED"/>
+        <column id="4" type="EMPTY"/>
         <column id="5" type="WALL"/>
+        <column id="6" type="WALL"/>
     </row>
     <row id="4">
         <column id="0" type="WALL"/>
         <column id="1" type="EMPTY"/>
-        <column id="2" type="EMPTY"/>
-        <column id="3" type="EMPTY"/>
+        <column id="2" type="GOAL"/>
+        <column id="3" type="PLAYER"/>
         <column id="4" type="EMPTY"/>
-        <column id="5" type="WALL"/>
+        <column id="5" type="EMPTY"/>
+        <column id="6" type="WALL"/>
     </row>
     <row id="5">
         <column id="0" type="WALL"/>
         <column id="1" type="EMPTY"/>
-        <column id="2" type="EMPTY"/>
+        <column id="2" type="DIAMOND"/>
         <column id="3" type="EMPTY"/>
-        <column id="4" type="WALL"/>
+        <column id="4" type="EMPTY"/>
         <column id="5" type="WALL"/>
+        <column id="6" type="WALL"/>
     </row>
     <row id="6">
+        <column id="0" type="WALL"/>
+        <column id="1" type="EMPTY"/>
+        <column id="2" type="DIAMOND"/>
+        <column id="3" type="WALL"/>
+        <column id="4" type="WALL"/>
+        <column id="5" type="WALL"/>
+        <column id="6" type="WALL"/>
+    </row>
+    <row id="7">
         <column id="0" type="WALL"/>
         <column id="1" type="EMPTY"/>
         <column id="2" type="EMPTY"/>
         <column id="3" type="WALL"/>
         <column id="4" type="WALL"/>
         <column id="5" type="WALL"/>
+        <column id="6" type="WALL"/>
     </row>
-    <row id="7">
+    <row id="8">
         <column id="0" type="WALL"/>
         <column id="1" type="WALL"/>
         <column id="2" type="WALL"/>
         <column id="3" type="WALL"/>
         <column id="4" type="WALL"/>
         <column id="5" type="WALL"/>
+        <column id="6" type="WALL"/>
     </row>
-    <name>Levelnull</name>
-    <startPosition row="2" column="3"/>
-    <uuid>ad5a0147-143e-474f-80de-7c4725ba3445</uuid>
-    <moves>10</moves>
+    <name>Level 3</name>
+    <startPosition row="4" column="3"/>
+    <uuid>c9f5a978-2783-49ac-a3aa-0dd3d555cb57</uuid>
+    <moves>2</moves>
 </level>

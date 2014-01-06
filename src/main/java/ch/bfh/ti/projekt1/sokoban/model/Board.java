@@ -8,7 +8,6 @@ import org.apache.log4j.Logger;
 
 import ch.bfh.ti.projekt1.sokoban.controller.AbstractController;
 import ch.bfh.ti.projekt1.sokoban.core.dijkstra.Dijkstra;
-import ch.bfh.ti.projekt1.sokoban.core.dijkstra.Edge;
 import ch.bfh.ti.projekt1.sokoban.core.dijkstra.Vertex;
 
 /**
@@ -130,98 +129,8 @@ public class Board extends AbstractModel {
 		return position;
 	}
 
-	/**
-	 * Checks if a given field can be walked on
-	 * 
-	 * @param state
-	 * @return boolean
-	 */
-	public boolean isWalkable(FieldState state) {
-		if (state == FieldState.EMPTY || state == FieldState.GOAL) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
 	public int getIndexOfNextRow(int currentPos, int height) {
 		return currentPos + height;
-	}
-
-	/**
-	 * Method that gives the distances each available field
-	 * 
-	 * @return ArrayList<Vertex>
-	 */
-	public Distance getDistances(int nStart, int iStart, int nEnd, int iEnd) {
-		Distance distance = new Distance();
-		try {
-
-			// Iterate through all the fields to check the distances
-			int nextRow = grid.length;
-			int position = 0;
-
-			// First initialize with all the vertices
-			for (int i = 0; i < grid[0].length; i++) { // i = y achse [][][][][]
-				for (int n = 0; n < grid.length; n++) { // n = x achse
-
-					String vertexName = "" + n + ":" + i;
-					Vertex v = new Vertex(vertexName, n, i);
-					distance.distances.add(v);
-
-					if ((i == iStart) && (n == nStart)) {
-						distance.startIndex = position;
-					}
-					if ((i == iEnd) && (n == nEnd)) {
-						distance.endIndex = position;
-					}
-					position++;
-				}
-			}
-
-			position = 0;
-
-			// Then set the adjacences
-			for (int i = 0; i < grid[0].length; i++) { // i = y achse [][][][][]
-				for (int n = 0; n < grid.length; n++) { // n = x achse
-					ArrayList<Edge> edges = new ArrayList<Edge>();
-
-					if (n + 1 < grid.length) {
-						if (isWalkable(grid[n + 1][i].getState())) {
-							edges.add(new Edge(distance.distances
-									.get(position + 1), 1));
-						}
-					}
-					if (n > 0) {
-						if (isWalkable(grid[n - 1][i].getState())) {
-							edges.add(new Edge(distance.distances
-									.get(position - 1), 1));
-						}
-					}
-					if (i + 1 < grid[0].length) {
-						if (isWalkable(grid[n][i + 1].getState())) {
-							edges.add(new Edge(distance.distances.get(position
-									+ nextRow), 1));
-						}
-					}
-					if (i > 0) {
-						if (isWalkable(grid[n][i - 1].getState())) {
-							edges.add(new Edge(distance.distances.get(position
-									- nextRow), 1));
-						}
-					}
-
-					Edge[] edgees = edges.toArray(new Edge[edges.size()]);
-					distance.distances.get(position).setAdjacencies(edgees);
-					position++;
-				}
-
-			}
-		} catch (Exception e) {
-			LOG.error(e);
-		}
-		return distance;
-
 	}
 
 	/**
@@ -231,15 +140,11 @@ public class Board extends AbstractModel {
 	 * @param positionWalkTo
 	 */
 	public void setWalk(Position positionWalkTo) {
-		Distance dijkstraObject = getDistances(this.position.getX(),
-				this.position.getY(), positionWalkTo.getX(),
-				positionWalkTo.getY());
 
-		Dijkstra findShortestPath = new Dijkstra();
+		Dijkstra findShortestPath = new Dijkstra(grid);
 
-		List<Vertex> path = findShortestPath.getPath(dijkstraObject.distances,
-				dijkstraObject.distances.get(dijkstraObject.startIndex),
-				dijkstraObject.distances.get(dijkstraObject.endIndex));
+		List<Vertex> path = findShortestPath.getPath(this.position,
+				positionWalkTo);
 
 		// führt die aktionen in einem eigenen thread aus
 		// der thread macht nach jedem vertex element x eine pause
@@ -545,12 +450,6 @@ public class Board extends AbstractModel {
 
 	public List<Direction> getMoves() {
 		return moves;
-	}
-
-	class Distance {
-		ArrayList<Vertex> distances = new ArrayList<Vertex>();
-		int startIndex = -1;
-		int endIndex = -1;
 	}
 
 	class WalkRunnable implements Runnable {

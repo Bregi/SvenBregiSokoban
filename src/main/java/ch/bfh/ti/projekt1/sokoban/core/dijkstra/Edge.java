@@ -1,4 +1,4 @@
-package ch.bfh.ti.projekt1.sokoban.core;
+package ch.bfh.ti.projekt1.sokoban.core.dijkstra;
 
 public class Edge {
 	public final Vertex target;

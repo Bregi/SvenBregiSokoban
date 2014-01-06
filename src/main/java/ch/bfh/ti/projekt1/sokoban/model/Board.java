@@ -4,10 +4,13 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import ch.bfh.ti.projekt1.sokoban.controller.AbstractController;
-import ch.bfh.ti.projekt1.sokoban.core.Dijkstra;
-import ch.bfh.ti.projekt1.sokoban.core.Edge;
-import ch.bfh.ti.projekt1.sokoban.core.Vertex;
+import ch.bfh.ti.projekt1.sokoban.core.Highscore;
+import ch.bfh.ti.projekt1.sokoban.core.dijkstra.Dijkstra;
+import ch.bfh.ti.projekt1.sokoban.core.dijkstra.Edge;
+import ch.bfh.ti.projekt1.sokoban.core.dijkstra.Vertex;
 
 /**
  * @author svennyffenegger
@@ -17,18 +20,16 @@ import ch.bfh.ti.projekt1.sokoban.core.Vertex;
  *        current position of the player.
  */
 public class Board extends AbstractModel {
+	private static final Logger LOG = Logger.getLogger(Board.class);
 
 	// the current position of the player
 	private Position position;
 	// grid of the fields
 	private Field[][] grid;
 	private String levelName;
-	private int startIndex;
-	private int endIndex;
-	private boolean walkBlock;
+
 	private ArrayList<String> playerPath;
 
-	private boolean diamondMove;
 	private List<Direction> moves;
 	private String uuid;
 	private int diamondMoveCounter;
@@ -56,9 +57,7 @@ public class Board extends AbstractModel {
 
 	// used for the game
 	public Board(int width, int height, Position startPosition) {
-		walkBlock = false;
 		this.position = startPosition;
-		this.diamondMove = false;
 		this.playerPath = new ArrayList<String>();
 		diamondMoveCounter = 0;
 		grid = new Field[width][height];
@@ -67,13 +66,6 @@ public class Board extends AbstractModel {
 
 	public String getLevelName() {
 		return levelName;
-	}
-
-	/*
-	 * used to decide if the player is allowed to walk
-	 */
-	public void setWalkBlock(boolean block) {
-		walkBlock = block;
 	}
 
 	public void setLevelName(String levelName) {
@@ -146,7 +138,7 @@ public class Board extends AbstractModel {
 	 * @return boolean
 	 */
 	public boolean isWalkable(FieldState state) {
-		if ((state == FieldState.EMPTY) || (state == FieldState.GOAL)) {
+		if (state == FieldState.EMPTY || state == FieldState.GOAL) {
 			return true;
 		} else {
 			return false;
@@ -162,147 +154,109 @@ public class Board extends AbstractModel {
 	 * 
 	 * @return ArrayList<Vertex>
 	 */
-	public Object[] getDistances(int nStart, int iStart, int nEnd, int iEnd) {
-		ArrayList<Vertex> distances = new ArrayList<Vertex>();
-		this.startIndex = -1;
-		this.endIndex = -1;
+	public Distance getDistances(int nStart, int iStart, int nEnd, int iEnd) {
+		Distance distance = new Distance();
+		try {
 
-		// Iterate through all the fields to check the distances
-		int nextRow = grid.length;
-		int position = 0;
+			// Iterate through all the fields to check the distances
+			int nextRow = grid.length;
+			int position = 0;
 
-		// First initialize with all the vertices
-		for (int i = 0; i < grid[0].length; i++) { // i = y achse [][][][][]
-			for (int n = 0; n < grid.length; n++) { // n = x achse
+			// First initialize with all the vertices
+			for (int i = 0; i < grid[0].length; i++) { // i = y achse [][][][][]
+				for (int n = 0; n < grid.length; n++) { // n = x achse
 
-				String vertexName = "" + n + ":" + i;
-				Vertex v = new Vertex(vertexName, n, i);
-				distances.add(v);
+					String vertexName = "" + n + ":" + i;
+					Vertex v = new Vertex(vertexName, n, i);
+					distance.distances.add(v);
 
-				if ((i == iStart) && (n == nStart)) {
-					this.startIndex = position;
-				}
-				if ((i == iEnd) && (n == nEnd)) {
-					this.endIndex = position;
-				}
-				position++;
-			}
-		}
-
-		position = 0;
-
-		// Then set the adjacences
-		for (int i = 0; i < grid[0].length; i++) { // i = y achse [][][][][]
-			for (int n = 0; n < grid.length; n++) { // n = x achse
-				ArrayList<Edge> edges = new ArrayList<Edge>();
-
-				if (n + 1 < grid.length) {
-					if (isWalkable(grid[n + 1][i].getState())) {
-						edges.add(new Edge(distances.get(position + 1), 1));
+					if ((i == iStart) && (n == nStart)) {
+						distance.startIndex = position;
 					}
-				}
-				if (n > 0) {
-					if (isWalkable(grid[n - 1][i].getState())) {
-						edges.add(new Edge(distances.get(position - 1), 1));
+					if ((i == iEnd) && (n == nEnd)) {
+						distance.endIndex = position;
 					}
+					position++;
 				}
-				if (i + 1 < grid.length) {
-					if (isWalkable(grid[n][i + 1].getState())) {
-						edges.add(new Edge(distances.get(position + nextRow), 1));
-					}
-				}
-				if (i > 0) {
-					if (isWalkable(grid[n][i - 1].getState())) {
-						edges.add(new Edge(distances.get(position - nextRow), 1));
-					}
-				}
-
-				Edge[] edgees = new Edge[edges.size()];
-				int c = 0;
-				for (Edge e : edges) {
-					edgees[c] = e;
-					c++;
-				}
-				distances.get(position).adjacencies = edgees;
-				position++;
 			}
 
-		}
+			position = 0;
 
-		Object[] dijkstraValues = new Object[3];
-		dijkstraValues[0] = distances;
-		dijkstraValues[1] = this.startIndex;
-		dijkstraValues[2] = this.endIndex;
-		return dijkstraValues;
+			// Then set the adjacences
+			for (int i = 0; i < grid[0].length; i++) { // i = y achse [][][][][]
+				for (int n = 0; n < grid.length; n++) { // n = x achse
+					ArrayList<Edge> edges = new ArrayList<Edge>();
+
+					if (n + 1 < grid.length) {
+						if (isWalkable(grid[n + 1][i].getState())) {
+							edges.add(new Edge(distance.distances
+									.get(position + 1), 1));
+						}
+					}
+					if (n > 0) {
+						if (isWalkable(grid[n - 1][i].getState())) {
+							edges.add(new Edge(distance.distances
+									.get(position - 1), 1));
+						}
+					}
+					if (i + 1 < grid.length) {
+						if (isWalkable(grid[n][i + 1].getState())) {
+							edges.add(new Edge(distance.distances.get(position
+									+ nextRow), 1));
+						}
+					}
+					if (i > 0) {
+						if (isWalkable(grid[n][i - 1].getState())) {
+							edges.add(new Edge(distance.distances.get(position
+									- nextRow), 1));
+						}
+					}
+
+					Edge[] edgees = new Edge[edges.size()];
+					int c = 0;
+					for (Edge e : edges) {
+						edgees[c] = e;
+						c++;
+					}
+					distance.distances.get(position).setAdjacencies(edgees);
+					position++;
+				}
+
+			}
+		} catch (Exception e) {
+			LOG.error(e);
+		}
+		return distance;
 
 	}
 
-	public Position getPlayerPosition() {
-		for (int i = 0; i < grid.length; i++) {
-			for (int n = 0; n < grid.length; n++) {
-				if (grid[n][i].getState() == FieldState.PLAYER) {
-					return new Position(n, i);
-				}
-			}
-		}
-		return null;
-	}
+	/*
+	 * public Position getPlayerPosition() { for (int i = 0; i < grid.length;
+	 * i++) { for (int n = 0; n < grid.length; n++) { if (grid[n][i].getState()
+	 * == FieldState.PLAYER) { return new Position(n, i); } } } return null; }
+	 */
 
 	/**
 	 * Walks the distance with the shortest available path (using the dijkstra
 	 * algorithm)
 	 * 
-	 * @param position
+	 * @param positionWalkTo
 	 */
-	public void setWalk(Position position) {
-		Position playerPosition = getPlayerPosition();
-		Object[] dijkstraObject = getDistances(playerPosition.getX(),
-				playerPosition.getY(), position.getX(), position.getY());
-		ArrayList<Vertex> directions = new ArrayList<Vertex>();
-		directions = (ArrayList<Vertex>) dijkstraObject[0];
+	public void setWalk(Position positionWalkTo) {
+		Distance dijkstraObject = getDistances(this.position.getX(),
+				this.position.getY(), positionWalkTo.getX(),
+				positionWalkTo.getY());
+
 		Dijkstra findShortestPath = new Dijkstra();
-		List<Vertex> path = findShortestPath.getPath(directions,
-				directions.get((int) dijkstraObject[1]),
-				directions.get((int) dijkstraObject[2]));
+
+		List<Vertex> path = findShortestPath.getPath(dijkstraObject.distances,
+				dijkstraObject.distances.get(dijkstraObject.startIndex),
+				dijkstraObject.distances.get(dijkstraObject.endIndex));
 
 		// führt die aktionen in einem eigenen thread aus
-		// der thread macht nach jedem vertex element x eine pause von 1000
-		// millis
-		class WalkRunnable implements Runnable {
-
-			List<Vertex> path;
-			Position playerPosition;
-
-			WalkRunnable(List<Vertex> path, Position playerPosition) {
-				this.path = path;
-				this.playerPosition = playerPosition;
-			}
-
-			@Override
-			public void run() {
-				for (Vertex x : path) {
-					if (x.getX() > playerPosition.getX()) {
-						setNextField(Direction.RIGHT);
-					} else if (x.getY() > playerPosition.getY()) {
-						setNextField(Direction.DOWN);
-					} else if (x.getX() < playerPosition.getX()) {
-						setNextField(Direction.LEFT);
-					} else if (x.getY() < playerPosition.getY()) {
-						setNextField(Direction.UP);
-					}
-
-					try {
-						Thread.sleep(500L);
-					} catch (InterruptedException e) {
-					}
-					playerPosition = new Position(x.getX(), x.getY());
-				}
-			}
-
-		}
-
+		// der thread macht nach jedem vertex element x eine pause
 		// hier wird der thread effektiv erzeugt und gestartet
-		new Thread(new WalkRunnable(path, playerPosition)).start();
+		new Thread(new WalkRunnable(path)).start();
 
 	}
 
@@ -493,8 +447,6 @@ public class Board extends AbstractModel {
 		if (oldPosition != position) {
 			checkLevelStatus();
 			moves.add(direction);
-			diamondMove = false;
-
 			firePropertyChange(AbstractController.PROPERTY_POSITION,
 					oldPosition, position);
 		}
@@ -605,6 +557,43 @@ public class Board extends AbstractModel {
 
 	public List<Direction> getMoves() {
 		return moves;
+	}
+
+	class Distance {
+		ArrayList<Vertex> distances = new ArrayList<Vertex>();
+		int startIndex = -1;
+		int endIndex = -1;
+	}
+
+	class WalkRunnable implements Runnable {
+
+		List<Vertex> path;
+
+		WalkRunnable(List<Vertex> path) {
+			this.path = path;
+		}
+
+		@Override
+		public void run() {
+			for (Vertex x : path) {
+				if (x.getX() > position.getX()) {
+					setNextField(Direction.RIGHT);
+				} else if (x.getY() > position.getY()) {
+					setNextField(Direction.DOWN);
+				} else if (x.getX() < position.getX()) {
+					setNextField(Direction.LEFT);
+				} else if (x.getY() < position.getY()) {
+					setNextField(Direction.UP);
+				}
+
+				try {
+					Thread.sleep(500L);
+				} catch (InterruptedException e) {
+					LOG.error(e);
+				}
+			}
+		}
+
 	}
 
 }

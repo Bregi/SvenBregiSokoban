@@ -11,7 +11,6 @@ import java.beans.PropertyChangeEvent;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import ch.bfh.ti.projekt1.sokoban.controller.AbstractController;
 import ch.bfh.ti.projekt1.sokoban.controller.BoardController;
 import ch.bfh.ti.projekt1.sokoban.model.Board;
 import ch.bfh.ti.projekt1.sokoban.model.Field;
@@ -33,12 +32,12 @@ import ch.bfh.ti.projekt1.sokoban.view.element.Wall;
  */
 public class BoardView extends JPanel implements KeyListener, MouseListener, AbstractView {
 
-    private BoardController controller;
+	private static final long serialVersionUID = 1L;
+	private BoardController controller;
     private Position playerPosition;
     private String levelName;
     private Field[][] grid;
     private Element[][] field;
-    private int numberOfGoals;
     private boolean levelIsFinished;
     public Board board;
 
@@ -51,8 +50,6 @@ public class BoardView extends JPanel implements KeyListener, MouseListener, Abs
         this.board = board;
         this.field = new Element[grid.length][grid[0].length];
         this.playerPosition = playerPosition;
-        this.numberOfGoals = 0;
-        //blankArea.addMouseListener(this);
         addMouseListener(this);
         setLayout(null);
         addKeyListener(this);
@@ -78,10 +75,6 @@ public class BoardView extends JPanel implements KeyListener, MouseListener, Abs
                 }
             });
 
-        }
-        
-        if (evt.getPropertyName().equals(AbstractController.PROPERTY_LEVEL_SCORE)) {
-        	System.out.println("Level score:"+evt.getNewValue().toString());
         }
     }
     /**

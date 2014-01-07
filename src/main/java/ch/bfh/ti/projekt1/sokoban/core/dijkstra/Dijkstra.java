@@ -13,8 +13,19 @@ public class Dijkstra {
 	private List<Vertex> path;
 	private Field[][] model;
 
+	private Mode mode;
+
+	public enum Mode {
+		EDITOR, GAME
+	};
+
 	public Dijkstra(Field[][] model) {
+		this(model, Mode.GAME);
+	}
+
+	public Dijkstra(Field[][] model, Mode mode) {
 		this.model = model;
+		this.mode = mode;
 	}
 
 	private void computePaths(Vertex source) {
@@ -148,11 +159,17 @@ public class Dijkstra {
 	 * @return boolean
 	 */
 	private boolean isWalkable(FieldState state) {
-		if (state == FieldState.EMPTY || state == FieldState.GOAL) {
-			return true;
-		} else {
-			return false;
+		if (mode == Mode.EDITOR) {
+			if (state == FieldState.EMPTY || state == FieldState.GOAL
+					|| state == FieldState.DIAMOND || state == FieldState.PLAYER) {
+				return true;
+			}
+		} else if (mode == Mode.GAME) {
+			if (state == FieldState.EMPTY || state == FieldState.GOAL) {
+				return true;
+			}
 		}
+		return false;
 	}
 
 	public List<Vertex> getPath() {

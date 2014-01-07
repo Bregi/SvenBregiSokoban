@@ -451,6 +451,18 @@ public class Board extends AbstractModel {
 	public List<Direction> getMoves() {
 		return moves;
 	}
+	
+	public List<Position> getPositionsOfType(FieldState state) {
+		List<Position> list = new ArrayList<>();
+		for (int i = 0; i < grid.length; i++) {
+			for (int j = 0; j < grid[0].length; j++) {
+				if (grid[i][j].getState() == state) {
+					list.add(new Position(i, j));
+				}
+			}
+		}
+		return list;
+	}
 
 	class WalkRunnable implements Runnable {
 

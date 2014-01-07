@@ -1,14 +1,19 @@
 package ch.bfh.ti.projekt1.sokoban.core;
 
 import java.io.File;
+import java.util.List;
 
 import ch.bfh.ti.projekt1.sokoban.controller.FieldController;
+import ch.bfh.ti.projekt1.sokoban.core.dijkstra.Dijkstra;
+import ch.bfh.ti.projekt1.sokoban.core.dijkstra.Dijkstra.Mode;
+import ch.bfh.ti.projekt1.sokoban.core.dijkstra.Vertex;
 import ch.bfh.ti.projekt1.sokoban.editor.DraggableElementDestination;
 import ch.bfh.ti.projekt1.sokoban.editor.EditorController;
 import ch.bfh.ti.projekt1.sokoban.editor.LevelEditorView;
 import ch.bfh.ti.projekt1.sokoban.model.Board;
 import ch.bfh.ti.projekt1.sokoban.model.Field;
 import ch.bfh.ti.projekt1.sokoban.model.FieldState;
+import ch.bfh.ti.projekt1.sokoban.model.Position;
 import ch.bfh.ti.projekt1.sokoban.xml.Column;
 import ch.bfh.ti.projekt1.sokoban.xml.Level;
 import ch.bfh.ti.projekt1.sokoban.xml.Row;
@@ -62,17 +67,60 @@ public class EditorService {
 	public void saveLevel(Board board) throws LevelMisconfigurationException {
 		File parentFolder = new File(
 				CoreConstants.getProperty("editor.basepath"));
+
+		List<Position> diamondPosList = board
+				.getPositionsOfType(FieldState.DIAMOND);
+		List<Position> goalPosList = board.getPositionsOfType(FieldState.GOAL);
+
+		Dijkstra dijkstra = new Dijkstra(board.getGrid(), Mode.EDITOR);
+
+		boolean diamondToGoals = checkConnections(dijkstra, diamondPosList,
+				goalPosList);
+		
+//		dijkstra = new Dijkstra(board.getGrid());
+
+		boolean goalToDiamonds = checkConnections(dijkstra, goalPosList,
+				diamondPosList);
+
+		if (!diamondToGoals) {
+			throw new LevelMisconfigurationException(
+					"there is a diamond without connection to any goal!");
+		}
+
+		if (!goalToDiamonds) {
+			throw new LevelMisconfigurationException(
+					"there is a goal without connection to any diamond!");
+		}
+
 		// prevent to save a modified level with the same uuid again
 		// when a level is changed in the editor, then it needs a new uuid
 		board.setUuid(null);
 		XmlService.getInstance().saveLevel(board, parentFolder);
 	}
 
+	private boolean checkConnections(Dijkstra dijkstra, List<Position> base,
+			List<Position> goals) {
+		for (Position diamondPos : base) {
+			boolean foundWay = false;
+			for (Position goalPos : goals) {
+				List<Vertex> path = dijkstra.getPath(diamondPos, goalPos);
+				if (path.size() > 1) {
+					foundWay = true;
+					break;
+				}
+			}
+
+			if (foundWay == false) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	public EditorController getLevel(File file) {
 		Level level = XmlService.getInstance().getLevelFromFile(file);
 		EditorController controller = new EditorController();
-		int col = XmlService.getInstance()
-				.getMaxColumnCount(level.getRow());
+		int col = XmlService.getInstance().getMaxColumnCount(level.getRow());
 		int row = level.getRow().size();
 
 		Board board = new Board(col, row);

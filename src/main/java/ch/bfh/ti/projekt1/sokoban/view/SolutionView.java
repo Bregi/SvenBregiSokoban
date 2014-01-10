@@ -29,23 +29,9 @@ public class SolutionView {
 
 	private JFrame frame;
 
-	private JMenuBar menuBar;
-
 	private JButton nextButton;
 
-	private JButton backButton;
 	private int currentPos;
-	private JMenu menuFile;
-
-	private JMenuItem menuFileNew;
-
-	private JMenuItem menuFileSave;
-
-	private JMenuItem menuFileLoad;
-
-	// private EditorController controller;
-
-	private EditorService editorService = EditorService.getInstance();
 
 	/**
 	 * @param board
@@ -54,7 +40,6 @@ public class SolutionView {
 	public SolutionView(final BoardController board, String pathValues) {
 		frame = new JFrame("Solution");
 		nextButton = new JButton(">");
-		backButton = new JButton("<");
 		frame.add(nextButton, BorderLayout.LINE_START);
 		frame.add(nextButton, BorderLayout.LINE_END);
 		currentPos = 0;
@@ -89,7 +74,6 @@ public class SolutionView {
 		});
 		frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		frame.setVisible(true);
-
 	}
 
 	/**

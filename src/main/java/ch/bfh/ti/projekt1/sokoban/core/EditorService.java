@@ -59,8 +59,7 @@ public class EditorService {
 
 		controller.setModel(currentLevel);
 
-		LevelEditorView editorView = new LevelEditorView(controller, columns,
-				rows);
+		LevelEditorView editorView = new LevelEditorView(columns, rows);
 		controller.setView(editorView);
 
 		// initialize fields with the empty state
@@ -204,7 +203,7 @@ public class EditorService {
 
 		Board board = new Board(col, row);
 
-		LevelEditorView editorView = new LevelEditorView(controller, col, row);
+		LevelEditorView editorView = new LevelEditorView(col, row);
 		controller.setView(editorView);
 		controller.setModel(board);
 

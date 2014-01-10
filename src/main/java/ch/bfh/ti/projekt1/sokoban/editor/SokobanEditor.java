@@ -22,6 +22,8 @@ import ch.bfh.ti.projekt1.sokoban.core.LevelMisconfigurationException;
 import ch.bfh.ti.projekt1.sokoban.model.Board;
 
 /**
+ * Main Class for the editor. Contains the menu and the panel with all the elements (LevelEditorView).
+ * 
  * @author svennyffenegger
  * @since 24/10/13 14:29
  */
@@ -50,10 +52,13 @@ public class SokobanEditor {
 		menuBar = new JMenuBar();
 		frame.setJMenuBar(menuBar);
 
-		menuFile = new JMenu("File");
+		menuFile = new JMenu("Datei");
 		menuBar.add(menuFile);
 
-		menuFileNew = new JMenuItem("New");
+		/**
+		 * File New
+		 */
+		menuFileNew = new JMenuItem("Neu");
 		menuFile.add(menuFileNew);
 		menuFileNew.addActionListener(new ActionListener() {
 			@Override
@@ -71,7 +76,10 @@ public class SokobanEditor {
 			}
 		});
 
-		menuFileSave = new JMenuItem("Save");
+		/**
+		 * File save
+		 */
+		menuFileSave = new JMenuItem("Speichern");
 		menuFile.add(menuFileSave);
 		menuFileSave.addActionListener(new ActionListener() {
 			@Override
@@ -91,13 +99,15 @@ public class SokobanEditor {
 			}
 		});
 
-		menuFileLoad = new JMenuItem("Load");
+		/**
+		 * File load
+		 */
+		menuFileLoad = new JMenuItem("Lade");
 		menuFile.add(menuFileLoad);
 		menuFileLoad.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JFileChooser fc = new JFileChooser(
-						"src/test/resources/ch/bfh/ti/projekt1/sokoban/generated");
+				JFileChooser fc = new JFileChooser(CoreConstants.getProperty("editor.basepath"));
 				FileNameExtensionFilter xmlfilter = new FileNameExtensionFilter(
 						"xml files (*.xml)", "xml");
 				fc.setFileFilter(xmlfilter);

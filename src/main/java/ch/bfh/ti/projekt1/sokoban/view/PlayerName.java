@@ -13,7 +13,6 @@ import java.awt.event.ActionListener;
 public class PlayerName {
 
     private JDialog dialog;
-    private Dimension dimension;
     private JPanel content;
     private JTextField name;
     private String playerName;
@@ -40,7 +39,7 @@ public class PlayerName {
                 try {
                     playerName = name.getText();
                 } catch (NumberFormatException nfe) {
-                    JOptionPane.showMessageDialog(dialog, "Keine gültigen Eingaben");
+                    JOptionPane.showMessageDialog(dialog, "Keine gï¿½ltigen Eingaben");
                 }
 
                 dialog.dispose();
@@ -53,7 +52,6 @@ public class PlayerName {
         buttonCancel.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                dimension = null;
                 dialog.dispose();
             }
         });

@@ -26,108 +26,112 @@ import ch.bfh.ti.projekt1.sokoban.model.Board;
  * @since 24/10/13 14:29
  */
 public class SokobanEditor {
-    private static final Logger LOG = Logger.getLogger(SokobanEditor.class);
-	
+	private static final Logger LOG = Logger.getLogger(SokobanEditor.class);
+
 	private JFrame frame;
 
-    private JMenuBar menuBar;
+	private JMenuBar menuBar;
 
-    private JMenu menuFile;
+	private JMenu menuFile;
 
-    private JMenuItem menuFileNew;
+	private JMenuItem menuFileNew;
 
-    private JMenuItem menuFileSave;
+	private JMenuItem menuFileSave;
 
-    private JMenuItem menuFileLoad;
+	private JMenuItem menuFileLoad;
 
-    private EditorController controller;
+	private EditorController controller;
 
-    private EditorService editorService = EditorService.getInstance();
+	private EditorService editorService = EditorService.getInstance();
 
-    public SokobanEditor() {
-        frame = new JFrame("Editor");
+	public SokobanEditor() {
+		frame = new JFrame("Editor");
 
-        menuBar = new JMenuBar();
-        frame.setJMenuBar(menuBar);
+		menuBar = new JMenuBar();
+		frame.setJMenuBar(menuBar);
 
-        menuFile = new JMenu("File");
-        menuBar.add(menuFile);
+		menuFile = new JMenu("File");
+		menuBar.add(menuFile);
 
-        menuFileNew = new JMenuItem("New");
-        menuFile.add(menuFileNew);
-        menuFileNew.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                LevelDimensionDialog dialog = new LevelDimensionDialog();
-                Dimension dim = dialog.showDimensionDialog(frame);
+		menuFileNew = new JMenuItem("New");
+		menuFile.add(menuFileNew);
+		menuFileNew.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				LevelDimensionDialog dialog = new LevelDimensionDialog();
+				Dimension dim = dialog.showDimensionDialog(frame);
 
-                if (dim != null) {
-                    controller = editorService.getNewLevel(dim.width, dim.height);
-                    frame.setContentPane((LevelEditorView) controller.getView());
-                    frame.getContentPane().revalidate();
-                }
+				if (dim != null) {
+					controller = editorService.getNewLevel(dim.width,
+							dim.height);
+					frame.setContentPane((LevelEditorView) controller.getView());
+					frame.getContentPane().revalidate();
+				}
 
-            }
-        });
+			}
+		});
 
-        menuFileSave = new JMenuItem("Save");
-        menuFile.add(menuFileSave);
-        menuFileSave.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-            	Board board = (Board) controller.getModel();
-            	board.setLevelName(JOptionPane.showInputDialog("Name des Levels:", board.getLevelName()));
-            	
-            	try {
+		menuFileSave = new JMenuItem("Save");
+		menuFile.add(menuFileSave);
+		menuFileSave.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Board board = (Board) controller.getModel();
+				board.setLevelName(JOptionPane.showInputDialog(
+						"Name des Levels:", board.getLevelName()));
+
+				try {
 					editorService.saveLevel(board);
-					JOptionPane.showMessageDialog(frame, "Level wurde gespeichert.");
+					JOptionPane.showMessageDialog(frame,
+							"Level wurde gespeichert.");
 				} catch (LevelMisconfigurationException e1) {
 					JOptionPane.showMessageDialog(frame, e1.getMessage());
 					LOG.error(e1.getMessage());
 				}
-            }
-        });
+			}
+		});
 
-        menuFileLoad = new JMenuItem("Load");
-        menuFile.add(menuFileLoad);
-        menuFileLoad.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JFileChooser fc = new JFileChooser("src/test/resources/ch/bfh/ti/projekt1/sokoban/generated");
-                FileNameExtensionFilter xmlfilter = new FileNameExtensionFilter(
-                        "xml files (*.xml)", "xml");
-                fc.setFileFilter(xmlfilter);
-                int returnVal = fc.showOpenDialog(frame);
+		menuFileLoad = new JMenuItem("Load");
+		menuFile.add(menuFileLoad);
+		menuFileLoad.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser fc = new JFileChooser(
+						"src/test/resources/ch/bfh/ti/projekt1/sokoban/generated");
+				FileNameExtensionFilter xmlfilter = new FileNameExtensionFilter(
+						"xml files (*.xml)", "xml");
+				fc.setFileFilter(xmlfilter);
+				int returnVal = fc.showOpenDialog(frame);
 
-                if (returnVal == JFileChooser.APPROVE_OPTION) {
-                    File file = fc.getSelectedFile();
+				if (returnVal == JFileChooser.APPROVE_OPTION) {
+					File file = fc.getSelectedFile();
+					try {
+						controller = editorService.getLevel(file);
 
-                    controller = editorService.getLevel(file);
+						frame.setContentPane((LevelEditorView) controller
+								.getView());
 
-                    //frame.setJMenuBar(new StartMenuView());
-                    frame.setContentPane((LevelEditorView) controller.getView());
+						frame.getContentPane().revalidate();
+						frame.getContentPane().repaint();
+					} catch (LevelMisconfigurationException ex) {
+						JOptionPane.showMessageDialog(frame, ex.getMessage());
+					}
+				}
+			}
+		});
 
-                    //frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		Integer width = new Integer(
+				CoreConstants.getProperty("editor.window.width"));
+		Integer height = new Integer(
+				CoreConstants.getProperty("editor.window.height"));
 
-                    frame.getContentPane().revalidate();
-                    frame.getContentPane().repaint(); 
-                } else {
-                    // show that the file was not applicable in this case
-                }
-            }
-        });
+		frame.setSize(width, height);
+		frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+		frame.setVisible(true);
 
-        Integer width = new Integer(CoreConstants.getProperty("editor.window.width"));
-        Integer height = new Integer(CoreConstants.getProperty("editor.window.height"));
-        
-        frame.setSize(width, height);
-        frame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        frame.setVisible(true);
+	}
 
-
-    }
-
-    public JFrame getFrame() {
-        return frame;
-    }
+	public JFrame getFrame() {
+		return frame;
+	}
 }

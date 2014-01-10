@@ -5,7 +5,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -21,7 +20,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -171,24 +169,24 @@ public class GameWindowView implements AbstractView {
 
 			currentLevel = levels.getLevel(currentStoryLevel);
 
-			BoardController board = levelService.getLevelProgressForUser(
-					player, levels.getLevel(currentStoryLevel));
-			if (board == null) {
-				try {
+			try {
+				BoardController board = levelService.getLevelProgressForUser(
+						player, levels.getLevel(currentStoryLevel));
+				if (board == null) {
 					board = levelService.getLevel(new File(levels
 							.getLevel(currentStoryLevel)));
-				} catch (FileNotFoundException e) {
-					LOG.error(e);
 				}
+				board.addView(GameWindowView.this);
+
+				view = (BoardView) board.getView(BoardView.class);
+				model = (Board) board.getModel(Board.class);
+
+				frame.setSize(view.getWindowSizeX(), view.getWindowSizeY());
+				revalidateLevel(frame);
+			} catch (LevelMisconfigurationException e1) {
+				LOG.error(e1.getMessage());
+				JOptionPane.showMessageDialog(frame, e1.getMessage());
 			}
-
-			board.addView(GameWindowView.this);
-
-			view = (BoardView) board.getView(BoardView.class);
-			model = (Board) board.getModel(Board.class);
-
-			frame.setSize(view.getWindowSizeX(), view.getWindowSizeY());
-			revalidateLevel(frame);
 		}
 		frame.getContentPane().revalidate();
 	}
@@ -233,7 +231,8 @@ public class GameWindowView implements AbstractView {
 
 			frame.setSize(view.getWindowSizeX(), view.getWindowSizeY());
 			revalidateLevel(frame);
-		} catch (FileNotFoundException e) {
+		} catch (LevelMisconfigurationException e) {
+			JOptionPane.showMessageDialog(frame, e.getMessage());
 			LOG.error(e);
 		}
 	}
@@ -262,7 +261,7 @@ public class GameWindowView implements AbstractView {
 		JMenuItem itmSave = new JMenuItem("Spiel speichern");
 		JMenuItem itmLoad = new JMenuItem("Spiel laden");
 		JMenuItem itmLoadLevel = new JMenuItem("Level laden");
-		JMenuItem itmViewSolution = new JMenuItem("Lösung ansehen");
+		JMenuItem itmViewSolution = new JMenuItem("Lï¿½sung ansehen");
 		JMenuItem itmClose = new JMenuItem("Spiel beenden");
 
 		// optionen
@@ -277,7 +276,7 @@ public class GameWindowView implements AbstractView {
 		// Spiel
 		menuFile.add(itmNew);
 		menuFile.addSeparator();
-		
+
 		menuFile.add(itmReload);
 		menuFile.addSeparator();
 
@@ -298,7 +297,7 @@ public class GameWindowView implements AbstractView {
 		// optionen
 		menuEdit.add(itmStatistics);
 		menuEdit.addSeparator();
-		
+
 		menuEdit.add(itmBest);
 
 		// leveleditor
@@ -355,7 +354,7 @@ public class GameWindowView implements AbstractView {
 				SokobanEditor editor = new SokobanEditor();
 			}
 		});
-		
+
 		// what happens when the user clicks on load a level
 		itmLoad.addActionListener(new ActionListener() {
 			@Override
@@ -392,7 +391,7 @@ public class GameWindowView implements AbstractView {
 									jFileChooser.getSelectedFile().getName()
 											.length() - 4);
 					currentLevel = jFileChooser.getSelectedFile().toString();
-					
+
 					loadANewLevel(jFileChooser.getSelectedFile());
 				}
 
@@ -404,7 +403,7 @@ public class GameWindowView implements AbstractView {
 			}
 
 		});
-		
+
 		// View the solution from a file
 		itmViewSolution.addActionListener(new ActionListener() {
 			@Override
@@ -441,7 +440,7 @@ public class GameWindowView implements AbstractView {
 						.getHighscoreForPlayer(player);
 				Map<String, String> levelNameMap = levelService
 						.getLevelNameUUIDMap();
-				dialog.setTitle("Highscore für Spieler " + player);
+				dialog.setTitle("Highscore fï¿½r Spieler " + player);
 				dialog.setContentPane(new HighscorePanel(levelNameMap,
 						levelScoreMap));
 				dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -505,7 +504,8 @@ public class GameWindowView implements AbstractView {
 				soVi.setSize(solBoardView.getWindowSizeX() + 20,
 						solBoardView.getWindowSizeY());
 				soVi.add(solBoardView);
-			} catch (FileNotFoundException e) {
+			} catch (LevelMisconfigurationException e) {
+				JOptionPane.showMessageDialog(frame, e.getMessage());
 				LOG.error(e);
 			}
 		} else {
@@ -571,22 +571,22 @@ public class GameWindowView implements AbstractView {
 		switch (evt.getPropertyName()) {
 		case AbstractController.PROPERTY_LEVEL_STATUS:
 			if ((boolean) evt.getNewValue() == true) {
-			
-			new Thread(new Runnable() {
-				
-				@Override
-				public void run() {
-					try {
-						Thread.sleep(500l);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
+
+				new Thread(new Runnable() {
+
+					@Override
+					public void run() {
+						try {
+							Thread.sleep(500l);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+						exportSolution();
+						if (storyMode) {
+							loadNextLevel();
+						}
 					}
-					exportSolution();
-					if (storyMode) {
-						loadNextLevel();
-					}
-				}
-			}).start();			
+				}).start();
 			}
 			break;
 		case AbstractController.PROPERTY_LEVEL_SCORE:
@@ -641,7 +641,8 @@ public class GameWindowView implements AbstractView {
 
 			frame.setSize(view.getWindowSizeX(), view.getWindowSizeY());
 			revalidateLevel(frame);
-		} catch (FileNotFoundException e) {
+		} catch (LevelMisconfigurationException e) {
+			JOptionPane.showMessageDialog(frame, e.getMessage());
 			LOG.error(e);
 		}
 	}

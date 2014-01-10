@@ -1,7 +1,6 @@
 package ch.bfh.ti.projekt1.sokoban.core;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -16,19 +15,11 @@ import org.apache.log4j.Logger;
 
 import ch.bfh.ti.projekt1.sokoban.controller.BoardController;
 import ch.bfh.ti.projekt1.sokoban.model.Board;
-<<<<<<< HEAD
-=======
-import ch.bfh.ti.projekt1.sokoban.model.Direction;
->>>>>>> 73c0982a7454f2d9ce470381aca9abc875e8f6f2
 import ch.bfh.ti.projekt1.sokoban.model.Field;
 import ch.bfh.ti.projekt1.sokoban.model.FieldState;
 import ch.bfh.ti.projekt1.sokoban.model.Position;
 import ch.bfh.ti.projekt1.sokoban.view.BoardView;
-<<<<<<< HEAD
-=======
 import ch.bfh.ti.projekt1.sokoban.view.BoardView.Mode;
-import ch.bfh.ti.projekt1.sokoban.view.GameWindowView;
->>>>>>> 73c0982a7454f2d9ce470381aca9abc875e8f6f2
 import ch.bfh.ti.projekt1.sokoban.xml.Column;
 import ch.bfh.ti.projekt1.sokoban.xml.Level;
 import ch.bfh.ti.projekt1.sokoban.xml.Row;
@@ -44,7 +35,6 @@ public class LevelService {
 	private static final Logger LOG = Logger.getLogger(LevelService.class);
 
 	private static LevelService instance;
-	private static final Logger LOG = Logger.getLogger(GameWindowView.class);
 
 	private char DEL = File.pathSeparatorChar;
 
@@ -63,7 +53,6 @@ public class LevelService {
 		return instance;
 	}
 
-<<<<<<< HEAD
 	/**
 	 * Loads the level definition from the file
 	 * 
@@ -75,13 +64,8 @@ public class LevelService {
 	public BoardController getLevel(File file)
 			throws LevelMisconfigurationException {
 		// load level definition itself from the xml file
-=======
-	public BoardController getLevel(File file) throws FileNotFoundException
-	{
->>>>>>> 73c0982a7454f2d9ce470381aca9abc875e8f6f2
 		Level level = XmlService.getInstance().getLevelFromFile(file);
-		
-		if(level!=null){
+
 		Position startPos = new Position(level.getStartPosition().getColumn(),
 				level.getStartPosition().getRow());
 
@@ -118,9 +102,6 @@ public class LevelService {
 		boardController.setView(boardView);
 
 		return boardController;
-		}else{
-			throw new FileNotFoundException();
-		}
 	}
 
 	/**
@@ -181,6 +162,7 @@ public class LevelService {
 
 	/**
 	 * Search for all profiles inside the root folder
+	 * 
 	 * @return list with all profile names
 	 */
 	public List<String> getProfiles() {
@@ -206,6 +188,7 @@ public class LevelService {
 
 	/**
 	 * Loads a progress for the user
+	 * 
 	 * @param user
 	 * @param levelName
 	 * @return the controller for the loaded level
@@ -219,7 +202,6 @@ public class LevelService {
 				+ CoreConstants.getProperty("game.folder.progress");
 
 		for (String fileStr : fileList(path)) {
-<<<<<<< HEAD
 			try {
 				Level progress = XmlService.getInstance().getLevelFromFile(
 						new File(fileStr));
@@ -228,20 +210,13 @@ public class LevelService {
 				}
 			} catch (LevelMisconfigurationException e) {
 				LOG.error(e);
-=======
-			Level progress = XmlService.getInstance().getLevelFromPath(fileStr);
-			if (progress.getUuid().equals(level.getUuid())) {
-				try{
-				return getLevel(new File(fileStr));
-				}catch(FileNotFoundException e){
-					LOG.error(e);
-				}
->>>>>>> 73c0982a7454f2d9ce470381aca9abc875e8f6f2
+
 			}
 		}
-		
+
 		// if we get here, the level could not be loaded
-		throw new LevelMisconfigurationException("Fehler: Der angeforderte Fortschritt konnte nicht geladen werden! Prüfen Sie die Konfiguration.");
+		throw new LevelMisconfigurationException(
+				"Fehler: Der angeforderte Fortschritt konnte nicht geladen werden! Prüfen Sie die Konfiguration.");
 	}
 
 }

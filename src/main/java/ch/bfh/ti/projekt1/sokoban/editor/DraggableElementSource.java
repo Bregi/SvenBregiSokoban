@@ -1,5 +1,6 @@
 package ch.bfh.ti.projekt1.sokoban.editor;
 
+import ch.bfh.ti.projekt1.sokoban.core.CoreConstants;
 import ch.bfh.ti.projekt1.sokoban.model.FieldState;
 import ch.bfh.ti.projekt1.sokoban.view.element.Element;
 
@@ -13,30 +14,34 @@ import java.awt.dnd.*;
  * @author svennyffenegger
  * @since 31/10/13 20:15
  */
-public class DraggableElementSource extends Element implements DragGestureListener {
+public class DraggableElementSource extends Element implements
+		DragGestureListener {
 	private static final long serialVersionUID = 1L;
-	
+
 	private DragSource source;
-    private FieldState state;
+	private FieldState state;
+	private static Integer size = new Integer(
+			CoreConstants.getProperty("game.element.size"));
 
-    public DraggableElementSource(FieldState state) {
-        this(state, new Dimension(40, 40));
-    }
+	public DraggableElementSource(FieldState state) {
+		this(state, new Dimension(size, size));
+	}
 
-    public DraggableElementSource(FieldState state, Dimension preferredDimension) {
-        addImage(state);
-        source = new DragSource();
-        source.createDefaultDragGestureRecognizer(this, DnDConstants.ACTION_MOVE, this);
-        setPreferredSize(preferredDimension);
-        this.state = state;
-    }
+	public DraggableElementSource(FieldState state, Dimension preferredDimension) {
+		addImage(state);
+		source = new DragSource();
+		source.createDefaultDragGestureRecognizer(this,
+				DnDConstants.ACTION_MOVE, this);
+		setPreferredSize(preferredDimension);
+		this.state = state;
+	}
 
-    @Override
-    public void dragGestureRecognized(DragGestureEvent dge) {
-        Transferable transferable = new LevelEditorTransferable(state);
-        source.startDrag(dge, DragSource.DefaultCopyDrop, transferable, new DragSourceAdapter() {
-        });
-    }
-    
-    
+	@Override
+	public void dragGestureRecognized(DragGestureEvent dge) {
+		Transferable transferable = new LevelEditorTransferable(state);
+		source.startDrag(dge, DragSource.DefaultCopyDrop, transferable,
+				new DragSourceAdapter() {
+				});
+	}
+
 }

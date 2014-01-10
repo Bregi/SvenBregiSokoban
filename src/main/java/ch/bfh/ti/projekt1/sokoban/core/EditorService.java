@@ -3,7 +3,7 @@ package ch.bfh.ti.projekt1.sokoban.core;
 import java.io.File;
 import java.util.List;
 
-import org.apache.log4j.xml.Log4jEntityResolver;
+import org.apache.log4j.Logger;
 
 import ch.bfh.ti.projekt1.sokoban.controller.FieldController;
 import ch.bfh.ti.projekt1.sokoban.core.dijkstra.Dijkstra;
@@ -192,9 +192,10 @@ public class EditorService {
 	 * @param file
 	 *            to load the definition from
 	 * @return a EditorController with initialized model and view
-	 * @throws LevelMisconfigurationException 
+	 * @throws LevelMisconfigurationException
 	 */
-	public EditorController getLevel(File file) throws LevelMisconfigurationException {
+	public EditorController getLevel(File file)
+			throws LevelMisconfigurationException {
 		// loads just the level itself from the xml
 		Level level = XmlService.getInstance().getLevelFromFile(file);
 		EditorController controller = new EditorController();

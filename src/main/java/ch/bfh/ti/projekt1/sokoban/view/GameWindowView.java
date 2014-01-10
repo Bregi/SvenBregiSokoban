@@ -261,7 +261,7 @@ public class GameWindowView implements AbstractView {
 		JMenuItem itmSave = new JMenuItem("Spiel speichern");
 		JMenuItem itmLoad = new JMenuItem("Spiel laden");
 		JMenuItem itmLoadLevel = new JMenuItem("Level laden");
-		JMenuItem itmViewSolution = new JMenuItem("L�sung ansehen");
+		JMenuItem itmViewSolution = new JMenuItem("Lösung ansehen");
 		JMenuItem itmClose = new JMenuItem("Spiel beenden");
 
 		// optionen

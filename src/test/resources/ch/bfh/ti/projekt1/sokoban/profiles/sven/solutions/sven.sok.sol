@@ -1,1 +1,0 @@
-4:[UP, RIGHT, UP, UP, UP]

@@ -1,71 +1,55 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <level xmlns="http://bfh.ch">
     <row id="0">
-        <column id="0" type="WALL"/>
-        <column id="1" type="WALL"/>
-        <column id="2" type="WALL"/>
-        <column id="3" type="WALL"/>
-        <column id="4" type="WALL"/>
-        <column id="5" type="WALL"/>
+        <column id="0" type="EMPTY"/>
+        <column id="1" type="EMPTY"/>
+        <column id="2" type="EMPTY"/>
+        <column id="3" type="COMPLETED"/>
+        <column id="4" type="EMPTY"/>
+        <column id="5" type="EMPTY"/>
     </row>
     <row id="1">
-        <column id="0" type="WALL"/>
-        <column id="1" type="DIAMOND"/>
-        <column id="2" type="COMPLETED"/>
-        <column id="3" type="GOAL"/>
-        <column id="4" type="WALL"/>
-        <column id="5" type="WALL"/>
+        <column id="0" type="EMPTY"/>
+        <column id="1" type="EMPTY"/>
+        <column id="2" type="EMPTY"/>
+        <column id="3" type="EMPTY"/>
+        <column id="4" type="EMPTY"/>
+        <column id="5" type="EMPTY"/>
     </row>
     <row id="2">
-        <column id="0" type="WALL"/>
-        <column id="1" type="WALL"/>
+        <column id="0" type="EMPTY"/>
+        <column id="1" type="EMPTY"/>
         <column id="2" type="EMPTY"/>
-        <column id="3" type="EMPTY"/>
-        <column id="4" type="WALL"/>
-        <column id="5" type="WALL"/>
+        <column id="3" type="PLAYER"/>
+        <column id="4" type="EMPTY"/>
+        <column id="5" type="EMPTY"/>
     </row>
     <row id="3">
-        <column id="0" type="WALL"/>
-        <column id="1" type="WALL"/>
+        <column id="0" type="EMPTY"/>
+        <column id="1" type="GOAL"/>
         <column id="2" type="EMPTY"/>
-        <column id="3" type="EMPTY"/>
-        <column id="4" type="WALL"/>
-        <column id="5" type="WALL"/>
+        <column id="3" type="COMPLETED"/>
+        <column id="4" type="EMPTY"/>
+        <column id="5" type="EMPTY"/>
     </row>
     <row id="4">
-        <column id="0" type="WALL"/>
-        <column id="1" type="EMPTY"/>
+        <column id="0" type="EMPTY"/>
+        <column id="1" type="DIAMOND"/>
         <column id="2" type="EMPTY"/>
-        <column id="3" type="DIAMOND"/>
+        <column id="3" type="EMPTY"/>
         <column id="4" type="EMPTY"/>
-        <column id="5" type="WALL"/>
+        <column id="5" type="EMPTY"/>
     </row>
     <row id="5">
-        <column id="0" type="WALL"/>
+        <column id="0" type="EMPTY"/>
         <column id="1" type="EMPTY"/>
         <column id="2" type="EMPTY"/>
         <column id="3" type="EMPTY"/>
-        <column id="4" type="WALL"/>
-        <column id="5" type="WALL"/>
-    </row>
-    <row id="6">
-        <column id="0" type="WALL"/>
-        <column id="1" type="EMPTY"/>
-        <column id="2" type="PLAYER"/>
-        <column id="3" type="WALL"/>
-        <column id="4" type="WALL"/>
-        <column id="5" type="WALL"/>
-    </row>
-    <row id="7">
-        <column id="0" type="WALL"/>
-        <column id="1" type="WALL"/>
-        <column id="2" type="WALL"/>
-        <column id="3" type="WALL"/>
-        <column id="4" type="WALL"/>
-        <column id="5" type="WALL"/>
+        <column id="4" type="EMPTY"/>
+        <column id="5" type="EMPTY"/>
     </row>
     <name>Level 1</name>
-    <startPosition row="6" column="2"/>
-    <uuid>fef7c80c-f0e2-471f-902b-baa24fd76f57</uuid>
-    <moves>7</moves>
+    <startPosition row="2" column="3"/>
+    <uuid>ec5fc531-449e-4001-89dd-ad035e0eadcd</uuid>
+    <moves>2</moves>
 </level>

@@ -8,12 +8,15 @@ import java.awt.datatransfer.Transferable;
 import java.awt.dnd.*;
 
 /**
+ * Class that can be dragged (used in editor)
+ * 
  * @author svennyffenegger
  * @since 31/10/13 20:15
  */
 public class DraggableElementSource extends Element implements DragGestureListener {
-
-    private DragSource source;
+	private static final long serialVersionUID = 1L;
+	
+	private DragSource source;
     private FieldState state;
 
     public DraggableElementSource(FieldState state) {
@@ -27,17 +30,10 @@ public class DraggableElementSource extends Element implements DragGestureListen
         setPreferredSize(preferredDimension);
         this.state = state;
     }
-    
-    protected void startDragging(DragGestureEvent dge) {
-    	
-    	
-    }
 
     @Override
     public void dragGestureRecognized(DragGestureEvent dge) {
         Transferable transferable = new LevelEditorTransferable(state);
-
-        //TODO hier Cursor mit Bild ersetzen
         source.startDrag(dge, DragSource.DefaultCopyDrop, transferable, new DragSourceAdapter() {
         });
     }

@@ -8,6 +8,8 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 
 /**
+ * Transferable implementation for Drag and Drop functionality
+ * 
  * @author svennyffenegger
  * @since 31/10/13 17:03
  */

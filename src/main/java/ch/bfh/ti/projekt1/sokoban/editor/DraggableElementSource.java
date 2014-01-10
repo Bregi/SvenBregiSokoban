@@ -23,10 +23,19 @@ public class DraggableElementSource extends Element implements
 	private static Integer size = new Integer(
 			CoreConstants.getProperty("game.element.size"));
 
+	/**
+	 * 
+	 * @param state
+	 */
 	public DraggableElementSource(FieldState state) {
 		this(state, new Dimension(size, size));
 	}
 
+	/**
+	 * 
+	 * @param state
+	 * @param preferredDimension
+	 */
 	public DraggableElementSource(FieldState state, Dimension preferredDimension) {
 		addImage(state);
 		source = new DragSource();
@@ -36,6 +45,9 @@ public class DraggableElementSource extends Element implements
 		this.state = state;
 	}
 
+	/**
+	 * When user wants to drag, then initialize dragging
+	 */
 	@Override
 	public void dragGestureRecognized(DragGestureEvent dge) {
 		Transferable transferable = new LevelEditorTransferable(state);

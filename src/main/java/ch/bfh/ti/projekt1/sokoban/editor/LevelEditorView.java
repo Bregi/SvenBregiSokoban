@@ -1,5 +1,6 @@
 package ch.bfh.ti.projekt1.sokoban.editor;
 
+import ch.bfh.ti.projekt1.sokoban.core.CoreConstants;
 import ch.bfh.ti.projekt1.sokoban.model.FieldState;
 import ch.bfh.ti.projekt1.sokoban.view.AbstractView;
 
@@ -11,56 +12,62 @@ import java.awt.dnd.DragGestureListener;
 import java.beans.PropertyChangeEvent;
 
 /**
+ * View implementation for the editor.it contains the board and the elements the
+ * user can drag to the board ("toolbox")
+ * 
  * @author svennyffenegger
  * @since 27/10/13 19:19
  */
-public class LevelEditorView extends JPanel implements AbstractView, DragGestureListener {
+public class LevelEditorView extends JPanel implements AbstractView,
+		DragGestureListener {
+	private static final long serialVersionUID = 1L;
 
-    private EditorController controller;
+	//for the "toolbox" on the right side
+	private JPanel elementsPanel;
+	
+	//all the elements of the board
+	private JPanel levelPanel;
 
-    private JPanel elementsPanel;
-    private JPanel levelPanel;
+	public LevelEditorView(int width, int height) {
+		GridLayout gridLayout = new GridLayout(height, width);
 
-    public LevelEditorView(EditorController controller, int width, int height) {
-        this.controller = controller;
+		levelPanel = new JPanel(gridLayout);
 
-        GridLayout gridLayout = new GridLayout(height, width);
+		setLayout(new FlowLayout());
+		add(levelPanel);
+		Integer size = new Integer(
+				CoreConstants.getProperty("game.element.size"));
 
-        levelPanel = new JPanel(gridLayout);
+		levelPanel.setPreferredSize(new Dimension(width * size, height * size));
 
+		elementsPanel = new JPanel();
+		BoxLayout boxLayout = new BoxLayout(elementsPanel, BoxLayout.Y_AXIS);
+		elementsPanel.setLayout(boxLayout);
 
-        setLayout(new FlowLayout());
-        add(levelPanel);
-        levelPanel.setPreferredSize(new Dimension(width * 40, height * 40));
+		elementsPanel.add(new DraggableElementSource(FieldState.WALL));
+		elementsPanel.add(new DraggableElementSource(FieldState.PLAYER));
+		elementsPanel.add(new DraggableElementSource(FieldState.GOAL));
+		elementsPanel.add(new DraggableElementSource(FieldState.EMPTY));
+		elementsPanel.add(new DraggableElementSource(FieldState.DIAMOND));
 
-        elementsPanel = new JPanel();
-        BoxLayout boxLayout = new BoxLayout(elementsPanel, BoxLayout.Y_AXIS);
-        elementsPanel.setLayout(boxLayout);
+		elementsPanel.setPreferredSize(new Dimension(size, 5 * size));
+		add(elementsPanel);
+	}
 
-        elementsPanel.add(new DraggableElementSource(FieldState.WALL));
-        elementsPanel.add(new DraggableElementSource(FieldState.PLAYER));
-        elementsPanel.add(new DraggableElementSource(FieldState.GOAL));
-        elementsPanel.add(new DraggableElementSource(FieldState.EMPTY));
-        elementsPanel.add(new DraggableElementSource(FieldState.DIAMOND));
+	@Override
+	public void modelPropertyChange(PropertyChangeEvent evt) {
+	}
 
-
-        elementsPanel.setPreferredSize(new Dimension(40, 5 * 40));
-        add(elementsPanel);
-        elementsPanel.setBackground(Color.RED);
-    }
-
-    @Override
-    public void modelPropertyChange(PropertyChangeEvent evt) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public void addElement(DraggableElementDestination elementDestination) {
-        levelPanel.add(elementDestination);
-    }
+	/**
+	 * Adds an element to this view
+	 * 
+	 * @param elementDestination
+	 */
+	public void addElement(DraggableElementDestination elementDestination) {
+		levelPanel.add(elementDestination);
+	}
 
 	@Override
 	public void dragGestureRecognized(DragGestureEvent dge) {
-		// TODO Auto-generated method stub
-		
 	}
 }

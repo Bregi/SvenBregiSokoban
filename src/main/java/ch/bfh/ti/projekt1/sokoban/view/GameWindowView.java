@@ -1,5 +1,6 @@
 package ch.bfh.ti.projekt1.sokoban.view;
 
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
@@ -63,7 +64,6 @@ public class GameWindowView implements AbstractView {
 
 	private JMenuItem menuFileNew;
 	private JMenuItem menuFileLoad;
-	private JMenuItem menuFileLoadLevel;
 	private JMenuItem menuStartLeveleditor;
 
 	private final String FOLDER_HIGHSCORE = CoreConstants
@@ -168,9 +168,15 @@ public class GameWindowView implements AbstractView {
 			currentStoryLevel = levels.getLevelByHash(content[1]);
 
 			currentLevel = levels.getLevel(currentStoryLevel);
+
+			BoardController board = levelService.getLevelProgressForUser(
+					player, levels.getLevel(currentStoryLevel));
+			if (board == null) {
+				board = levelService.getLevel(new File(levels
+						.getLevel(currentStoryLevel)));
+			}
+
 			// TODO: (also validate)
-			BoardController board = levelService.getLevel(new File(levels
-					.getLevel(currentStoryLevel)));
 			board.addView(GameWindowView.this);
 
 			view = (BoardView) board.getView(BoardView.class);
@@ -193,10 +199,10 @@ public class GameWindowView implements AbstractView {
 		PlayerName playerName = new PlayerName();
 		player = playerName.showDimensionDialog(frame);
 
-		// create profile directory
-		createPlayerProfile(player);
-
 		if (player != null) {
+			
+			// create profile directory
+			createPlayerProfile(player);
 
 			// Initialize the level
 			currentStoryLevel = 1;
@@ -241,7 +247,7 @@ public class GameWindowView implements AbstractView {
 		JMenuItem itmSave = new JMenuItem("Spiel speichern");
 		JMenuItem itmLoad = new JMenuItem("Spiel laden");
 		JMenuItem itmLoadLevel = new JMenuItem("Level laden");
-		JMenuItem itmViewSolution = new JMenuItem("L�sung ansehen");
+		JMenuItem itmViewSolution = new JMenuItem("Lösung ansehen");
 		JMenuItem itmClose = new JMenuItem("Spiel beenden");
 
 		// optionen
@@ -260,6 +266,8 @@ public class GameWindowView implements AbstractView {
 		menuFile.addSeparator();
 
 		menuFile.add(itmSave);
+		menuFile.addSeparator();
+
 		menuFile.addSeparator();
 
 		menuFile.add(itmLoad);
@@ -415,8 +423,10 @@ public class GameWindowView implements AbstractView {
 		itmStatistics.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				int steps = view.getStepsUsed();
-				JOptionPane.showMessageDialog(null, "Schritte:" + steps);
+				int steps = model.getMoves().size();
+				int diamondMoves = model.getDiamondMoveCounter();
+				JOptionPane.showMessageDialog(null, "Schritte:" + steps
+						+ "\nDiamantverschiebungen:" + diamondMoves);
 			}
 		});
 
@@ -428,13 +438,20 @@ public class GameWindowView implements AbstractView {
 						.getHighscoreForPlayer(player);
 				Map<String, String> levelNameMap = levelService
 						.getLevelNameUUIDMap();
-
+				dialog.setTitle("Highscore für Spieler " + player);
 				dialog.setContentPane(new HighscorePanel(levelNameMap,
 						levelScoreMap));
 				dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+				int width = new Integer(CoreConstants
+						.getProperty("game.highscore.width"));
+				int height = new Integer(CoreConstants
+						.getProperty("game.highscore.height"));
+				dialog.setSize(new Dimension(width, height));
+
 				dialog.setVisible(true);
 			}
 		});
+
 		return gameMenuBar;
 	}
 
@@ -492,7 +509,7 @@ public class GameWindowView implements AbstractView {
 	 */
 	public void exportSolution() {
 
-		int steps = view.getStepsUsed();
+		int steps = model.getMoves().size();
 		File file = new File(basePath + player + "/" + FOLDER_SOLUTIONS + "/"
 				+ levelName + ".sol");
 

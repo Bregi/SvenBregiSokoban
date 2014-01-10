@@ -11,7 +11,6 @@ import java.beans.PropertyChangeEvent;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import ch.bfh.ti.projekt1.sokoban.controller.AbstractController;
 import ch.bfh.ti.projekt1.sokoban.controller.BoardController;
 import ch.bfh.ti.projekt1.sokoban.model.Board;
 import ch.bfh.ti.projekt1.sokoban.model.Field;
@@ -33,28 +32,24 @@ import ch.bfh.ti.projekt1.sokoban.view.element.Wall;
  */
 public class BoardView extends JPanel implements KeyListener, MouseListener, AbstractView {
 
-    private BoardController controller;
+	private static final long serialVersionUID = 1L;
+	private BoardController controller;
     private Position playerPosition;
     private String levelName;
-    private int stepsUsed;
     private Field[][] grid;
     private Element[][] field;
-    private int numberOfGoals;
     private boolean levelIsFinished;
     public Board board;
 
     public BoardView(Board board, BoardController controller,
                      Position playerPosition, String levelName) {
         this.controller = controller;
-        this.stepsUsed = 0;
         this.levelName = levelName;
         this.levelIsFinished = false;
         this.grid = board.getGrid();
         this.board = board;
         this.field = new Element[grid.length][grid[0].length];
         this.playerPosition = playerPosition;
-        this.numberOfGoals = 0;
-        //blankArea.addMouseListener(this);
         addMouseListener(this);
         setLayout(null);
         addKeyListener(this);
@@ -71,7 +66,6 @@ public class BoardView extends JPanel implements KeyListener, MouseListener, Abs
        
         // we have a new position, the player was moved
         if (evt.getNewValue() instanceof Position) {
-            this.stepsUsed++;
 
             // repaint the board and the parent
             SwingUtilities.invokeLater(new Runnable() {
@@ -81,10 +75,6 @@ public class BoardView extends JPanel implements KeyListener, MouseListener, Abs
                 }
             });
 
-        }
-        
-        if (evt.getPropertyName().equals(AbstractController.PROPERTY_LEVEL_SCORE)) {
-        	System.out.println("Level score:"+evt.getNewValue().toString());
         }
     }
     /**
@@ -270,10 +260,6 @@ public class BoardView extends JPanel implements KeyListener, MouseListener, Abs
             this.levelIsFinished = true;
         }
         repaint();
-    }
-
-    public int getStepsUsed() {
-        return this.stepsUsed;
     }
 
     public boolean getIsLevelFinished() {

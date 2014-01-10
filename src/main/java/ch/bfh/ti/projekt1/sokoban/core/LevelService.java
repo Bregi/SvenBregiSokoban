@@ -36,7 +36,7 @@ public class LevelService {
 
 	private static LevelService instance;
 
-	private char DEL = File.pathSeparatorChar;
+	private char DEL = File.separatorChar;
 
 	private LevelService() {
 	}

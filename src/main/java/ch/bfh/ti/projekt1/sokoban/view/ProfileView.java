@@ -8,8 +8,16 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
+/**
+ * The window to add a new player
+ * @author marcoberger
+ * @since 29/11/13 14:19
+ */
 public class ProfileView extends JPanel{
 	
+	/**
+	 * @param profiles
+	 */
 	public ProfileView(List<String> profiles) {
 		BoxLayout layout = new BoxLayout(this, BoxLayout.Y_AXIS);
 		setLayout(layout);

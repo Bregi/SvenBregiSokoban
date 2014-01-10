@@ -9,6 +9,12 @@ import ch.bfh.ti.projekt1.sokoban.model.Field;
 import ch.bfh.ti.projekt1.sokoban.model.FieldState;
 import ch.bfh.ti.projekt1.sokoban.model.Position;
 
+/**
+ * Used to find a shortest path between a given field. Uses the dijkstra algorithm
+ * @author marcoberger
+ * @since 01.11.2014 08:24:08
+ *
+ */
 public class Dijkstra {
 	private List<Vertex> path;
 	private Field[][] model;
@@ -19,15 +25,26 @@ public class Dijkstra {
 		EDITOR, GAME
 	};
 
+	/**
+	 * @param model
+	 */
 	public Dijkstra(Field[][] model) {
 		this(model, Mode.GAME);
 	}
 
+	/**
+	 * @param model
+	 * @param mode
+	 */
 	public Dijkstra(Field[][] model, Mode mode) {
 		this.model = model;
 		this.mode = mode;
 	}
 
+	/**
+	 * Calculates the paths
+	 * @param source
+	 */
 	private void computePaths(Vertex source) {
 		source.setMinDistance(0.0);
 		PriorityQueue<Vertex> vertexQueue = new PriorityQueue<Vertex>();
@@ -51,6 +68,11 @@ public class Dijkstra {
 		}
 	}
 
+	/**
+	 * Findes the shortest path to a target
+	 * @param target
+	 * @return ArrayList<Vertex>
+	 */
 	private List<Vertex> getShortestPathTo(Vertex target) {
 		List<Vertex> path = new ArrayList<Vertex>();
 		for (Vertex vertex = target; vertex != null; vertex = vertex
@@ -60,6 +82,12 @@ public class Dijkstra {
 		return path;
 	}
 
+	/**
+	 * Finds the path from a given start to a given end position
+	 * @param start
+	 * @param end
+	 * @return ArrayList<Vertex>
+	 */
 	public List<Vertex> getPath(Position start, Position end) {
 		Distances dijkstraObject = getDistances(start.getX(), start.getY(),
 				end.getX(), end.getY());
@@ -72,6 +100,12 @@ public class Dijkstra {
 		return getPath(vStart, vEnd);
 	}
 
+	/**
+	 * Gets the path from start to end
+	 * @param start
+	 * @param end
+	 * @return ArrayList<Vertex>
+	 */
 	private List<Vertex> getPath(Vertex start, Vertex end) {
 
 		computePaths(start);
@@ -113,8 +147,8 @@ public class Dijkstra {
 		position = 0;
 
 		// Then set the adjacences
-		for (int i = 0; i < model[0].length; i++) { // i = y achse [][][][][]
-			for (int n = 0; n < model.length; n++) { // n = x achse
+		for (int i = 0; i < model[0].length; i++) { // i = y axis 
+			for (int n = 0; n < model.length; n++) { // n = x axis [][][][][]
 				ArrayList<Edge> edges = new ArrayList<Edge>();
 
 				if (n + 1 < model.length) {
@@ -172,10 +206,18 @@ public class Dijkstra {
 		return false;
 	}
 
+	/**
+	 * Gets the path
+	 * @return ArrayList<Vertex>
+	 */
 	public List<Vertex> getPath() {
 		return path;
 	}
 
+	/**
+	 * Sets the path
+	 * @param path
+	 */
 	public void setPath(List<Vertex> path) {
 		this.path = path;
 	}

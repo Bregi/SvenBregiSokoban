@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -34,14 +35,17 @@ import ch.bfh.ti.projekt1.sokoban.core.LevelService;
 import ch.bfh.ti.projekt1.sokoban.editor.SokobanEditor;
 import ch.bfh.ti.projekt1.sokoban.model.Board;
 import ch.bfh.ti.projekt1.sokoban.model.Level;
+import ch.bfh.ti.projekt1.sokoban.view.BoardView.Mode;
 
 /**
+ * Provides the view of the game inclusive all the menues
+ * 
  * @author marcoberger
  * @since 24/10/13 14:29
  */
 public class GameWindowView implements AbstractView {
-	private static final Logger LOG = Logger.getLogger(GameWindowView.class);
 
+	private static final Logger LOG = Logger.getLogger(GameWindowView.class);
 	private LevelService levelService = LevelService.getInstance();
 	private String levelName;
 	private Level levels;
@@ -53,15 +57,12 @@ public class GameWindowView implements AbstractView {
 	private String player;
 	private JFrame frame;
 	private boolean storyMode;
-
 	private BoardView view;
 	private Board model;
 	private JMenuBar menuBar;
 	private JMenuBar gameMenuBar;
-
 	private JMenu menuFile;
 	private JMenu menuLevelEditor;
-
 	private JMenuItem menuFileNew;
 	private JMenuItem menuFileLoad;
 	private JMenuItem menuStartLeveleditor;
@@ -172,11 +173,14 @@ public class GameWindowView implements AbstractView {
 			BoardController board = levelService.getLevelProgressForUser(
 					player, levels.getLevel(currentStoryLevel));
 			if (board == null) {
-				board = levelService.getLevel(new File(levels
-						.getLevel(currentStoryLevel)));
+				try {
+					board = levelService.getLevel(new File(levels
+							.getLevel(currentStoryLevel)));
+				} catch (FileNotFoundException e) {
+					LOG.error(e);
+				}
 			}
 
-			// TODO: (also validate)
 			board.addView(GameWindowView.this);
 
 			view = (BoardView) board.getView(BoardView.class);
@@ -184,8 +188,6 @@ public class GameWindowView implements AbstractView {
 
 			frame.setSize(view.getWindowSizeX(), view.getWindowSizeY());
 			revalidateLevel(frame);
-		} else {
-			// show that the file was not applicable in this case
 		}
 		frame.getContentPane().revalidate();
 	}
@@ -200,7 +202,7 @@ public class GameWindowView implements AbstractView {
 		player = playerName.showDimensionDialog(frame);
 
 		if (player != null) {
-			
+
 			// create profile directory
 			createPlayerProfile(player);
 
@@ -209,9 +211,19 @@ public class GameWindowView implements AbstractView {
 			currentLevel = levels.getLevel(currentStoryLevel);
 			levelName = levels.getLevelOnly(currentStoryLevel);
 
-			// And load it
-			BoardController board = levelService.getLevel(new File(levels
-					.getLevel(currentStoryLevel)));
+			// Load the new level
+			loadANewLevel(new File(levels.getLevel(currentStoryLevel)));
+		}
+	}
+
+	/**
+	 * Loads the given file to the gameboard
+	 * 
+	 * @param file
+	 */
+	public void loadANewLevel(File file) {
+		try {
+			BoardController board = levelService.getLevel(file);
 
 			board.addView(GameWindowView.this);
 
@@ -220,6 +232,8 @@ public class GameWindowView implements AbstractView {
 
 			frame.setSize(view.getWindowSizeX(), view.getWindowSizeY());
 			revalidateLevel(frame);
+		} catch (FileNotFoundException e) {
+			LOG.error(e);
 		}
 	}
 
@@ -247,7 +261,7 @@ public class GameWindowView implements AbstractView {
 		JMenuItem itmSave = new JMenuItem("Spiel speichern");
 		JMenuItem itmLoad = new JMenuItem("Spiel laden");
 		JMenuItem itmLoadLevel = new JMenuItem("Level laden");
-		JMenuItem itmViewSolution = new JMenuItem("LÃ¶sung ansehen");
+		JMenuItem itmViewSolution = new JMenuItem("Lösung ansehen");
 		JMenuItem itmClose = new JMenuItem("Spiel beenden");
 
 		// optionen
@@ -262,12 +276,11 @@ public class GameWindowView implements AbstractView {
 		// Spiel
 		menuFile.add(itmNew);
 		menuFile.addSeparator();
+		
 		menuFile.add(itmReload);
 		menuFile.addSeparator();
 
 		menuFile.add(itmSave);
-		menuFile.addSeparator();
-
 		menuFile.addSeparator();
 
 		menuFile.add(itmLoad);
@@ -284,12 +297,12 @@ public class GameWindowView implements AbstractView {
 		// optionen
 		menuEdit.add(itmStatistics);
 		menuEdit.addSeparator();
+		
 		menuEdit.add(itmBest);
 
 		// leveleditor
 		menuLevelEditor.add(itmLevelEditorStart);
 		gameMenuBar = new JMenuBar();
-
 		gameMenuBar.add(menuFile);
 		gameMenuBar.add(menuEdit);
 		gameMenuBar.add(menuLevelEditor);
@@ -316,15 +329,7 @@ public class GameWindowView implements AbstractView {
 								JOptionPane.QUESTION_MESSAGE, null, options,
 								options[1]);
 				if (response == JOptionPane.YES_OPTION) {
-					BoardController board = levelService.getLevel(new File(
-							currentLevel));
-					board.addView(GameWindowView.this);
-
-					view = (BoardView) board.getView(BoardView.class);
-					model = (Board) board.getModel(Board.class);
-
-					revalidateLevel(frame);
-
+					loadANewLevel(new File(currentLevel));
 				}
 			}
 		});
@@ -349,6 +354,7 @@ public class GameWindowView implements AbstractView {
 				SokobanEditor editor = new SokobanEditor();
 			}
 		});
+		
 		// what happens when the user clicks on load a level
 		itmLoad.addActionListener(new ActionListener() {
 			@Override
@@ -385,13 +391,8 @@ public class GameWindowView implements AbstractView {
 									jFileChooser.getSelectedFile().getName()
 											.length() - 4);
 					currentLevel = jFileChooser.getSelectedFile().toString();
-					BoardController board = levelService.getLevel(jFileChooser
-							.getSelectedFile());
-					board.addView(GameWindowView.this);
-
-					view = (BoardView) board.getView(BoardView.class);
-					frame.setSize(view.getWindowSizeX(), view.getWindowSizeY());
-					frame.setContentPane(view);
+					
+					loadANewLevel(jFileChooser.getSelectedFile());
 				}
 
 				// load the game Menu
@@ -402,6 +403,7 @@ public class GameWindowView implements AbstractView {
 			}
 
 		});
+		
 		// View the solution from a file
 		itmViewSolution.addActionListener(new ActionListener() {
 			@Override
@@ -438,7 +440,7 @@ public class GameWindowView implements AbstractView {
 						.getHighscoreForPlayer(player);
 				Map<String, String> levelNameMap = levelService
 						.getLevelNameUUIDMap();
-				dialog.setTitle("Highscore fÃ¼r Spieler " + player);
+				dialog.setTitle("Highscore für Spieler " + player);
 				dialog.setContentPane(new HighscorePanel(levelNameMap,
 						levelScoreMap));
 				dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -490,15 +492,21 @@ public class GameWindowView implements AbstractView {
 			String[] content = fileContent.split(":");
 
 			// Load it
-			BoardController board = levelService.getLevel(new File(
-					editorBasePath + levelName + ".xml"));
-			BoardView solBoardView = (BoardView) board.getView(BoardView.class);
-			SolutionView solView = new SolutionView(board, content[1]);
-			JFrame soVi = solView.getFrame();
-			soVi.setSize(solBoardView.getWindowSizeX() + 20,
-					solBoardView.getWindowSizeY());
+			try {
+				BoardController board = levelService.getLevel(new File(
+						editorBasePath + levelName + ".xml"));
 
-			soVi.add(solBoardView);
+				BoardView solBoardView = (BoardView) board
+						.getView(BoardView.class);
+				solBoardView.setMode(Mode.BLOCKED);
+				SolutionView solView = new SolutionView(board, content[1]);
+				JFrame soVi = solView.getFrame();
+				soVi.setSize(solBoardView.getWindowSizeX() + 20,
+						solBoardView.getWindowSizeY());
+				soVi.add(solBoardView);
+			} catch (FileNotFoundException e) {
+				LOG.error(e);
+			}
 		} else {
 			// show that the file was not applicable in this case
 		}
@@ -611,14 +619,19 @@ public class GameWindowView implements AbstractView {
 		levelName = levels.getLevelOnly(currentStoryLevel);
 		currentLevel = levels.getLevel(currentStoryLevel);
 		saveGameProgress();
-		BoardController board = levelService.getLevel(new File(currentLevel));
-		board.addView(GameWindowView.this);
+		try {
+			BoardController board = levelService
+					.getLevel(new File(currentLevel));
+			board.addView(GameWindowView.this);
 
-		view = (BoardView) board.getView(BoardView.class);
-		model = (Board) board.getModel(Board.class);
+			view = (BoardView) board.getView(BoardView.class);
+			model = (Board) board.getModel(Board.class);
 
-		frame.setSize(view.getWindowSizeX(), view.getWindowSizeY());
-		revalidateLevel(frame);
+			frame.setSize(view.getWindowSizeX(), view.getWindowSizeY());
+			revalidateLevel(frame);
+		} catch (FileNotFoundException e) {
+			LOG.error(e);
+		}
 	}
 
 	/**

@@ -36,6 +36,10 @@ public abstract class AbstractController implements PropertyChangeListener {
 
     }
 
+    /**
+     * @param model
+     * @param view
+     */
     public AbstractController(AbstractModel model, AbstractView view) {
         this.view = view;
         this.model = model;
@@ -45,18 +49,34 @@ public abstract class AbstractController implements PropertyChangeListener {
         view.modelPropertyChange(evt);
     }
 
+    
+    /**
+     * @return ViewModel
+     */
     public AbstractView getView() {
         return view;
     }
 
+    /**
+     * Set the view
+     * @param view
+     */
     public void setView(AbstractView view) {
         this.view = view;
     }
 
+    /**
+     * Gets the current model
+     * @return
+     */
     public AbstractModel getModel() {
         return model;
     }
 
+    /**
+     * Sets the current model
+     * @param model
+     */
     public void setModel(AbstractModel model) {
         this.model = model;
         this.model.addPropertyChangeListener(this);

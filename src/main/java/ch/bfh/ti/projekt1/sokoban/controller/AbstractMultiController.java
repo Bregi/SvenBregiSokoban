@@ -23,25 +23,41 @@ public abstract class AbstractMultiController extends AbstractController {
 	private static final Logger LOG = Logger
 			.getLogger(AbstractController.class);
 
+	/**
+	 * 
+	 */
 	public AbstractMultiController() {
 		registeredViews = new ArrayList<AbstractView>();
 		registeredModels = new ArrayList<AbstractModel>();
 	}
 
+	/**
+	 * 
+	 * @param model
+	 */
 	public void addModel(AbstractModel model) {
 		registeredModels.add(model);
 		model.addPropertyChangeListener(this);
 	}
 
+	/**
+	 * @param model
+	 */
 	public void removeModel(AbstractModel model) {
 		registeredModels.remove(model);
 		model.removePropertyChangeListener(this);
 	}
 
+	/**
+	 * @param view
+	 */
 	public void addView(AbstractView view) {
 		registeredViews.add(view);
 	}
 
+	/**
+	 * @param view
+	 */
 	public void removeView(AbstractView view) {
 		registeredViews.remove(view);
 	}
@@ -53,6 +69,10 @@ public abstract class AbstractMultiController extends AbstractController {
 		}
 	}
 
+	/**
+	 * @param clazz
+	 * @return
+	 */
 	public AbstractView getView(Class<? extends AbstractView> clazz) {
 		for (AbstractView view : registeredViews) {
 			if (clazz.isInstance(view)) {
@@ -61,7 +81,11 @@ public abstract class AbstractMultiController extends AbstractController {
 		}
 		return null;
 	}
-	
+
+	/**
+	 * @param clazz
+	 * @return
+	 */
 	public AbstractModel getModel(Class<? extends AbstractModel> clazz) {
 		for (AbstractModel model : registeredModels) {
 			if (clazz.isInstance(model)) {

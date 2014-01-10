@@ -3,6 +3,8 @@ package ch.bfh.ti.projekt1.sokoban.core;
 import java.io.File;
 import java.util.List;
 
+import org.apache.log4j.xml.Log4jEntityResolver;
+
 import ch.bfh.ti.projekt1.sokoban.controller.FieldController;
 import ch.bfh.ti.projekt1.sokoban.core.dijkstra.Dijkstra;
 import ch.bfh.ti.projekt1.sokoban.core.dijkstra.Dijkstra.Mode;
@@ -118,6 +120,7 @@ public class EditorService {
 	}
 
 	public EditorController getLevel(File file) {
+		try{
 		Level level = XmlService.getInstance().getLevelFromFile(file);
 		EditorController controller = new EditorController();
 		int col = XmlService.getInstance().getMaxColumnCount(level.getRow());
@@ -150,6 +153,9 @@ public class EditorService {
 		board.setLevelName(level.getName());
 		board.setUuid(level.getUuid());
 		return controller;
+		} catch(Exception e){
+		return null;
+		}
 	}
 
 }

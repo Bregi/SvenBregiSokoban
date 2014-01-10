@@ -12,6 +12,11 @@ import javax.swing.JTable;
 
 import ch.bfh.ti.projekt1.sokoban.core.CoreConstants;
 
+/**
+ * The panel that shows the highscores of the current player
+ * @author svennyffenegger 
+ * @since 01.01.2012
+ */
 public class HighscorePanel extends JPanel{
 
 	private static final long serialVersionUID = 1L;
@@ -25,6 +30,10 @@ public class HighscorePanel extends JPanel{
 	
 	private JScrollPane scrollPane;
 	
+	/**
+	 * @param levelNameMap
+	 * @param levelScoreMap
+	 */
 	public HighscorePanel(Map<String, String> levelNameMap, Map<String, Integer> levelScoreMap) {
 		this.levelNameMap = levelNameMap;
 		this.levelScoreMap = levelScoreMap;
@@ -60,6 +69,9 @@ public class HighscorePanel extends JPanel{
 	class ValueComparator implements Comparator<String> {
 
 	    Map<String, String> base;
+	    /**
+	     * @param base
+	     */
 	    public ValueComparator(Map<String, String> base) {
 	        this.base = base;
 	    }

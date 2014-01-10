@@ -1,8 +1,11 @@
 package ch.bfh.ti.projekt1.sokoban.view.element;
 
+
 /**
- * @author svennyffenegger
- * @since 22/11/13 16:15
+ * The model of the player is on goal - element
+ * 
+ * @author Marco Berger 
+ * @since 01/09/2013
  */
 public class PlayerOnGoal extends Element {
     public PlayerOnGoal() {

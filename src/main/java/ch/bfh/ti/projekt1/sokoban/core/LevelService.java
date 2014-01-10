@@ -1,25 +1,31 @@
 package ch.bfh.ti.projekt1.sokoban.core;
 
-import ch.bfh.ti.projekt1.sokoban.controller.BoardController;
-import ch.bfh.ti.projekt1.sokoban.model.*;
-import ch.bfh.ti.projekt1.sokoban.view.BoardView;
-import ch.bfh.ti.projekt1.sokoban.xml.Column;
-import ch.bfh.ti.projekt1.sokoban.xml.Level;
-import ch.bfh.ti.projekt1.sokoban.xml.Row;
-
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.xml.Log4jEntityResolver;
+import org.apache.log4j.Logger;
+
+import ch.bfh.ti.projekt1.sokoban.controller.BoardController;
+import ch.bfh.ti.projekt1.sokoban.model.Board;
+import ch.bfh.ti.projekt1.sokoban.model.Direction;
+import ch.bfh.ti.projekt1.sokoban.model.Field;
+import ch.bfh.ti.projekt1.sokoban.model.FieldState;
+import ch.bfh.ti.projekt1.sokoban.model.Position;
+import ch.bfh.ti.projekt1.sokoban.view.BoardView;
+import ch.bfh.ti.projekt1.sokoban.view.BoardView.Mode;
+import ch.bfh.ti.projekt1.sokoban.view.GameWindowView;
+import ch.bfh.ti.projekt1.sokoban.xml.Column;
+import ch.bfh.ti.projekt1.sokoban.xml.Level;
+import ch.bfh.ti.projekt1.sokoban.xml.Row;
 
 /**
  * @author svennyffenegger
@@ -28,6 +34,7 @@ import org.apache.log4j.xml.Log4jEntityResolver;
 public class LevelService {
 
 	private static LevelService instance;
+	private static final Logger LOG = Logger.getLogger(GameWindowView.class);
 
 	private LevelService() {
 	}
@@ -39,9 +46,11 @@ public class LevelService {
 		return instance;
 	}
 
-	public BoardController getLevel(File file) {
+	public BoardController getLevel(File file) throws FileNotFoundException
+	{
 		Level level = XmlService.getInstance().getLevelFromFile(file);
-
+		
+		if(level!=null){
 		Position startPos = new Position(level.getStartPosition().getColumn(),
 				level.getStartPosition().getRow());
 
@@ -64,12 +73,15 @@ public class LevelService {
 			board.setDiamondMoveCounter(level.getMoves());
 		}
 		BoardView boardView = new BoardView(board, boardController,
-				board.getPosition(), level.getName());
+				board.getPosition(), level.getName(), Mode.WALKABLE);
 
 		boardController.setModel(board);
 		boardController.setView(boardView);
 
 		return boardController;
+		}else{
+			throw new FileNotFoundException();
+		}
 	}
 
 	public void saveLevelMoves(List<Direction> directionList, String levelName) {
@@ -139,7 +151,11 @@ public class LevelService {
 		for (String fileStr : fileList(path)) {
 			Level progress = XmlService.getInstance().getLevelFromPath(fileStr);
 			if (progress.getUuid().equals(level.getUuid())) {
+				try{
 				return getLevel(new File(fileStr));
+				}catch(FileNotFoundException e){
+					LOG.error(e);
+				}
 			}
 		}
 		

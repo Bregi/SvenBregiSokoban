@@ -16,18 +16,20 @@ public class Field extends AbstractModel {
     }
 
     /**
-     * @return
+     * @return FieldState
      */
     public FieldState getState() {
         return state;
     }
 
     /**
+     * Sets a new state to a field 
      * @param state
      */
     public void setState(FieldState state) {
         FieldState oldState = this.state;
         this.state = state;
+        // If it is a new value, notify the view
         firePropertyChange(AbstractController.PROPERTY_FIELD_STATE, oldState, this.state);
     }
 }

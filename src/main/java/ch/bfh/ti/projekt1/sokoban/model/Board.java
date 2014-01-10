@@ -338,10 +338,10 @@ public class Board extends AbstractModel {
 		// check if the position has been changed and a property change needs to
 		// be fired
 		if (oldPosition != position) {
-			checkLevelStatus();
 			moves.add(direction);
 			firePropertyChange(AbstractController.PROPERTY_POSITION,
 					oldPosition, position);
+			checkLevelStatus();
 		}
 	}
 

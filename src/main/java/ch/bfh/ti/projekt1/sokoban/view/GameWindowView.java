@@ -20,6 +20,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -562,11 +563,22 @@ public class GameWindowView implements AbstractView {
 		switch (evt.getPropertyName()) {
 		case AbstractController.PROPERTY_LEVEL_STATUS:
 			if ((boolean) evt.getNewValue() == true) {
-
-				exportSolution();
-				if (storyMode) {
-					loadNextLevel();
+			
+			new Thread(new Runnable() {
+				
+				@Override
+				public void run() {
+					try {
+						Thread.sleep(500l);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					exportSolution();
+					if (storyMode) {
+						loadNextLevel();
+					}
 				}
+			}).start();			
 			}
 			break;
 		case AbstractController.PROPERTY_LEVEL_SCORE:

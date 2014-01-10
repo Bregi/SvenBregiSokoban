@@ -19,20 +19,18 @@ public class CoreConstants {
     private static final String APP_PROPERTIES = "src/main/resources/ch/bfh/ti/projekt1/sokoban/config/sokoban.properties";
 
     private static CoreConstants instance = null;
-    private static Properties properties = new Properties();
+    private Properties properties;
 
     private CoreConstants() {
+    	properties = new Properties();
         LOG.debug("The properties file is being loaded: " + APP_PROPERTIES);
         try {
             FileInputStream inputStream = new FileInputStream(APP_PROPERTIES);
             properties.load(inputStream);
         } catch (FileNotFoundException e) {
             LOG.error(e);
-            LOG.error(e);
         } catch (IOException e) {
             LOG.error(e);
-        } finally {
-
         }
     }
 

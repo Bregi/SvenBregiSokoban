@@ -1,8 +1,11 @@
 package ch.bfh.ti.projekt1.sokoban.view.element;
 
+
 /**
- * @author svennyffenegger
- * @since 08/11/13 13:46
+ * The model of the Goal element
+ * 
+ * @author Marco Berger 
+ * @since 01/09/2013
  */
 public class Goal extends Element {
     public Goal() {

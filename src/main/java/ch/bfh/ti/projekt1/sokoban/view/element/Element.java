@@ -14,8 +14,12 @@ import ch.bfh.ti.projekt1.sokoban.controller.FieldController;
 import ch.bfh.ti.projekt1.sokoban.model.FieldState;
 import ch.bfh.ti.projekt1.sokoban.view.AbstractView;
 
+
 /**
- * TODO: Element nur mit Konstruktor, der FieldState voraussetzt?
+ * The model of the element
+ * 
+ * @author Marco Berger 
+ * @since 01/09/2013
  */
 public abstract class Element extends JComponent implements AbstractView {
 	private static final long serialVersionUID = 1L;
@@ -32,6 +36,9 @@ public abstract class Element extends JComponent implements AbstractView {
 	private Image backgroundImage;
 	private int x, y;
 
+	/**
+	 * @param controller
+	 */
 	public Element(FieldController controller) {
 		this.controller = controller;
 	}
@@ -40,6 +47,10 @@ public abstract class Element extends JComponent implements AbstractView {
 		this(null);
 	}
 
+	/**
+	 * Adds an image to the element
+	 * @param imageUrl
+	 */
 	public void addImage(String imageUrl) {
 		try {
 			this.backgroundImage = ImageIO.read(new File(imageUrl));
@@ -50,6 +61,10 @@ public abstract class Element extends JComponent implements AbstractView {
 		}
 	}
 
+	/**
+	 * Adds the image 
+	 * @param state
+	 */
 	public void addImage(FieldState state) {
 		switch (state) {
 		case EMPTY:
@@ -84,6 +99,11 @@ public abstract class Element extends JComponent implements AbstractView {
 		repaint();
 	}
 
+	/**
+	 * Move the element to a given position
+	 * @param x
+	 * @param y
+	 */
 	public void moveElement(int x, int y) {
 		this.setLocation(x, y);
 	}

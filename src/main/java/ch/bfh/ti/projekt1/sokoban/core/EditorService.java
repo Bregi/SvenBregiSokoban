@@ -3,7 +3,7 @@ package ch.bfh.ti.projekt1.sokoban.core;
 import java.io.File;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.log4j.xml.Log4jEntityResolver;
 
 import ch.bfh.ti.projekt1.sokoban.controller.FieldController;
 import ch.bfh.ti.projekt1.sokoban.core.dijkstra.Dijkstra;

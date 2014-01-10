@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 /**
+ * Stores the PlayerName
  * @author marcoberger
  * @since 29/11/13 14:19
  */
@@ -17,6 +18,10 @@ public class PlayerName {
     private JTextField name;
     private String playerName;
 
+    /**
+     * @param owner
+     * @return String
+     */
     public String showDimensionDialog(Frame owner) {
     	
     	playerName = null;
@@ -32,11 +37,10 @@ public class PlayerName {
         buttonConfirm.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //TODO: richtig validieren
                 try {
                     playerName = name.getText();
                 } catch (NumberFormatException nfe) {
-                    JOptionPane.showMessageDialog(dialog, "Keine gÃ¼ltigen Eingaben");
+                    JOptionPane.showMessageDialog(dialog, "Keine gültigen Eingaben");
                 }
 
                 dialog.dispose();

@@ -19,6 +19,8 @@ import ch.bfh.ti.projekt1.sokoban.core.EditorService;
 import ch.bfh.ti.projekt1.sokoban.editor.LevelDimensionDialog;
 
 /**
+ * The window where a solution can be seen
+ * 
  * @author marcoberger
  * @since 24/12/13 14:29
  */
@@ -45,6 +47,10 @@ public class SolutionView {
 
 	private EditorService editorService = EditorService.getInstance();
 
+	/**
+	 * @param board
+	 * @param pathValues
+	 */
 	public SolutionView(final BoardController board, String pathValues) {
 		frame = new JFrame("Solution");
 		nextButton = new JButton(">");
@@ -55,6 +61,7 @@ public class SolutionView {
 		pathValues = pathValues.substring(1, pathValues.length()-1);
 		final String[] path = pathValues.split(", ");
 		
+		// What happens when the user clicks on the next field
 		nextButton.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
@@ -85,6 +92,9 @@ public class SolutionView {
 
 	}
 
+	/**
+	 * @return JFrame
+	 */
 	public JFrame getFrame() {
 		return frame;
 	}

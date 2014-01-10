@@ -14,7 +14,8 @@ import javax.swing.JPanel;
  * @since 29/11/13 14:19
  */
 public class ProfileView extends JPanel{
-	
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * @param profiles
 	 */

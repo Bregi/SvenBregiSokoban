@@ -502,7 +502,7 @@ public class GameWindowView implements AbstractView {
 				SolutionView solView = new SolutionView(board, content[1]);
 				JFrame soVi = solView.getFrame();
 				soVi.setSize(solBoardView.getWindowSizeX() + 20,
-						solBoardView.getWindowSizeY());
+						solBoardView.getWindowSizeY()-22);
 				soVi.add(solBoardView);
 			} catch (LevelMisconfigurationException e) {
 				JOptionPane.showMessageDialog(frame, e.getMessage());
@@ -582,8 +582,22 @@ public class GameWindowView implements AbstractView {
 							e.printStackTrace();
 						}
 						exportSolution();
+						// If user is in story mode, load the next level
 						if (storyMode) {
+							int maxLevel = new Integer(CoreConstants.getProperty("game.story.levels"));
+							if(currentStoryLevel<maxLevel-1 ){
 							loadNextLevel();
+							}else{
+								JOptionPane.showMessageDialog(null, "Der StoryModus wurde erfolgreich beendet!");
+								view.setMode(Mode.BLOCKED);
+							}
+						// Otherwise only give a message
+						}else{
+							int steps = model.getMoves().size();
+							int diamondMoves = model.getDiamondMoveCounter();
+							JOptionPane.showMessageDialog(null, "Level wurde erfolgreich gelöst. \nSchritte:" + steps
+									+ "\nDiamantverschiebungen:" + diamondMoves);
+							view.setMode(Mode.BLOCKED);
 						}
 					}
 				}).start();
